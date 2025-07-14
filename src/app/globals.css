@@ -24,3 +24,138 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Force input fields to always have black text - Override Tailwind */
+input,
+textarea,
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Override Tailwind text color classes specifically */
+.text-gray-400,
+.text-gray-500,
+.text-gray-600,
+.text-gray-700,
+.placeholder-gray-400 {
+  color: #111827 !important; /* gray-900 for better contrast */
+}
+
+/* Override any nested gray text classes */
+* .text-gray-400,
+* .text-gray-500,
+* .text-gray-600 {
+  color: #374151 !important; /* gray-700 for better readability */
+}
+
+/* Ensure placeholder text is visible but not too dark */
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+/* Ensure focus states maintain black text */
+input:focus,
+textarea:focus,
+select:focus,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Ensure autofill text is black */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+  -webkit-text-fill-color: #000000 !important;
+  color: #000000 !important;
+}
+
+/* Override any inherited text colors */
+input,
+textarea,
+select {
+  color: #000000 !important;
+}
+
+/* Force black text in all states */
+input:not(:placeholder-shown),
+textarea:not(:placeholder-shown),
+select:not(:placeholder-shown) {
+  color: #000000 !important;
+}
+
+/* Ensure button text is never light gray */
+button {
+  color: inherit !important;
+}
+
+/* Override any light gray text in buttons */
+button .text-gray-400,
+button .text-gray-500,
+button .text-gray-600 {
+  color: #111827 !important; /* gray-900 */
+}
+
+/* Ensure button text has proper contrast */
+button:not([class*="text-white"]):not([class*="text-blue"]):not([class*="text-red"]):not([class*="text-green"]) {
+  color: #111827 !important; /* gray-900 */
+}
+
+/* Specific overrides for button variants */
+button[class*="outline"] {
+  color: #111827 !important; /* gray-900 */
+}
+
+button[class*="ghost"] {
+  color: #111827 !important; /* gray-900 */
+}
+
+button[class*="secondary"] {
+  color: #111827 !important; /* gray-900 */
+}
+
+/* Fix pagination and other navigation buttons */
+nav button,
+.pagination button {
+  color: #111827 !important; /* gray-900 */
+}
+
+/* Ensure all interactive elements have proper text color */
+a:not([class*="text-white"]):not([class*="text-blue"]):not([class*="text-red"]):not([class*="text-green"]) {
+  color: #111827 !important; /* gray-900 */
+}
+
+/* Comprehensive gray text fixes */
+.text-gray-300,
+.text-gray-400,
+.text-gray-500,
+.text-gray-600 {
+  color: #374151 !important; /* gray-700 - readable but not too dark */
+}
+
+/* Special case for very light gray text that should be darker */
+span[class*="text-gray-"],
+div[class*="text-gray-"],
+p[class*="text-gray-"] {
+  color: #4b5563 !important; /* gray-600 - ensure readability */
+}
