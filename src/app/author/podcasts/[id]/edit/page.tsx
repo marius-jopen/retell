@@ -1,10 +1,29 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { useToast } from '@/components/ui/toast'
+import PodcastWorkflowManager from '@/components/workflow/podcast-workflow-manager'
+import { PodcastWorkflowState } from '@/lib/podcast-workflow'
+import EpisodeActions from '@/components/author/episode-actions'
+import { formatDate } from '@/lib/utils'
+
+interface Episode {
+  id: string
+  title: string
+  description: string
+  episode_number: number
+  season_number: number | null
+  duration: number | null
+  status: 'draft' | 'pending' | 'approved' | 'rejected'
+  created_at: string
+  updated_at: string
+  audio_url: string | null
+  script_url: string | null
+}
 
 interface Podcast {
   id: string
@@ -20,22 +39,27 @@ interface Podcast {
 }
 
 export default function EditPodcastPage({ params }: { params: Promise<{ id: string }> }) {
-  const [podcast, setPodcast] = useState<Podcast | null>(null)
+  const [podcastId, setPodcastId] = useState('')
+  const [podcast, setPodcast] = useState<any>(null)
+  const [episodes, setEpisodes] = useState<Episode[]>([])
+  const [workflowState, setWorkflowState] = useState<PodcastWorkflowState | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: '',
     language: '',
     country: '',
-    rss_url: ''
+    rss_url: '',
+    auto_publish_episodes: false
   })
   const [coverImage, setCoverImage] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
   const [fetchError, setFetchError] = useState('')
-  const [podcastId, setPodcastId] = useState<string>('')
+  const [error, setError] = useState('')
+  const [activeTab, setActiveTab] = useState<'details' | 'workflow'>('details')
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
+  const { addToast } = useToast()
 
   const categories = [
     'Business',
@@ -62,10 +86,12 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
     { code: 'de', name: 'German' },
     { code: 'it', name: 'Italian' },
     { code: 'pt', name: 'Portuguese' },
+    { code: 'nl', name: 'Dutch' },
+    { code: 'pl', name: 'Polish' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'zh', name: 'Chinese (Mandarin)' },
     { code: 'ja', name: 'Japanese' },
     { code: 'ko', name: 'Korean' },
-    { code: 'zh', name: 'Chinese' },
-    { code: 'ru', name: 'Russian' },
     { code: 'ar', name: 'Arabic' },
     { code: 'hi', name: 'Hindi' },
     { code: 'other', name: 'Other' }
@@ -80,6 +106,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
     'France',
     'Spain',
     'Italy',
+    'Netherlands',
     'Japan',
     'South Korea',
     'Brazil',
@@ -90,6 +117,26 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
     'Russia',
     'Other'
   ]
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-800'
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'rejected':
+        return 'bg-red-100 text-red-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const formatDuration = (seconds: number | null) => {
+    if (!seconds) return 'N/A'
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
 
   useEffect(() => {
     const fetchPodcast = async () => {
@@ -104,27 +151,49 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
           return
         }
 
-        const { data, error } = await supabase
+        // Get podcast data
+        const { data: podcastData, error: podcastError } = await supabase
           .from('podcasts')
           .select('*')
           .eq('id', id)
           .eq('author_id', user.id)
           .single()
 
-        if (error) {
+        if (podcastError) {
           setFetchError('Error fetching podcast or you don\'t have permission to edit it')
           return
         }
 
-        setPodcast(data)
+        setPodcast(podcastData)
         setFormData({
-          title: data.title || '',
-          description: data.description || '',
-          category: data.category || '',
-          language: data.language || '',
-          country: data.country || '',
-          rss_url: data.rss_url || ''
+          title: podcastData.title || '',
+          description: podcastData.description || '',
+          category: podcastData.category || '',
+          language: podcastData.language || '',
+          country: podcastData.country || '',
+          rss_url: podcastData.rss_url || '',
+          auto_publish_episodes: podcastData.auto_publish_episodes || false
         })
+
+        // Fetch episodes
+        const { data: episodesData, error: episodesError } = await supabase
+          .from('episodes')
+          .select('*')
+          .eq('podcast_id', id)
+          .order('episode_number', { ascending: false })
+
+        if (episodesError) {
+          console.error('Error fetching episodes:', episodesError)
+        } else {
+          setEpisodes(episodesData || [])
+        }
+
+        // Load workflow state
+        const workflowResponse = await fetch(`/api/podcasts/${id}/workflow`)
+        if (workflowResponse.ok) {
+          const workflowData = await workflowResponse.json()
+          setWorkflowState(workflowData.workflow)
+        }
       } catch (error) {
         console.error('Error loading podcast:', error)
         setFetchError('Error loading podcast')
@@ -134,27 +203,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
     fetchPodcast()
   }, [params, supabase])
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select a valid image file')
-        return
-      }
-      
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('File size must be less than 5MB')
-        return
-      }
-      setCoverImage(file)
-      setError('')
-    }
-  }
-
-  const uploadCoverImage = async (file: File, _podcastId: string) => {
-    // TEMPORARY: Use base64 until storage bucket is set up
+  const uploadCoverImage = async (file: File, podcastId: string) => {
     try {
       const base64Url = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader()
@@ -169,7 +218,6 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
       return base64Url
     } catch (error) {
       console.error('Error converting image to base64:', error)
-      setError('Failed to process image. Please try again.')
       return null
     }
   }
@@ -180,7 +228,6 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
     setError('')
 
     try {
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         setError('You must be logged in to update a podcast')
@@ -218,19 +265,50 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
         }
       }
 
+      // Check if we should set manual overrides based on workflow state
+      const updates: any = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        category: formData.category,
+        language: formData.language,
+        country: formData.country,
+        rss_url: formData.rss_url.trim() || null,
+        cover_image_url: coverImageUrl,
+        auto_publish_episodes: formData.auto_publish_episodes,
+        updated_at: new Date().toISOString()
+      }
+
+      // Set manual overrides if in hybrid mode
+      if (workflowState?.mode === 'hybrid') {
+        const overrides = { ...workflowState.manual_overrides }
+        
+        // Check if values have changed from RSS values
+        if (formData.title !== podcast?.title) {
+          overrides.title = true
+        }
+        if (formData.description !== podcast?.description) {
+          overrides.description = true
+        }
+        if (formData.category !== podcast?.category) {
+          overrides.category = true
+        }
+        if (formData.language !== podcast?.language) {
+          overrides.language = true
+        }
+        if (formData.country !== podcast?.country) {
+          overrides.country = true
+        }
+        if (coverImage) {
+          overrides.cover_image = true
+        }
+        
+        updates.manual_overrides = overrides
+      }
+
       // Update podcast
       const { error: updateError } = await supabase
         .from('podcasts')
-        .update({
-          title: formData.title.trim(),
-          description: formData.description.trim(),
-          category: formData.category,
-          language: formData.language,
-          country: formData.country,
-          rss_url: formData.rss_url.trim() || null,
-          cover_image_url: coverImageUrl,
-          updated_at: new Date().toISOString()
-        })
+        .update(updates)
         .eq('id', podcastId)
         .eq('author_id', user.id)
 
@@ -240,36 +318,38 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
         return
       }
 
-      // Redirect to podcasts page
+      // Show success message
+      addToast({
+        type: 'success',
+        message: `Successfully updated podcast "${formData.title}"`
+      })
+
+      // Navigate back to podcast list
       router.push('/author/podcasts')
-      router.refresh()
     } catch (error) {
       console.error('Error updating podcast:', error)
-      setError('Failed to update podcast. Please try again.')
+      setError('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
+  const handleWorkflowChanged = (newWorkflowState: PodcastWorkflowState) => {
+    setWorkflowState(newWorkflowState)
+    // Reload podcast data if workflow changed
+    if (newWorkflowState.mode !== workflowState?.mode) {
+      window.location.reload()
+    }
+  }
+
   if (fetchError) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <div className="mt-2 text-sm text-red-700">{fetchError}</div>
-            </div>
-          </div>
-        </div>
-        <div className="mt-6">
-          <Link href="/author/podcasts">
-            <Button variant="outline">Back to Podcasts</Button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+          <h1 className="text-2xl font-bold text-red-800 mb-2">Error</h1>
+          <p className="text-red-700">{fetchError}</p>
+          <Link href="/author/podcasts" className="mt-4 inline-block">
+            <Button variant="outline">← Back to Podcasts</Button>
           </Link>
         </div>
       </div>
@@ -278,196 +358,411 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
 
   if (!podcast) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <p className="mt-2 text-sm text-gray-600">Loading podcast...</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-64 mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-48 mb-8"></div>
+          <div className="space-y-6">
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Edit Podcast</h1>
-            <p className="mt-2 text-lg text-gray-600">
-              Update your podcast information
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              📝 Edit Podcast
+            </h1>
+            <p className="text-lg text-gray-600">
+              Update your podcast details and manage episodes
             </p>
           </div>
           <Link href="/author/podcasts">
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline" className="rounded-2xl">
+              ← Back to Podcasts
+            </Button>
           </Link>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Podcast Information</h2>
+      {/* Tab Navigation */}
+      <div className="mb-8">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setActiveTab('details')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'details'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              📝 Podcast Details
+            </button>
+            <button
+              onClick={() => setActiveTab('workflow')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'workflow'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              🔧 Workflow Settings
+            </button>
+          </nav>
         </div>
-        
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
+      </div>
+
+      {activeTab === 'details' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Podcast Info */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-200">
+              <div className="p-8">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    📝 Podcast Details
+                  </h2>
+                  <p className="text-gray-600">
+                    Update your podcast information and settings
+                  </p>
+                  
+                  {/* Workflow Status Indicator */}
+                  {workflowState && (
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-sm font-medium text-gray-700">
+                            Current Mode: 
+                          </span>
+                          <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                            workflowState.mode === 'manual' 
+                              ? 'bg-blue-100 text-blue-800'
+                              : workflowState.mode === 'rss'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-purple-100 text-purple-800'
+                          }`}>
+                            {workflowState.mode.toUpperCase()}
+                          </span>
+                        </div>
+                        <Button
+                          onClick={() => setActiveTab('workflow')}
+                          variant="outline"
+                          size="sm"
+                        >
+                          Configure Workflow
+                        </Button>
+                      </div>
+                      {workflowState.mode === 'hybrid' && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          Some fields may be automatically synced from RSS feed
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">Error</h3>
-                  <div className="mt-2 text-sm text-red-700">{error}</div>
-                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Title */}
+                  <div>
+                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                      Podcast Title *
+                      {workflowState?.manual_overrides?.title && (
+                        <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+                      )}
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      placeholder="Enter podcast title"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                      Description *
+                      {workflowState?.manual_overrides?.description && (
+                        <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+                      )}
+                    </label>
+                    <textarea
+                      id="description"
+                      rows={4}
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      placeholder="Describe your podcast"
+                    />
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                      Category *
+                      {workflowState?.manual_overrides?.category && (
+                        <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+                      )}
+                    </label>
+                    <select
+                      id="category"
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    >
+                      <option value="">Select a category</option>
+                      {categories.map(category => (
+                        <option key={category} value={category}>{category}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Language */}
+                  <div>
+                    <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-2">
+                      Language *
+                      {workflowState?.manual_overrides?.language && (
+                        <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+                      )}
+                    </label>
+                    <select
+                      id="language"
+                      value={formData.language}
+                      onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    >
+                      <option value="">Select a language</option>
+                      {languages.map(lang => (
+                        <option key={lang.code} value={lang.code}>{lang.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Country */}
+                  <div>
+                    <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
+                      Country *
+                      {workflowState?.manual_overrides?.country && (
+                        <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+                      )}
+                    </label>
+                    <select
+                      id="country"
+                      value={formData.country}
+                      onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    >
+                      <option value="">Select a country</option>
+                      {countries.map(country => (
+                        <option key={country} value={country}>{country}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Cover Image */}
+                  <div>
+                    <label htmlFor="cover_image" className="block text-sm font-medium text-gray-700 mb-2">
+                      Cover Image
+                      {workflowState?.manual_overrides?.cover_image && (
+                        <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+                      )}
+                    </label>
+                    <input
+                      type="file"
+                      id="cover_image"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          if (file.size > 5 * 1024 * 1024) {
+                            setError('Cover image must be less than 5MB')
+                            return
+                          }
+                          setCoverImage(file)
+                          setError('')
+                        }
+                      }}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    />
+                    {podcast?.cover_image_url && (
+                      <div className="mt-2">
+                        <img
+                          src={podcast.cover_image_url}
+                          alt="Current cover"
+                          className="w-20 h-20 object-cover rounded-lg"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* RSS URL */}
+                  <div>
+                    <label htmlFor="rss_url" className="block text-sm font-medium text-gray-700 mb-2">
+                      RSS Feed URL
+                    </label>
+                    <input
+                      type="url"
+                      id="rss_url"
+                      value={formData.rss_url}
+                      onChange={(e) => setFormData({ ...formData, rss_url: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      placeholder="https://example.com/feed.xml"
+                    />
+                  </div>
+
+                  {/* Auto-publish Episodes */}
+                  <div>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="auto_publish_episodes"
+                        checked={formData.auto_publish_episodes}
+                        onChange={(e) => setFormData({ ...formData, auto_publish_episodes: e.target.checked })}
+                        className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor="auto_publish_episodes" className="ml-2 text-sm text-gray-700">
+                        Automatically publish new episodes from RSS feed
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Error Message */}
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+                      <div className="flex items-center">
+                        <span className="text-red-600 mr-2">⚠️</span>
+                        <p className="text-red-700">{error}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Submit Button */}
+                  <div className="flex justify-end space-x-4">
+                    <Link href="/author/podcasts">
+                      <Button variant="outline" className="rounded-2xl">
+                        Cancel
+                      </Button>
+                    </Link>
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105"
+                    >
+                      {loading ? '💾 Saving...' : '💾 Save Changes'}
+                    </Button>
+                  </div>
+                </form>
               </div>
             </div>
-          )}
-
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-              Podcast Title *
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your podcast title"
-              required
-            />
           </div>
 
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Description *
-            </label>
-            <textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Describe your podcast"
-              required
-            />
-          </div>
+          {/* Right Column - Episodes */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-200 h-fit">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">
+                    📻 Episodes ({episodes.length})
+                  </h2>
+                  <Link href={`/author/podcasts/${podcastId}/episodes/new`}>
+                    <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl">
+                      ✨ Add Episode
+                    </Button>
+                  </Link>
+                </div>
 
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-              Category *
-            </label>
-            <select
-              id="category"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              required
-            >
-              <option value="">Select a category</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
+                {/* Episodes List */}
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {episodes.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">🎧</div>
+                      <p className="text-gray-500 mb-4">No episodes yet</p>
+                      <Link href={`/author/podcasts/${podcastId}/episodes/new`}>
+                        <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl">
+                          Create First Episode
+                        </Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    episodes.map((episode) => (
+                      <div key={episode.id} className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-4 border border-orange-100 hover:shadow-md transition-all">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-bold">
+                                #{episode.episode_number}
+                              </span>
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Published
+                              </span>
+                            </div>
+                            <h3 className="text-sm font-semibold text-gray-900 mb-1 truncate">
+                              {episode.title}
+                            </h3>
+                            <div className="text-xs text-gray-500 space-y-1">
+                              <div>Duration: {formatDuration(episode.duration)}</div>
+                              <div>Created: {formatDate(episode.created_at)}</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between mt-4">
+                          <div className="flex items-center space-x-2">
+                            <Link href={`/author/podcasts/${podcastId}/episodes/${episode.id}/edit`}>
+                              <Button variant="outline" size="sm" className="text-xs rounded-full border-blue-200 text-blue-700 hover:bg-blue-50">
+                                ✏️ Edit
+                              </Button>
+                            </Link>
+                            <EpisodeActions
+                              episodeId={episode.id}
+                              episodeTitle={episode.title}
+                              podcastId={podcast.id}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-2">
-                Language *
-              </label>
-              <select
-                id="language"
-                value={formData.language}
-                onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="">Select a language</option>
-                {languages.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
-                Country/Region *
-              </label>
-              <select
-                id="country"
-                value={formData.country}
-                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="">Select a country</option>
-                {countries.map((country) => (
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
-                ))}
-              </select>
+                {/* View All Episodes Link */}
+                {episodes.length > 0 && (
+                  <div className="mt-6 text-center">
+                    <Link href={`/author/podcasts/${podcastId}/episodes`}>
+                      <Button variant="outline" className="rounded-xl border-orange-200 text-orange-700 hover:bg-orange-50">
+                        📋 View All Episodes
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
+        </div>
+      )}
 
-          <div>
-            <label htmlFor="rss_url" className="block text-sm font-medium text-gray-700 mb-2">
-              RSS Feed URL (Optional)
-            </label>
-            <input
-              type="url"
-              id="rss_url"
-              value={formData.rss_url}
-              onChange={(e) => setFormData({ ...formData, rss_url: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="https://your-podcast-feed.com/rss"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="cover_image" className="block text-sm font-medium text-gray-700 mb-2">
-              Cover Image
-            </label>
-            <div className="flex items-center space-x-4">
-              {podcast.cover_image_url && (
-                <img
-                  src={podcast.cover_image_url}
-                  alt="Current cover"
-                  className="h-16 w-16 rounded-lg object-cover"
-                />
-              )}
-              <input
-                type="file"
-                id="cover_image"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-              />
-            </div>
-            <p className="mt-2 text-sm text-gray-500">
-              {podcast.cover_image_url ? 'Upload a new image to replace the current one' : 'Upload an image (max 5MB)'}
-            </p>
-          </div>
-
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
-            <Link href="/author/podcasts">
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </Link>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Updating...' : 'Update Podcast'}
-            </Button>
-          </div>
-        </form>
-      </div>
+      {activeTab === 'workflow' && (
+        <PodcastWorkflowManager
+          podcastId={podcastId}
+          initialWorkflowState={workflowState || undefined}
+          onWorkflowChanged={handleWorkflowChanged}
+        />
+      )}
     </div>
   )
 } 

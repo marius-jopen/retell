@@ -48,19 +48,15 @@ export default function SignupPage() {
 
       if (!response.ok) {
         console.error('Signup error:', data)
-        setError(data.error || 'Signup failed')
+        setError(data.error || 'An error occurred during signup')
         return
       }
 
-      console.log('Signup successful:', data)
-
-      // Redirect to appropriate dashboard or email confirmation
-      if (data.user?.email_confirmed_at) {
-        router.push(`/${role}`)
-        router.refresh() // Refresh to update server-side auth state
+      // Redirect to appropriate dashboard based on role
+      if (role === 'author') {
+        router.push('/author')
       } else {
-        router.push('/auth/confirm-email')
-        router.refresh() // Refresh to update server-side auth state
+        router.push('/')
       }
     } catch (error) {
       console.error('Signup error:', error)
@@ -71,122 +67,136 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-          Create your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
-            sign in to your existing account
-          </Link>
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 bg-red-600/20"></div>
+      <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="text-center animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
+          <div className="text-6xl mb-6">🚀</div>
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Join the Adventure! ✨
+          </h2>
+          <p className="text-red-100 mb-8">
+            🎙️ Ready to share your amazing podcast stories with the world? Let's create your account!
+          </p>
+          <p className="text-red-100/80">
+            Already have an account?{' '}
+            <Link href="/auth/login" className="font-medium text-white hover:text-red-200 underline decoration-white/50 hover:decoration-white transition-all">
+              🎧 Sign in here
+            </Link>
+          </p>
+        </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
+        <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-8 py-12 border border-white/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
           <form className="space-y-6" onSubmit={handleSignup}>
             <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">
-                Full Name
+              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-2">
+                👤 Full Name
               </label>
-              <div className="mt-1">
-                <input
-                  id="full_name"
-                  name="full_name"
-                  type="text"
-                  autoComplete="name"
-                  required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
+              <input
+                id="full_name"
+                name="full_name"
+                type="text"
+                autoComplete="name"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
+                placeholder="Your awesome name"
+              />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                📧 Email Address
               </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
+                placeholder="your@email.com"
+              />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                🔐 Password
               </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
+                placeholder="Create a strong password"
+              />
             </div>
 
             <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                I am a...
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                🎯 I am a...
               </label>
-              <div className="mt-1">
-                <select
-                  id="role"
-                  name="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as UserRole)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                >
-                  <option value="author">Author (Upload content)</option>
-                </select>
+              <select
+                id="role"
+                name="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value as UserRole)}
+                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
+              >
+                <option value="author">🎙️ Author (Upload content)</option>
+              </select>
+              <div className="mt-3 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border border-red-100">
+                <p className="text-sm text-gray-700">
+                  {role === 'author' && '🎨 Perfect! You\'ll be able to upload and manage your amazing podcast content'}
+                </p>
               </div>
-              <p className="mt-2 text-sm text-gray-500">
-                {role === 'author' && 'I want to upload and manage my podcast content'}
-              </p>
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm">{error}</div>
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-in fade-in-0 slide-in-from-top-2 duration-300">
+                <p className="text-red-600 text-sm">⚠️ {error}</p>
+              </div>
             )}
 
             <div>
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                 disabled={loading}
               >
-                {loading ? 'Creating account...' : 'Create account'}
+                {loading ? '🔄 Creating your account...' : '🎉 Create Account'}
               </Button>
             </div>
           </form>
 
-          <div className="mt-6">
+          <div className="mt-8">
+            <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border border-red-100">
+              <p className="text-xs text-gray-600 text-center">
+                🤝 By creating an account, you agree to our{' '}
+                <Link href="/terms" className="text-red-600 hover:text-red-700 underline">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" className="text-red-600 hover:text-red-700 underline">
+                  Privacy Policy
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">
-              By creating an account, you agree to our{' '}
-              <Link href="/terms" className="text-blue-600 hover:text-blue-500">
-                Terms of Service
-              </Link>{' '}
-              and{' '}
-              <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
-                Privacy Policy
-              </Link>
-              .
+              🎧 Join thousands of podcast creators sharing their stories with the world!
             </p>
           </div>
         </div>

@@ -5,33 +5,30 @@ export interface Database {
         Row: {
           id: string
           email: string
-          role: 'admin' | 'author'
-          full_name: string
+          full_name: string | null
           avatar_url: string | null
+          role: 'admin' | 'author' | 'client'
           company: string | null
-          country: string | null
           created_at: string
           updated_at: string
         }
         Insert: {
           id: string
           email: string
-          role: 'admin' | 'author'
-          full_name: string
+          full_name?: string | null
           avatar_url?: string | null
+          role?: 'admin' | 'author' | 'client'
           company?: string | null
-          country?: string | null
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           email?: string
-          role?: 'admin' | 'author'
-          full_name?: string
+          full_name?: string | null
           avatar_url?: string | null
+          role?: 'admin' | 'author' | 'client'
           company?: string | null
-          country?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -48,6 +45,7 @@ export interface Database {
           country: string
           status: 'draft' | 'pending' | 'approved' | 'rejected'
           rss_url: string | null
+          auto_publish_episodes: boolean
           created_at: string
           updated_at: string
         }
@@ -62,6 +60,7 @@ export interface Database {
           country: string
           status?: 'draft' | 'pending' | 'approved' | 'rejected'
           rss_url?: string | null
+          auto_publish_episodes?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -76,6 +75,7 @@ export interface Database {
           country?: string
           status?: 'draft' | 'pending' | 'approved' | 'rejected'
           rss_url?: string | null
+          auto_publish_episodes?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -91,7 +91,6 @@ export interface Database {
           duration: number | null
           episode_number: number
           season_number: number | null
-          status: 'draft' | 'pending' | 'approved' | 'rejected'
           created_at: string
           updated_at: string
         }
@@ -105,7 +104,6 @@ export interface Database {
           duration?: number | null
           episode_number: number
           season_number?: number | null
-          status?: 'draft' | 'pending' | 'approved' | 'rejected'
           created_at?: string
           updated_at?: string
         }
@@ -119,7 +117,6 @@ export interface Database {
           duration?: number | null
           episode_number?: number
           season_number?: number | null
-          status?: 'draft' | 'pending' | 'approved' | 'rejected'
           created_at?: string
           updated_at?: string
         }

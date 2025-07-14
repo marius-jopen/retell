@@ -56,11 +56,6 @@ export default function LoginPage() {
   }
 
   const handleMagicLink = async () => {
-    if (!email) {
-      setError('Please enter your email address')
-      return
-    }
-
     setLoading(true)
     setError('')
 
@@ -87,21 +82,34 @@ export default function LoginPage() {
 
   if (magicLinkSent) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Check your email
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            We've sent a magic link to <strong>{email}</strong>
-          </p>
-          <div className="mt-8 text-center">
-            <Button
-              variant="link"
-              onClick={() => setMagicLinkSent(false)}
-            >
-              Back to login
-            </Button>
+      <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 bg-red-600/20 backdrop-blur-sm"></div>
+        <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-8 py-12 border border-white/20">
+            <div className="text-center animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
+              <div className="text-6xl mb-6">📧</div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                ✨ Check Your Email!
+              </h2>
+              <p className="text-gray-600 mb-2">
+                🎉 We've sent a magic link to
+              </p>
+              <p className="text-red-600 font-semibold mb-8">
+                {email}
+              </p>
+              <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 mb-8 border border-red-100">
+                <p className="text-sm text-gray-700">
+                  🔮 Click the magic link in your email to sign in instantly!
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setMagicLinkSent(false)}
+                className="border-red-200 text-red-600 hover:bg-red-50"
+              >
+                🔙 Back to Login
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -109,79 +117,86 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-          Sign in to your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
-            create a new account
-          </Link>
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 bg-red-600/20"></div>
+      <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="text-center animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
+          <div className="text-6xl mb-6">🎙️</div>
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Welcome Back! ✨
+          </h2>
+          <p className="text-red-100 mb-8">
+            🎧 Ready to dive back into your podcast journey? Let's get you signed in!
+          </p>
+          <p className="text-red-100/80">
+            Don't have an account yet?{' '}
+            <Link href="/auth/signup" className="font-medium text-white hover:text-red-200 underline decoration-white/50 hover:decoration-white transition-all">
+              🚀 Create one here
+            </Link>
+          </p>
+        </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
+        <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-8 py-12 border border-white/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
           <form className="space-y-6" onSubmit={handleEmailLogin}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                📧 Email Address
               </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
+                placeholder="your@email.com"
+              />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                🔐 Password
               </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
+                placeholder="Your secret password"
+              />
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm">{error}</div>
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-in fade-in-0 slide-in-from-top-2 duration-300">
+                <p className="text-red-600 text-sm">⚠️ {error}</p>
+              </div>
             )}
 
             <div>
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                 disabled={loading}
               >
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? '🔄 Signing in...' : '🎉 Sign In'}
               </Button>
             </div>
 
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
+                  <div className="w-full border-t border-red-200" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or</span>
+                  <span className="px-4 bg-white/95 text-gray-500">✨ Or try magic ✨</span>
                 </div>
               </div>
 
@@ -189,15 +204,21 @@ export default function LoginPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full"
+                  className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 py-3 px-6 rounded-xl font-medium transition-all duration-200"
                   onClick={handleMagicLink}
                   disabled={loading}
                 >
-                  Send magic link
+                  {loading ? '🪄 Sending magic...' : '🔮 Send Magic Link'}
                 </Button>
               </div>
             </div>
           </form>
+
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-500">
+              🎧 Join thousands of podcast creators sharing their stories
+            </p>
+          </div>
         </div>
       </div>
     </div>

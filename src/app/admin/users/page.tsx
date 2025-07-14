@@ -2,11 +2,12 @@ import { requireAdmin } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import UserRoleActions from '@/components/admin/user-role-actions'
 
 interface User {
   id: string
   email: string
-  role: 'admin' | 'author' | 'client'
+  role: 'admin' | 'author'
   full_name: string
   avatar_url: string | null
   company: string | null
@@ -31,29 +32,11 @@ async function getUsers() {
   return users as User[]
 }
 
-async function updateUserRole(userId: string, newRole: 'admin' | 'author' | 'client') {
-  'use server'
-  
-  const supabase = await createServerSupabaseClient()
-  
-  const { error } = await supabase
-    .from('user_profiles')
-    .update({ role: newRole })
-    .eq('id', userId)
-  
-  if (error) {
-    console.error('Error updating user role:', error)
-    throw error
-  }
-}
-
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
   })
 }
 
@@ -61,7 +44,6 @@ function getRoleColor(role: string) {
   switch (role) {
     case 'admin': return 'bg-red-100 text-red-800'
     case 'author': return 'bg-blue-100 text-blue-800'
-    case 'client': return 'bg-green-100 text-green-800'
     default: return 'bg-gray-100 text-gray-800'
   }
 }
@@ -73,8 +55,7 @@ export default async function AdminUsersPage() {
   const stats = {
     total: users.length,
     admins: users.filter(u => u.role === 'admin').length,
-    authors: users.filter(u => u.role === 'author').length,
-    clients: users.filter(u => u.role === 'client').length
+    authors: users.filter(u => u.role === 'author').length
   }
 
   return (
@@ -94,7 +75,7 @@ export default async function AdminUsersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900">Total Users</h3>
           <p className="text-3xl font-bold text-blue-600">{stats.total}</p>
@@ -106,10 +87,6 @@ export default async function AdminUsersPage() {
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900">Authors</h3>
           <p className="text-3xl font-bold text-blue-600">{stats.authors}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Clients</h3>
-          <p className="text-3xl font-bold text-green-600">{stats.clients}</p>
         </div>
       </div>
 
@@ -205,45 +182,12 @@ export default async function AdminUsersPage() {
                       {formatDate(user.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        {user.id !== currentUser.id && (
-                          <div className="flex space-x-1">
-                            {user.role !== 'admin' && (
-                              <form action={async () => {
-                                'use server'
-                                await updateUserRole(user.id, 'admin')
-                              }}>
-                                <Button type="submit" size="sm" variant="outline" className="text-xs">
-                                  Make Admin
-                                </Button>
-                              </form>
-                            )}
-                            {user.role !== 'author' && (
-                              <form action={async () => {
-                                'use server'
-                                await updateUserRole(user.id, 'author')
-                              }}>
-                                <Button type="submit" size="sm" variant="outline" className="text-xs">
-                                  Make Author
-                                </Button>
-                              </form>
-                            )}
-                            {user.role !== 'client' && (
-                              <form action={async () => {
-                                'use server'
-                                await updateUserRole(user.id, 'client')
-                              }}>
-                                <Button type="submit" size="sm" variant="outline" className="text-xs">
-                                  Make Client
-                                </Button>
-                              </form>
-                            )}
-                          </div>
-                        )}
-                        {user.id === currentUser.id && (
-                          <span className="text-xs text-gray-500 italic">You</span>
-                        )}
-                      </div>
+                      <UserRoleActions
+                        userId={user.id}
+                        currentRole={user.role}
+                        userName={user.full_name}
+                        currentUserId={currentUser.id}
+                      />
                     </td>
                   </tr>
                 ))}

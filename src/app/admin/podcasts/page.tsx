@@ -2,6 +2,7 @@ import { requireAdmin } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import PodcastActions from '@/components/admin/podcast-actions'
 
 interface Podcast {
   id: string
@@ -56,21 +57,7 @@ async function getPodcasts() {
   return podcasts as Podcast[]
 }
 
-async function updatePodcastStatus(podcastId: string, status: 'approved' | 'rejected') {
-  'use server'
-  
-  const supabase = await createServerSupabaseClient()
-  
-  const { error } = await supabase
-    .from('podcasts')
-    .update({ status })
-    .eq('id', podcastId)
-  
-  if (error) {
-    console.error('Error updating podcast status:', error)
-    throw error
-  }
-}
+
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -240,26 +227,16 @@ export default async function AdminPodcastsPage() {
                             View
                           </Button>
                         </Link>
-                        {podcast.status === 'pending' && (
-                          <>
-                            <form action={async () => {
-                              'use server'
-                              await updatePodcastStatus(podcast.id, 'approved')
-                            }}>
-                              <Button type="submit" size="sm" className="bg-green-600 hover:bg-green-700">
-                                Approve
-                              </Button>
-                            </form>
-                            <form action={async () => {
-                              'use server'
-                              await updatePodcastStatus(podcast.id, 'rejected')
-                            }}>
-                              <Button type="submit" variant="destructive" size="sm">
-                                Reject
-                              </Button>
-                            </form>
-                          </>
-                        )}
+                        <Link href={`/admin/podcasts/${podcast.id}/edit`}>
+                          <Button variant="outline" size="sm">
+                            Edit
+                          </Button>
+                        </Link>
+                        <PodcastActions
+                          podcastId={podcast.id}
+                          podcastTitle={podcast.title}
+                          status={podcast.status}
+                        />
                       </div>
                     </td>
                   </tr>
