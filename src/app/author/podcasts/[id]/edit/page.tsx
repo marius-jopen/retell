@@ -341,8 +341,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                 episodes={episodes.map(ep => ({
                   ...ep,
                   season_number: ep.season_number || undefined,
-                  duration: ep.duration || undefined,
-                  status: ep.status as 'published' | 'draft' | 'pending'
+                  duration: ep.duration || undefined
                 }))}
                 maxHeight="100%"
                 emptyStateMessage="No episodes yet"

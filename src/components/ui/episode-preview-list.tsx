@@ -13,7 +13,6 @@ export interface Episode {
   duration?: number
   created_at: string
   updated_at: string
-  status: 'published' | 'draft' | 'pending'
 }
 
 export interface EpisodePreviewListProps extends HTMLAttributes<HTMLDivElement> {
@@ -43,11 +42,7 @@ const formatDuration = (seconds?: number) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
 }
 
-const statusVariants = {
-  published: 'bg-green-100 text-green-800',
-  pending: 'bg-yellow-100 text-yellow-800',
-  draft: 'bg-gray-100 text-gray-800',
-}
+
 
 const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
   ({ 
@@ -143,25 +138,14 @@ const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
                             {episode.description}
                           </p>
 
-                          {/* Status and Actions */}
-                          {showActions && (
-                            <div className="flex items-center justify-between mt-2">
-                              <span className={cn(
-                                'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
-                                statusVariants[episode.status] || 'bg-gray-100 text-gray-800'
-                              )}>
-                                {episode.status}
-                              </span>
-
-                              <div className="flex items-center gap-1">
-                                {getEpisodeHref && (
-                                  <Link href={getEpisodeHref(episode)} onClick={(e) => e.stopPropagation()}>
-                                    <Button variant="outline" size="sm" className="text-xs h-6 px-2">
-                                      Edit
-                                    </Button>
-                                  </Link>
-                                )}
-                              </div>
+                          {/* Actions */}
+                          {showActions && getEpisodeHref && (
+                            <div className="flex justify-end mt-2">
+                              <Link href={getEpisodeHref(episode)} onClick={(e) => e.stopPropagation()}>
+                                <Button variant="outline" size="sm" className="text-xs h-6 px-2">
+                                  Edit
+                                </Button>
+                              </Link>
                             </div>
                           )}
                         </div>

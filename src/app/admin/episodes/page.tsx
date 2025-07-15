@@ -55,7 +55,6 @@ export default async function AdminEpisodesPage() {
   
   const stats = {
     total: episodes.length,
-    published: episodes.length,
   }
 
   return (
@@ -75,27 +74,15 @@ export default async function AdminEpisodesPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center">
-            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
               <div className="w-4 h-4 bg-white rounded-full"></div>
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Episodes</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-              <div className="w-4 h-4 bg-white rounded-full"></div>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Published Episodes</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.published}</p>
             </div>
           </div>
         </div>
@@ -122,10 +109,7 @@ export default async function AdminEpisodesPage() {
                     Author
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Published
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                    Created
                   </th>
                 </tr>
               </thead>
@@ -154,11 +138,6 @@ export default async function AdminEpisodesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(episode.created_at)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Published
-                      </span>
                     </td>
                   </tr>
                 ))}

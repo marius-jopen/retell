@@ -14,7 +14,6 @@ interface Episode {
   duration: number | null
   episode_number: number
   season_number: number | null
-  status: 'draft' | 'pending' | 'approved' | 'rejected'
   created_at: string
   updated_at: string
 }
@@ -100,7 +99,6 @@ export default async function EpisodesPage({ params }: { params: Promise<{ id: s
   const episodes = podcast.episodes || []
   const stats = {
     total: episodes.length,
-    published: episodes.length,
   }
 
   return (
@@ -129,12 +127,8 @@ export default async function EpisodesPage({ params }: { params: Promise<{ id: s
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8">
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-500">Total:</span>
-              <span className="text-lg font-bold text-blue-600">{stats.total}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-500">Published:</span>
-              <span className="text-lg font-bold text-green-600">{stats.published}</span>
+              <span className="text-sm font-medium text-gray-500">Total Episodes:</span>
+              <span className="text-lg font-bold text-red-600">{stats.total}</span>
             </div>
           </div>
         </div>
@@ -177,9 +171,7 @@ export default async function EpisodesPage({ params }: { params: Promise<{ id: s
                               <span> • Season {episode.season_number}</span>
                             )}
                           </span>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Published
-                          </span>
+
                         </div>
                       </div>
                       <h3 className="mt-2 text-lg font-medium text-gray-900">{episode.title}</h3>

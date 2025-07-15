@@ -104,21 +104,39 @@ select:not(:placeholder-shown) {
   color: #000000 !important;
 }
 
-/* Ensure button text is never light gray */
-button {
-  color: inherit !important;
-}
-
-/* Override any light gray text in buttons */
+/* Override any light gray text in buttons - but respect color variants */
 button .text-gray-400,
 button .text-gray-500,
 button .text-gray-600 {
   color: #111827 !important; /* gray-900 */
 }
 
-/* Ensure button text has proper contrast */
-button:not([class*="text-white"]):not([class*="text-blue"]):not([class*="text-red"]):not([class*="text-green"]) {
+/* Ensure button text has proper contrast - but only for buttons without explicit text colors */
+button:not([class*="text-white"]):not([class*="text-blue"]):not([class*="text-red"]):not([class*="text-green"]):not([class*="bg-red"]):not([class*="bg-blue"]):not([class*="bg-green"]):not([class*="bg-yellow"]) {
   color: #111827 !important; /* gray-900 */
+}
+
+/* Force white text on red/colored buttons with maximum specificity */
+button.bg-red-600,
+button.bg-red-500,
+button.bg-red-700,
+button.bg-red-800,
+button[class*="bg-red"],
+button[class*="bg-blue"], 
+button[class*="bg-green"],
+button[class*="bg-yellow"],
+.bg-red-600,
+.bg-red-500 {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+/* Additional specificity for our button component variants */
+button.inline-flex.bg-red-600,
+button.inline-flex.bg-red-500,
+button.inline-flex.bg-red-700 {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
 }
 
 /* Specific overrides for button variants */

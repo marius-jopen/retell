@@ -16,7 +16,6 @@ interface Episode {
   duration: number | null
   episode_number: number
   season_number: number | null
-  status: 'draft' | 'pending' | 'approved' | 'rejected'
   podcast_id: string
 }
 
