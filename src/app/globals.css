@@ -116,27 +116,32 @@ button:not([class*="text-white"]):not([class*="text-blue"]):not([class*="text-re
   color: #111827 !important; /* gray-900 */
 }
 
-/* Force white text on red/colored buttons with maximum specificity */
-button.bg-red-600,
-button.bg-red-500,
-button.bg-red-700,
-button.bg-red-800,
-button[class*="bg-red"],
-button[class*="bg-blue"], 
-button[class*="bg-green"],
-button[class*="bg-yellow"],
-.bg-red-600,
-.bg-red-500 {
+/* Force white text on red/colored buttons with maximum specificity - but NOT outline buttons */
+button.bg-red-600:not([class*="border"]),
+button.bg-red-500:not([class*="border"]),
+button.bg-red-700:not([class*="border"]),
+button.bg-red-800:not([class*="border"]),
+button[class*="bg-red"]:not([class*="border"]):not([class*="outline"]),
+button[class*="bg-blue"]:not([class*="border"]):not([class*="outline"]), 
+button[class*="bg-green"]:not([class*="border"]):not([class*="outline"]),
+button[class*="bg-yellow"]:not([class*="border"]):not([class*="outline"]) {
   color: white !important;
   -webkit-text-fill-color: white !important;
 }
 
-/* Additional specificity for our button component variants */
-button.inline-flex.bg-red-600,
-button.inline-flex.bg-red-500,
-button.inline-flex.bg-red-700 {
+/* Additional specificity for our solid button component variants */
+button.inline-flex.bg-red-600:not([class*="border"]),
+button.inline-flex.bg-red-500:not([class*="border"]),
+button.inline-flex.bg-red-700:not([class*="border"]) {
   color: white !important;
   -webkit-text-fill-color: white !important;
+}
+
+/* Ensure outline buttons keep their intended text colors */
+button[class*="border"].text-red-600,
+button[class*="outline"].text-red-600 {
+  color: #dc2626 !important; /* red-600 */
+  -webkit-text-fill-color: #dc2626 !important;
 }
 
 /* Specific overrides for button variants */
