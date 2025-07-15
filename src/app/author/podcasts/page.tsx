@@ -1,6 +1,7 @@
 import { requireRole } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { StatsCard } from '@/components/ui/stats-card'
 import Link from 'next/link'
 import AuthorPodcastActions from '@/components/author/podcast-actions'
 import RSSUpdate from '@/components/rss/rss-update'
@@ -103,65 +104,36 @@ export default async function AuthorPodcastsPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Podcasts</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-gray-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Draft</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.draft}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Approved</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Episodes</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalEpisodes}</p>
-              </div>
-            </div>
-          </div>
+          <StatsCard
+            title="Total Podcasts"
+            value={stats.total}
+            icon="🎙️"
+            color="blue"
+          />
+          <StatsCard
+            title="Draft"
+            value={stats.draft}
+            icon="📝"
+            color="gray"
+          />
+          <StatsCard
+            title="Pending"
+            value={stats.pending}
+            icon="⏳"
+            color="yellow"
+          />
+          <StatsCard
+            title="Approved"
+            value={stats.approved}
+            icon="✅"
+            color="green"
+          />
+          <StatsCard
+            title="Total Episodes"
+            value={stats.totalEpisodes}
+            icon="🎵"
+            color="purple"
+          />
         </div>
 
         {/* Podcast List */}
