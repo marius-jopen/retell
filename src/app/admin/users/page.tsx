@@ -1,5 +1,5 @@
 import { requireAdmin } from '@/lib/auth'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createAdminSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import UserRoleActions from '@/components/admin/user-role-actions'
@@ -7,7 +7,7 @@ import UserRoleActions from '@/components/admin/user-role-actions'
 interface User {
   id: string
   email: string
-  role: 'admin' | 'author'
+  role: 'admin' | 'author' | 'client'
   full_name: string
   avatar_url: string | null
   company: string | null
@@ -17,7 +17,7 @@ interface User {
 }
 
 async function getUsers() {
-  const supabase = await createServerSupabaseClient()
+  const supabase = createAdminSupabaseClient()
   
   const { data: users, error } = await supabase
     .from('user_profiles')
@@ -32,21 +32,7 @@ async function getUsers() {
   return users as User[]
 }
 
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
 
-function getRoleColor(role: string) {
-  switch (role) {
-    case 'admin': return 'bg-red-100 text-red-800'
-    case 'author': return 'bg-blue-100 text-blue-800'
-    default: return 'bg-gray-100 text-gray-800'
-  }
-}
 
 export default async function AdminUsersPage() {
   const currentUser = await requireAdmin()
@@ -147,7 +133,7 @@ export default async function AdminUsersPage() {
                               className="h-10 w-10 rounded-full object-cover"
                             />
                           ) : (
-                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
                               <span className="text-white font-bold">
                                 {user.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                               </span>
@@ -168,7 +154,7 @@ export default async function AdminUsersPage() {
                       <div className="text-sm text-gray-900">{user.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                         {user.role}
                       </span>
                     </td>
@@ -179,7 +165,11 @@ export default async function AdminUsersPage() {
                       {user.country || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(user.created_at)}
+                      {new Date(user.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <UserRoleActions

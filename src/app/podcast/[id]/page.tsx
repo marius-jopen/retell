@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 import Link from 'next/link'
 import { Database } from '@/types/database'
+import TruncatedText from '@/components/ui/truncated-text'
+import AudioPlayer from '@/components/ui/audio-player'
 
 type Episode = Database['public']['Tables']['episodes']['Row']
 type Podcast = Database['public']['Tables']['podcasts']['Row'] & {
@@ -53,17 +55,17 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
 
   if (!podcast) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="mb-6">
-            <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-8">
+            <svg className="mx-auto h-16 w-16 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.194-5.5-3M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Podcast Not Found</h1>
-          <p className="text-gray-600 mb-6">The podcast you're looking for doesn't exist or might have been removed.</p>
+          <h1 className="text-2xl font-light text-stone-800 mb-3">Podcast Not Found</h1>
+          <p className="text-stone-600 mb-8 font-light">The podcast you're looking for doesn't exist or might have been removed.</p>
           <Link href="/catalog">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button className="bg-red-500 hover:bg-red-600 text-white">
               Browse All Podcasts
             </Button>
           </Link>
@@ -78,17 +80,17 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
 
   if (!canAccess) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <div className="mb-6">
-            <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-8">
+            <svg className="mx-auto h-16 w-16 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Restricted</h1>
-          <p className="text-gray-600 mb-6">This podcast is not yet available for public viewing. Please check back later.</p>
+          <h1 className="text-2xl font-light text-stone-800 mb-3">Access Restricted</h1>
+          <p className="text-stone-600 mb-8 font-light">This podcast is not yet available for public viewing. Please check back later.</p>
           <Link href="/catalog">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button className="bg-red-500 hover:bg-red-600 text-white">
               Back to Catalog
             </Button>
           </Link>
@@ -101,9 +103,9 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
   const totalDuration = episodes.reduce((total: number, ep: Episode) => total + (ep.duration || 0), 0)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-stone-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-red-400 via-red-500 to-red-600 text-white">
+      <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Cover Image */}
@@ -217,199 +219,168 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
         </div>
       </div>
 
-      {/* Episodes Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Episodes</h2>
-          <p className="text-lg text-gray-600">
-            {episodes.length > 0 
-              ? `Discover ${episodes.length} episodes of high-quality content`
-              : 'No episodes are currently available for this podcast'
-            }
-          </p>
-        </div>
-
-        {episodes.length > 0 ? (
-          <div className="space-y-6">
-            {episodes.map((episode: Episode, index: number) => (
-              <div key={episode.id} className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                <div className="p-8">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
-                        {episode.episode_number}
-                      </div>
-                      <div>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                            Episode {episode.episode_number}
-                          </span>
-                          {episode.season_number && episode.season_number > 1 && (
-                            <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                              Season {episode.season_number}
-                            </span>
-                          )}
-                          <span className="text-sm text-gray-500">
-                            {formatDate(episode.created_at)}
-                          </span>
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                          {episode.title}
-                        </h3>
-                        <p className="text-gray-600 leading-relaxed">
-                          {episode.description}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {episode.duration && (
-                        <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                          {Math.floor(episode.duration / 60)}:{String(episode.duration % 60).padStart(2, '0')}
-                        </span>
-                      )}
-                      {user?.profile.role === 'client' && (
-                        <Button variant="outline" size="sm" className="text-blue-600 border-blue-600 hover:bg-blue-50">
-                          Preview Script
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Enhanced Audio Player */}
-                  <div className="mt-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
-                    <div className="flex items-center space-x-4">
-                      <button className="flex items-center justify-center w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg">
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-700">Audio Preview</span>
-                          <span className="text-xs text-gray-500">
-                            {episode.duration ? `${Math.floor(episode.duration / 60)}:${String(episode.duration % 60).padStart(2, '0')}` : 'Duration unknown'}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full" style={{ width: '0%' }}></div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-500 mt-1">
-                          <span>0:00</span>
-                          <span>Full episode available with license</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <div className="mb-8">
-              <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Episodes Available</h3>
-            <p className="text-gray-600 mb-6">This podcast doesn't have any episodes available yet. Check back soon for new content!</p>
-            <Link href="/catalog">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                Explore Other Podcasts
-              </Button>
-            </Link>
-          </div>
-        )}
-      </div>
-
-      {/* About Section */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">About This Podcast</h3>
-              <div className="space-y-6">
+      {/* Main Content - 2 Column Layout */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          
+          {/* Left Column - About This Podcast */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8">
+              <h3 className="text-2xl font-light text-stone-800 mb-8">About This Podcast</h3>
+              
+              <div className="space-y-8">
+                {/* Content Details */}
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Content Details</h4>
-                  <ul className="space-y-2 text-gray-600">
+                  <h4 className="font-medium text-stone-800 mb-4 text-sm uppercase tracking-wider">Content Details</h4>
+                  <ul className="space-y-3 text-stone-600">
                     <li className="flex items-center">
-                      <svg className="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-4"></div>
                       {podcast.episodes?.length || 0} episodes available
                     </li>
                     <li className="flex items-center">
-                      <svg className="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                      </svg>
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-4"></div>
                       {podcast.language} language
                     </li>
                     <li className="flex items-center">
-                      <svg className="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                      </svg>
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-4"></div>
                       {podcast.category} category
                     </li>
                     <li className="flex items-center">
-                      <svg className="w-5 h-5 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-4"></div>
                       From {podcast.country}
                     </li>
                   </ul>
                 </div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Quality & Format</h4>
-              <ul className="space-y-2 text-gray-600">
-                <li className="flex items-center">
-                  <svg className="w-5 h-5 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  High-quality audio files
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-5 h-5 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Complete episode scripts
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-5 h-5 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Professional production
-                </li>
-                <li className="flex items-center">
-                  <svg className="w-5 h-5 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Curated content
-                </li>
-              </ul>
-              
-              <div className="mt-8 p-6 bg-blue-50 rounded-xl border border-blue-200">
-                <h4 className="font-semibold text-gray-900 mb-2">Interested in licensing?</h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Get access to high-quality podcast content for your platform or project.
-                </p>
-                <div className="flex space-x-3">
-                  <Link href="/auth/signup?role=client">
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                      Get Started
-                    </Button>
-                  </Link>
-                  <Link href="/catalog">
-                    <Button variant="outline" size="sm">
-                      Browse More
-                    </Button>
-                  </Link>
+
+                {/* Quality & Format */}
+                <div>
+                  <h4 className="font-medium text-stone-800 mb-4 text-sm uppercase tracking-wider">Quality & Format</h4>
+                  <ul className="space-y-3 text-stone-600">
+                    <li className="flex items-center">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-4"></div>
+                      High-quality audio files
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-4"></div>
+                      Complete episode scripts
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-4"></div>
+                      Professional production
+                    </li>
+                    <li className="flex items-center">
+                      <div className="w-1.5 h-1.5 bg-red-400 rounded-full mr-4"></div>
+                      Curated content
+                    </li>
+                  </ul>
+                </div>
+                
+                {/* Licensing CTA */}
+                <div className="mt-8 p-6 bg-white/70 backdrop-blur-sm rounded-lg border border-stone-200/50">
+                  <h4 className="font-medium text-stone-800 mb-2">Interested in licensing?</h4>
+                  <p className="text-sm text-stone-600 mb-5 leading-relaxed">
+                    Get access to high-quality podcast content for your platform or project.
+                  </p>
+                  <div className="flex flex-col space-y-2">
+                    <Link href="/auth/signup?role=client">
+                      <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white w-full">
+                        Get Started
+                      </Button>
+                    </Link>
+                    <Link href="/catalog">
+                      <Button variant="outline" size="sm" className="border-stone-300 text-stone-600 hover:bg-stone-50 w-full">
+                        Browse More
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Right Column - Episodes */}
+          <div className="lg:col-span-2">
+            <div className="mb-6">
+              <h2 className="text-xl font-light text-stone-800 mb-1">Episodes</h2>
+              <p className="text-sm text-stone-500">
+                {episodes.length > 0 
+                  ? `${episodes.length} episodes`
+                  : 'No episodes available'
+                }
+              </p>
+            </div>
+
+            {episodes.length > 0 ? (
+              <div className="space-y-3">
+                {episodes.map((episode: Episode, index: number) => (
+                  <div key={episode.id} className="bg-white/70 rounded-lg border border-stone-200/30 hover:bg-white hover:border-stone-300/50 transition-all duration-200">
+                    <div className="p-4">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0 mt-0.5">
+                          {episode.episode_number}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2 text-xs text-stone-500">
+                              <span>Episode {episode.episode_number}</span>
+                              {episode.season_number && episode.season_number > 1 && (
+                                <>
+                                  <span>•</span>
+                                  <span>Season {episode.season_number}</span>
+                                </>
+                              )}
+                              <span>•</span>
+                              <span>{formatDate(episode.created_at)}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {episode.duration && (
+                                <span className="text-xs text-stone-500 bg-stone-100 px-2 py-1 rounded-full">
+                                  {Math.floor(episode.duration / 60)}:{String(episode.duration % 60).padStart(2, '0')}
+                                </span>
+                              )}
+                              {user?.profile.role === 'client' && (
+                                <Button variant="outline" size="sm" className="text-red-600 border-red-300 hover:bg-red-50 text-xs h-6 px-2">
+                                  Script
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                          <h3 className="text-base font-medium text-stone-800 mb-2 leading-snug">
+                            {episode.title}
+                          </h3>
+                          <TruncatedText text={episode.description} className="text-sm text-stone-600 leading-relaxed" />
+                        </div>
+                      </div>
+                      
+                      {/* Audio Player */}
+                      {episode.audio_url && (
+                        <div className="mt-3">
+                          <AudioPlayer 
+                            src={episode.audio_url} 
+                            title={episode.title}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="mb-8">
+              <svg className="mx-auto h-16 w-16 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-light text-stone-800 mb-3">No Episodes Available</h3>
+            <p className="text-stone-600 mb-8 font-light">This podcast doesn't have any episodes available yet. Check back soon for new content!</p>
+            <Link href="/catalog">
+              <Button className="bg-red-500 hover:bg-red-600 text-white">
+                Explore Other Podcasts
+              </Button>
+            </Link>
+          </div>
+            )}
           </div>
         </div>
       </div>

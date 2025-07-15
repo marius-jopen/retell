@@ -323,9 +323,9 @@ export default function EditEpisodePage({ params }: { params: Promise<{ id: stri
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Edit Episode</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Edit {podcast.title}</h1>
             <p className="mt-2 text-lg text-gray-600">
-              Update episode in "{podcast.title}"
+              Update episode "{episode?.title}"
             </p>
           </div>
           <Link href={`/author/podcasts/${podcast.id}/episodes`}>

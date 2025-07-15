@@ -122,24 +122,28 @@ export default async function AuthorDashboard() {
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Link href="/author/upload">
-              <Button className="w-full h-20 bg-orange-400 hover:bg-orange-500 text-white">
-                Create New Podcast
-              </Button>
+              <div className="bg-white border border-gray-200 p-6 text-center hover:bg-gray-50 transition-colors">
+                <div className="text-3xl mb-3">🎤</div>
+                <div className="text-sm font-medium text-gray-900">Create New Podcast</div>
+              </div>
             </Link>
             <Link href="/author/podcasts">
-              <Button className="w-full h-20 bg-amber-500 hover:bg-amber-600 text-white">
-                My Podcasts
-              </Button>
+              <div className="bg-white border border-gray-200 p-6 text-center hover:bg-gray-50 transition-colors">
+                <div className="text-3xl mb-3">📻</div>
+                <div className="text-sm font-medium text-gray-900">My Podcasts</div>
+              </div>
             </Link>
             <Link href="/catalog">
-              <Button className="w-full h-20 bg-rose-400 hover:bg-rose-500 text-white">
-                Browse Catalog
-              </Button>
+              <div className="bg-white border border-gray-200 p-6 text-center hover:bg-gray-50 transition-colors">
+                <div className="text-3xl mb-3">🎧</div>
+                <div className="text-sm font-medium text-gray-900">Browse Catalog</div>
+              </div>
             </Link>
             <Link href="/author/analytics">
-              <Button className="w-full h-20 bg-stone-500 hover:bg-stone-600 text-white">
-                Analytics
-              </Button>
+              <div className="bg-white border border-gray-200 p-6 text-center hover:bg-gray-50 transition-colors">
+                <div className="text-3xl mb-3">📊</div>
+                <div className="text-sm font-medium text-gray-900">Analytics</div>
+              </div>
             </Link>
           </div>
         </div>

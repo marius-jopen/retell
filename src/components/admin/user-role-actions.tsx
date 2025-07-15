@@ -8,18 +8,18 @@ import { createBrowserSupabaseClient } from '@/lib/supabase'
 
 interface UserRoleActionsProps {
   userId: string
-  currentRole: 'admin' | 'author'
+  currentRole: 'admin' | 'author' | 'client'
   userName: string
   currentUserId: string
 }
 
 export default function UserRoleActions({ userId, currentRole, userName, currentUserId }: UserRoleActionsProps) {
-  const [loading, setLoading] = useState<'admin' | 'author' | null>(null)
+  const [loading, setLoading] = useState<'admin' | 'author' | 'client' | null>(null)
   const { addToast } = useToast()
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
 
-  const updateUserRole = async (newRole: 'admin' | 'author') => {
+  const updateUserRole = async (newRole: 'admin' | 'author' | 'client') => {
     setLoading(newRole)
     
     try {
@@ -80,6 +80,17 @@ export default function UserRoleActions({ userId, currentRole, userName, current
           disabled={loading !== null}
         >
           {loading === 'author' ? 'Updating...' : 'Make Author'}
+        </Button>
+      )}
+      {currentRole !== 'client' && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-xs"
+          onClick={() => updateUserRole('client')}
+          disabled={loading !== null}
+        >
+          {loading === 'client' ? 'Updating...' : 'Make Client'}
         </Button>
       )}
     </div>

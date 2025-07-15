@@ -377,15 +377,15 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              📝 Edit Podcast
+            <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+              Edit {podcast.title}
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-gray-600">
               Update your podcast details and manage episodes
             </p>
           </div>
           <Link href="/author/podcasts">
-            <Button variant="outline" className="rounded-2xl">
+            <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
               ← Back to Podcasts
             </Button>
           </Link>
@@ -400,21 +400,21 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
               onClick={() => setActiveTab('details')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'details'
-                  ? 'border-orange-500 text-orange-600'
+                  ? 'border-gray-900 text-gray-900'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              📝 Podcast Details
+              Podcast Details
             </button>
             <button
               onClick={() => setActiveTab('workflow')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'workflow'
-                  ? 'border-orange-500 text-orange-600'
+                  ? 'border-gray-900 text-gray-900'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              🔧 Workflow Settings
+              Workflow Settings
             </button>
           </nav>
         </div>
@@ -424,11 +424,11 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Podcast Info */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-3xl shadow-lg border border-gray-200">
-              <div className="p-8">
+            <div className="bg-white border border-gray-200">
+              <div className="p-6">
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    📝 Podcast Details
+                  <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                    Podcast Details
                   </h2>
                   <p className="text-gray-600">
                     Update your podcast information and settings
@@ -436,13 +436,13 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                   
                   {/* Workflow Status Indicator */}
                   {workflowState && (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <div className="mt-4 p-4 bg-gray-50 border border-gray-200">
                       <div className="flex items-center justify-between">
                         <div>
                           <span className="text-sm font-medium text-gray-700">
                             Current Mode: 
                           </span>
-                          <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                          <span className={`ml-2 px-2 py-1 text-xs font-medium ${
                             workflowState.mode === 'manual' 
                               ? 'bg-blue-100 text-blue-800'
                               : workflowState.mode === 'rss'
@@ -484,7 +484,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                       placeholder="Enter podcast title"
                     />
                   </div>
@@ -503,7 +503,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                       placeholder="Describe your podcast"
                     />
                   </div>
@@ -521,7 +521,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                     >
                       <option value="">Select a category</option>
                       {categories.map(category => (
@@ -543,7 +543,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                       value={formData.language}
                       onChange={(e) => setFormData({ ...formData, language: e.target.value })}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                     >
                       <option value="">Select a language</option>
                       {languages.map(lang => (
@@ -565,7 +565,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                       value={formData.country}
                       onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                     >
                       <option value="">Select a country</option>
                       {countries.map(country => (
@@ -597,14 +597,14 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                           setError('')
                         }
                       }}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                     />
                     {podcast?.cover_image_url && (
                       <div className="mt-2">
                         <img
                           src={podcast.cover_image_url}
                           alt="Current cover"
-                          className="w-20 h-20 object-cover rounded-lg"
+                          className="w-20 h-20 object-cover border border-gray-200"
                         />
                       </div>
                     )}
@@ -620,7 +620,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                       id="rss_url"
                       value={formData.rss_url}
                       onChange={(e) => setFormData({ ...formData, rss_url: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                       placeholder="https://example.com/feed.xml"
                     />
                   </div>
@@ -633,7 +633,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                         id="auto_publish_episodes"
                         checked={formData.auto_publish_episodes}
                         onChange={(e) => setFormData({ ...formData, auto_publish_episodes: e.target.checked })}
-                        className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                        className="h-4 w-4 text-gray-600 focus:ring-gray-500 border-gray-300"
                       />
                       <label htmlFor="auto_publish_episodes" className="ml-2 text-sm text-gray-700">
                         Automatically publish new episodes from RSS feed
@@ -643,9 +643,9 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
 
                   {/* Error Message */}
                   {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+                    <div className="bg-red-50 border border-red-200 p-4">
                       <div className="flex items-center">
-                        <span className="text-red-600 mr-2">⚠️</span>
+                        <span className="text-red-600 mr-2">⚠</span>
                         <p className="text-red-700">{error}</p>
                       </div>
                     </div>
@@ -654,16 +654,16 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                   {/* Submit Button */}
                   <div className="flex justify-end space-x-4">
                     <Link href="/author/podcasts">
-                      <Button variant="outline" className="rounded-2xl">
+                      <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
                         Cancel
                       </Button>
                     </Link>
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="px-8 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105"
+                      className="px-6 py-2 bg-gray-900 text-white hover:bg-gray-800"
                     >
-                      {loading ? '💾 Saving...' : '💾 Save Changes'}
+                      {loading ? 'Saving...' : 'Save Changes'}
                     </Button>
                   </div>
                 </form>
@@ -673,61 +673,58 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
 
           {/* Right Column - Episodes */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl shadow-lg border border-gray-200 h-fit">
-              <div className="p-6">
+            <div className="bg-white border border-gray-200 h-full flex flex-col">
+              <div className="p-6 flex-shrink-0">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">
-                    📻 Episodes ({episodes.length})
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Episodes ({episodes.length})
                   </h2>
                   <Link href={`/author/podcasts/${podcastId}/episodes/new`}>
-                    <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl">
-                      ✨ Add Episode
+                    <Button size="sm" className="bg-gray-900 text-white hover:bg-gray-800 text-sm">
+                      Add Episode
                     </Button>
                   </Link>
                 </div>
+              </div>
 
-                {/* Episodes List */}
-                <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {episodes.length === 0 ? (
-                    <div className="text-center py-8">
-                      <div className="text-4xl mb-4">🎧</div>
-                      <p className="text-gray-500 mb-4">No episodes yet</p>
-                      <Link href={`/author/podcasts/${podcastId}/episodes/new`}>
-                        <Button size="sm" className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl">
-                          Create First Episode
-                        </Button>
-                      </Link>
-                    </div>
-                  ) : (
-                    episodes.map((episode) => (
-                      <div key={episode.id} className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-4 border border-orange-100 hover:shadow-md transition-all">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-bold">
-                                #{episode.episode_number}
-                              </span>
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Published
-                              </span>
-                            </div>
-                            <h3 className="text-sm font-semibold text-gray-900 mb-1 truncate">
-                              {episode.title}
-                            </h3>
-                            <div className="text-xs text-gray-500 space-y-1">
-                              <div>Duration: {formatDuration(episode.duration)}</div>
-                              <div>Created: {formatDate(episode.created_at)}</div>
+              {/* Episodes List */}
+              <div className="flex-1 overflow-hidden">
+                <div className="h-full overflow-y-auto px-6 pb-6">
+                  <div className="space-y-3">
+                    {episodes.length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="text-4xl mb-4">🎧</div>
+                        <p className="text-gray-500 mb-4">No episodes yet</p>
+                        <Link href={`/author/podcasts/${podcastId}/episodes/new`}>
+                          <Button size="sm" className="bg-gray-900 text-white hover:bg-gray-800 text-sm">
+                            Create First Episode
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : (
+                      episodes.map((episode) => (
+                        <div key={episode.id} className="bg-gray-50 p-3 border border-gray-100">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center space-x-2 mb-2">
+                                <span className="inline-flex items-center justify-center h-6 w-6 bg-gray-600 text-white text-xs font-medium">
+                                  #{episode.episode_number}
+                                </span>
+                                <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800">
+                                  Published
+                                </span>
+                              </div>
+                              <h3 className="text-sm font-medium text-gray-900 mb-1 truncate">
+                                {episode.title}
+                              </h3>
+                              <div className="text-xs text-gray-500 space-y-1">
+                                <div>Duration: {formatDuration(episode.duration)}</div>
+                                <div>Created: {formatDate(episode.created_at)}</div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between mt-4">
-                          <div className="flex items-center space-x-2">
-                            <Link href={`/author/podcasts/${podcastId}/episodes/${episode.id}/edit`}>
-                              <Button variant="outline" size="sm" className="text-xs rounded-full border-blue-200 text-blue-700 hover:bg-blue-50">
-                                ✏️ Edit
-                              </Button>
-                            </Link>
+                          
+                          <div className="flex items-center justify-end mt-4">
                             <EpisodeActions
                               episodeId={episode.id}
                               episodeTitle={episode.title}
@@ -735,22 +732,24 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                             />
                           </div>
                         </div>
-                      </div>
-                    ))
-                  )}
+                      ))
+                    )}
+                  </div>
                 </div>
+              </div>
 
-                {/* View All Episodes Link */}
-                {episodes.length > 0 && (
-                  <div className="mt-6 text-center">
+              {/* View All Episodes Link */}
+              {episodes.length > 0 && (
+                <div className="p-6 pt-0 flex-shrink-0">
+                  <div className="text-center">
                     <Link href={`/author/podcasts/${podcastId}/episodes`}>
-                      <Button variant="outline" className="rounded-xl border-orange-200 text-orange-700 hover:bg-orange-50">
-                        📋 View All Episodes
+                      <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                        View All Episodes
                       </Button>
                     </Link>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
