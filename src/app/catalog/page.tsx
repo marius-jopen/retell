@@ -21,15 +21,15 @@ export default async function CatalogPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-orange-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-red-400 via-red-500 to-red-600 text-white">
+      <div className="bg-gradient-warm text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-5xl font-bold mb-4">
               Discover Amazing Podcasts
             </h1>
-            <p className="text-xl text-red-100 max-w-3xl mx-auto">
+            <p className="text-xl text-orange-100 max-w-3xl mx-auto">
               Explore premium podcast content from talented creators worldwide. Find your next favorite show.
             </p>
           </div>
@@ -44,7 +44,7 @@ export default async function CatalogPage() {
               <input
                 type="text"
                 placeholder="Search podcasts..."
-                className="w-full px-6 py-4 text-lg bg-white rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 pl-12"
+                className="w-full px-6 py-4 text-lg bg-white rounded-full shadow-modern border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 pl-12"
               />
               <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -69,7 +69,7 @@ export default async function CatalogPage() {
           {podcasts && podcasts.length > 0 ? (
             podcasts.map((podcast) => (
               <Link key={podcast.id} href={`/podcast/${podcast.id}`} className="group">
-                <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 group-hover:border-red-200">
+                <div className="bg-white rounded-modern-xl shadow-modern hover:shadow-modern-hover transition-all duration-300 overflow-hidden border border-orange-200 group-hover:border-orange-300 card-equal-height card-hover">
                   <div className="relative">
                     {podcast.cover_image_url ? (
                       <img
@@ -78,7 +78,7 @@ export default async function CatalogPage() {
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-48 bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex items-center justify-center group-hover:from-red-500 group-hover:via-red-600 group-hover:to-red-700 transition-all duration-300">
+                      <div className="w-full h-48 bg-gradient-warm flex items-center justify-center group-hover:opacity-90 transition-all duration-300">
                         <span className="text-white text-3xl font-bold">
                           {podcast.title.substring(0, 2).toUpperCase()}
                         </span>
@@ -91,9 +91,9 @@ export default async function CatalogPage() {
                     </div>
                   </div>
                   
-                  <div className="p-6">
+                  <div className="p-6 card-content flex flex-col">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full capitalize">
+                      <span className="bg-orange-100 text-orange-800 text-xs font-medium px-2.5 py-0.5 rounded-full capitalize">
                         {podcast.category}
                       </span>
                       <span className="text-xs text-gray-500 uppercase tracking-wide">
@@ -101,11 +101,11 @@ export default async function CatalogPage() {
                       </span>
                     </div>
                     
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-red-600 transition-colors">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
                       {podcast.title}
                     </h3>
                     
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed flex-1">
                       {podcast.description}
                     </p>
                     
@@ -125,8 +125,8 @@ export default async function CatalogPage() {
                       </span>
                     </div>
                     
-                    <div className="mt-4 flex items-center justify-center">
-                      <span className="text-red-600 font-medium group-hover:text-red-700 transition-colors">
+                    <div className="mt-auto flex items-center justify-center">
+                      <span className="text-orange-600 font-medium group-hover:text-orange-700 transition-colors">
                         Explore Podcast →
                       </span>
                     </div>
@@ -148,7 +148,7 @@ export default async function CatalogPage() {
                 </p>
                 <div className="flex justify-center space-x-4">
                   <Link href="/auth/signup?role=author">
-                    <Button className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white">
+                    <Button className="bg-gradient-warm hover:opacity-90 text-white rounded-full">
                       Become a Creator
                     </Button>
                   </Link>
