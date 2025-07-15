@@ -280,7 +280,7 @@ export default function AuthorUploadPage() {
             </p>
           </div>
           <Link href="/author/podcasts">
-            <Button variant="outline" className="rounded-2xl">
+            <Button variant="outline">
               ← Back to Podcasts
             </Button>
           </Link>
@@ -514,7 +514,7 @@ export default function AuthorUploadPage() {
               {/* Submit Button */}
               <div className="flex justify-end space-x-4">
                 <Link href="/author/podcasts">
-                  <Button variant="outline" className="rounded-2xl">
+                  <Button variant="outline">
                     Cancel
                   </Button>
                 </Link>

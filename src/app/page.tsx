@@ -21,12 +21,12 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-700">
               <Link href="/catalog">
-                <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 shadow-2xl hover:shadow-3xl transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+                <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 shadow-2xl hover:shadow-3xl transition-all duration-300 px-8 py-4 text-lg font-semibold">
                   🎧 Explore Podcasts
                 </Button>
               </Link>
               <Link href="/auth/signup?role=author">
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-red-600 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-red-600 shadow-xl hover:shadow-2xl transition-all duration-300 px-8 py-4 text-lg font-semibold">
                   🎤 Start Creating
                 </Button>
               </Link>
@@ -142,12 +142,12 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link href="/auth/signup?role=author">
-                <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 shadow-2xl hover:shadow-3xl transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+                <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 shadow-2xl hover:shadow-3xl transition-all duration-300 px-8 py-4 text-lg font-semibold">
                   🎤 Start Creating Now
                 </Button>
               </Link>
               <Link href="/catalog">
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-red-600 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-red-600 shadow-xl hover:shadow-2xl transition-all duration-300 px-8 py-4 text-lg font-semibold">
                   🎧 Explore Amazing Content
                 </Button>
               </Link>

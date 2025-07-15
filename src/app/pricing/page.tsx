@@ -229,12 +229,12 @@ export default function PricingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/auth/signup">
-              <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 shadow-2xl hover:shadow-3xl transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+              <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 shadow-2xl hover:shadow-3xl transition-all duration-300 px-8 py-4 text-lg font-semibold">
                 🎯 Start Free Trial
               </Button>
             </Link>
             <Link href="/catalog">
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-red-600 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-red-600 shadow-xl hover:shadow-2xl transition-all duration-300 px-8 py-4 text-lg font-semibold">
                 🎧 Browse Content First
               </Button>
             </Link>
@@ -249,7 +249,7 @@ export default function PricingPage() {
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Link href="/">
-            <Button variant="outline" className="rounded-2xl border-red-200 text-red-700 hover:bg-red-50">
+            <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50">
               ← Back to Home
             </Button>
           </Link>
