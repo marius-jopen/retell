@@ -5,6 +5,9 @@ import { StatsCard } from './stats-card'
 import { ActionCard } from './action-card'
 import { ContentBox } from './content-box'
 import { ListItemCard } from './list-item-card'
+import { PodcastList } from './podcast-list'
+import { Table, TableColumn } from './table'
+import Link from 'next/link'
 
 export default function PrimitivesDemo() {
   const samplePodcast = {
@@ -17,6 +20,81 @@ export default function PrimitivesDemo() {
     episodes: { length: 24 }
   }
 
+  // Sample data for table demo
+  const sampleUsers = [
+    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'active', joined: '2024-01-15' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Author', status: 'active', joined: '2024-02-20' },
+    { id: 3, name: 'Bob Wilson', email: 'bob@example.com', role: 'User', status: 'inactive', joined: '2024-03-10' }
+  ]
+
+  const userColumns: TableColumn[] = [
+    {
+      key: 'name',
+      title: 'User',
+      render: (_, user) => (
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-xs">
+              {user.name.split(' ').map((n: string) => n[0]).join('')}
+            </span>
+          </div>
+          <div>
+            <div className="text-sm font-medium text-gray-900">{user.name}</div>
+            <div className="text-xs text-gray-500">{user.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'role',
+      title: 'Role',
+      render: (_, user) => (
+        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+          user.role === 'Admin' ? 'bg-red-100 text-red-800' :
+          user.role === 'Author' ? 'bg-blue-100 text-blue-800' :
+          'bg-gray-100 text-gray-800'
+        }`}>
+          {user.role}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      render: (_, user) => (
+        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+          user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+        }`}>
+          {user.status}
+        </span>
+      ),
+      align: 'center'
+    },
+    {
+      key: 'joined',
+      title: 'Joined',
+      render: (_, user) => (
+        <span className="text-xs text-gray-500">{user.joined}</span>
+      ),
+      sortable: true
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      render: (_, user) => (
+        <div className="flex space-x-1">
+          <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
+            Edit
+          </Button>
+          <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
+            Delete
+          </Button>
+        </div>
+      ),
+      align: 'right'
+    }
+  ]
+
   const features = [
     'High-quality content library',
     'Commercial licensing',
@@ -26,15 +104,18 @@ export default function PrimitivesDemo() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="mx-auto max-w-7xl space-y-12">
-        
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">UI Primitives Demo</h1>
-          <p className="text-xl text-gray-600">Comprehensive showcase of fully-rounded button and card components</p>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            🎨 RETELL Design System
+          </h1>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Modern, compact components designed for Silicon Valley 2025. 
+            Featuring bigger rounded corners, tighter spacing, and clean aesthetics without kitsch.
+          </p>
         </div>
-
+        
         {/* Button Variants */}
         <section>
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">Button Variants</h2>
@@ -101,17 +182,25 @@ export default function PrimitivesDemo() {
               </CardFooter>
             </Card>
 
-            <Card variant="outlined" interactive="hover">
+            <Card variant="outlined">
               <CardHeader>
-                <CardTitle>Interactive Card</CardTitle>
-                <CardDescription>This card responds to hover interactions</CardDescription>
+                <CardTitle>Outlined Card</CardTitle>
+                <CardDescription>Clean border, no shadow</CardDescription>
               </CardHeader>
-              <CardContent>
-                <p>Hover over this card to see the interaction effect.</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="outline" size="sm">Hover Me</Button>
-              </CardFooter>
+            </Card>
+            
+            <Card variant="elevated">
+              <CardHeader>
+                <CardTitle>Elevated Card</CardTitle>
+                <CardDescription>Enhanced shadow depth</CardDescription>
+              </CardHeader>
+            </Card>
+            
+            <Card variant="gradient">
+              <CardHeader>
+                <CardTitle>Gradient Card</CardTitle>
+                <CardDescription>Subtle gradient background</CardDescription>
+              </CardHeader>
             </Card>
           </div>
         </section>
@@ -403,11 +492,153 @@ export default function PrimitivesDemo() {
                 <p>Large card with large rounded corners</p>
               </CardContent>
             </Card>
-            <Card size="xl" rounded="full">
+            <Card size="lg" rounded="full">
               <CardContent>
                 <p>Extra large card with full rounded corners</p>
               </CardContent>
             </Card>
+          </div>
+        </section>
+
+        {/* Universal List Components */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">🎙️ Podcast List Component</h2>
+          
+          <div className="grid grid-cols-1 gap-8">
+            {/* With Podcasts */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">With Sample Podcasts</h3>
+              <PodcastList
+                title="Recent Podcasts"
+                podcasts={[
+                  {
+                    id: '1',
+                    title: 'Tech Talk Daily',
+                    category: 'Technology',
+                    language: 'en',
+                    status: 'approved',
+                    created_at: new Date().toISOString(),
+                    episodes: [{ id: '1' }, { id: '2' }, { id: '3' }],
+                    user_profiles: {
+                      full_name: 'John Doe',
+                      email: 'john@example.com'
+                    }
+                  },
+                  {
+                    id: '2',
+                    title: 'Die sogenannte Gegenwart',
+                    category: 'General',
+                    language: 'de',
+                    status: 'pending',
+                    created_at: new Date(Date.now() - 86400000).toISOString(),
+                    episodes: [{ id: '1' }, { id: '2' }],
+                    user_profiles: {
+                      full_name: 'Hans Müller',
+                      email: 'hans@example.com'
+                    }
+                  },
+                  {
+                    id: '3',
+                    title: 'Science Weekly',
+                    category: 'Science',
+                    language: 'en',
+                    status: 'draft',
+                    created_at: new Date(Date.now() - 172800000).toISOString(),
+                    episodes: [{ id: '1' }],
+                    user_profiles: {
+                      full_name: 'Dr. Sarah Smith',
+                      email: 'sarah@example.com'
+                    }
+                  }
+                ]}
+                viewAllHref="/podcasts"
+                getItemHref={(podcast) => `/podcast/${podcast.id}`}
+                showAuthor={true}
+              />
+            </div>
+
+            {/* Author View (No Author Names) */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Author View (No Author Names)</h3>
+              <PodcastList
+                title="Your Recent Podcasts"
+                podcasts={[
+                  {
+                    id: '1',
+                    title: 'My Awesome Podcast',
+                    category: 'Entertainment',
+                    language: 'en',
+                    status: 'approved',
+                    created_at: new Date().toISOString(),
+                    episodes: [{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }]
+                  },
+                  {
+                    id: '2',
+                    title: 'Weekly Updates',
+                    category: 'News',
+                    language: 'en',
+                    status: 'pending',
+                    created_at: new Date(Date.now() - 86400000).toISOString(),
+                    episodes: [{ id: '1' }, { id: '2' }]
+                  }
+                ]}
+                viewAllHref="/author/podcasts"
+                getItemHref={(podcast) => `/author/podcasts/${podcast.id}/edit`}
+                showAuthor={false}
+              />
+            </div>
+
+            {/* Empty State */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Empty State</h3>
+              <PodcastList
+                title="Recent Podcasts"
+                podcasts={[]}
+                emptyStateMessage="No podcasts have been created yet"
+                emptyStateIcon="📻"
+                viewAllHref="/podcasts"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Table Component */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">📊 Table Component</h2>
+          
+          <div className="grid grid-cols-1 gap-8">
+            {/* Basic Table */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">User Management Table</h3>
+              <Table
+                title="Users"
+                columns={userColumns}
+                data={sampleUsers}
+                emptyStateMessage="No users found"
+                emptyStateIcon="👥"
+              />
+            </div>
+
+            {/* Table without title */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Table Without Header</h3>
+              <Table
+                columns={userColumns}
+                data={sampleUsers.slice(0, 2)}
+              />
+            </div>
+
+            {/* Empty Table */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Empty State</h3>
+              <Table
+                title="Empty Table"
+                columns={userColumns}
+                data={[]}
+                emptyStateMessage="No data to display"
+                emptyStateIcon="📭"
+              />
+            </div>
           </div>
         </section>
 

@@ -13,21 +13,35 @@ export interface ActionCardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const ActionCard = forwardRef<HTMLDivElement, ActionCardProps>(
-  ({ title, icon, href, onClick, description, variant = 'default', className, ...props }, ref) => {
-    const cardContent = (
+  ({ title, description, icon, href, onClick, variant = 'default', className, ...props }, ref) => {
+    const content = (
       <Card 
         ref={ref} 
-        interactive="hover" 
         variant={variant === 'featured' ? 'gradient' : 'default'}
-        className={cn('cursor-pointer', className)} 
+        className={cn(
+          'transition-all duration-200 hover:shadow-md border-gray-100 hover:border-gray-200',
+          onClick || href ? 'cursor-pointer hover:scale-[1.02]' : '',
+          className
+        )} 
         {...props}
+        onClick={onClick}
       >
-        <CardContent className="p-6 text-center">
-          <div className="text-3xl mb-3">{icon}</div>
-          <div className="text-sm font-medium text-gray-900">{title}</div>
-          {description && (
-            <div className="text-xs text-gray-600 mt-1">{description}</div>
+        <CardContent className="p-4 text-center">
+          {icon && (
+            <div className="text-2xl mb-2">
+              {icon}
+            </div>
           )}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 mb-1">
+              {title}
+            </h3>
+            {description && (
+              <p className="text-xs text-gray-500 leading-relaxed">
+                {description}
+              </p>
+            )}
+          </div>
         </CardContent>
       </Card>
     )
@@ -35,20 +49,12 @@ const ActionCard = forwardRef<HTMLDivElement, ActionCardProps>(
     if (href) {
       return (
         <Link href={href}>
-          {cardContent}
+          {content}
         </Link>
       )
     }
 
-    if (onClick) {
-      return (
-        <div onClick={onClick}>
-          {cardContent}
-        </div>
-      )
-    }
-
-    return cardContent
+    return content
   }
 )
 ActionCard.displayName = 'ActionCard'

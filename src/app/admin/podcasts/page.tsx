@@ -1,6 +1,8 @@
 import { requireAdmin } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { StatsCard } from '@/components/ui/stats-card'
+import { Table, TableColumn } from '@/components/ui/table'
 import Link from 'next/link'
 import PodcastActions from '@/components/admin/podcast-actions'
 
@@ -57,8 +59,6 @@ async function getPodcasts() {
   return podcasts as Podcast[]
 }
 
-
-
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -90,6 +90,113 @@ export default async function AdminPodcastsPage() {
     rejected: podcasts.filter(p => p.status === 'rejected').length
   }
 
+  const columns: TableColumn<Podcast>[] = [
+    {
+      key: 'podcast',
+      title: 'Podcast',
+      render: (_, podcast) => (
+        <div className="flex items-center space-x-3">
+          <div className="flex-shrink-0">
+            {podcast.cover_image_url ? (
+              <img 
+                src={podcast.cover_image_url} 
+                alt={podcast.title}
+                className="w-10 h-10 rounded-lg object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
+                <span className="text-white font-bold text-xs">
+                  {podcast.title.substring(0, 2).toUpperCase()}
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="min-w-0">
+            <div className="text-sm font-medium text-gray-900 truncate">
+              {podcast.title}
+            </div>
+            <div className="text-xs text-gray-500">
+              {podcast.language.toUpperCase()} • {podcast.country}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'author',
+      title: 'Author',
+      render: (_, podcast) => (
+        <div>
+          <div className="text-sm text-gray-900">{podcast.user_profiles?.full_name || 'Unknown Author'}</div>
+          <div className="text-xs text-gray-500">{podcast.user_profiles?.email || 'No email'}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'category',
+      title: 'Category',
+      render: (_, podcast) => (
+        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          {podcast.category}
+        </span>
+      ),
+    },
+    {
+      key: 'episodes',
+      title: 'Episodes',
+      render: (_, podcast) => (
+        <span className="text-sm text-gray-600">
+          {podcast.episodes.length} episodes
+        </span>
+      ),
+      align: 'center'
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      render: (_, podcast) => (
+        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(podcast.status)}`}>
+          {podcast.status}
+        </span>
+      ),
+      align: 'center'
+    },
+    {
+      key: 'created_at',
+      title: 'Submitted',
+      render: (_, podcast) => (
+        <span className="text-xs text-gray-500">
+          {formatDate(podcast.created_at)}
+        </span>
+      ),
+      sortable: true
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      render: (_, podcast) => (
+        <div className="flex space-x-1">
+          <Link href={`/podcast/${podcast.id}`}>
+            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
+              View
+            </Button>
+          </Link>
+          <Link href={`/admin/podcasts/${podcast.id}/edit`}>
+            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
+              Edit
+            </Button>
+          </Link>
+          <PodcastActions
+            podcastId={podcast.id}
+            podcastTitle={podcast.title}
+            status={podcast.status}
+          />
+        </div>
+      ),
+      align: 'right'
+    }
+  ]
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -108,144 +215,40 @@ export default async function AdminPodcastsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Total Podcasts</h3>
-          <p className="text-3xl font-bold text-blue-600">{stats.total}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Pending Review</h3>
-          <p className="text-3xl font-bold text-yellow-600">{stats.pending}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Approved</h3>
-          <p className="text-3xl font-bold text-green-600">{stats.approved}</p>
-        </div>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900">Rejected</h3>
-          <p className="text-3xl font-bold text-red-600">{stats.rejected}</p>
-        </div>
+        <StatsCard
+          title="Total Podcasts"
+          value={stats.total}
+          icon="🎙️"
+          color="blue"
+        />
+        <StatsCard
+          title="Pending Review"
+          value={stats.pending}
+          icon="⏳"
+          color="yellow"
+        />
+        <StatsCard
+          title="Approved"
+          value={stats.approved}
+          icon="✅"
+          color="green"
+        />
+        <StatsCard
+          title="Rejected"
+          value={stats.rejected}
+          icon="❌"
+          color="red"
+        />
       </div>
 
-      {/* Podcast List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">All Podcasts</h2>
-        </div>
-        
-        {podcasts.length === 0 ? (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 616 0v6a3 3 0 01-3 3z" />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No podcasts</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              No podcasts have been submitted yet.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Podcast
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Author
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Episodes
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Submitted
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {podcasts.map((podcast) => (
-                  <tr key={podcast.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-12 w-12">
-                          {podcast.cover_image_url ? (
-                            <img 
-                              src={podcast.cover_image_url} 
-                              alt={podcast.title}
-                              className="h-12 w-12 rounded-lg object-cover"
-                            />
-                          ) : (
-                            <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                              <span className="text-white font-bold">
-                                {podcast.title.substring(0, 2).toUpperCase()}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {podcast.title}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {podcast.language.toUpperCase()} • {podcast.country}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{podcast.user_profiles?.full_name || 'Unknown Author'}</div>
-                      <div className="text-sm text-gray-500">{podcast.user_profiles?.email || 'No email'}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {podcast.category}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {podcast.episodes.length} episodes
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(podcast.status)}`}>
-                        {podcast.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(podcast.created_at)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <Link href={`/podcast/${podcast.id}`}>
-                          <Button variant="outline" size="sm">
-                            View
-                          </Button>
-                        </Link>
-                        <Link href={`/admin/podcasts/${podcast.id}/edit`}>
-                          <Button variant="outline" size="sm">
-                            Edit
-                          </Button>
-                        </Link>
-                        <PodcastActions
-                          podcastId={podcast.id}
-                          podcastTitle={podcast.title}
-                          status={podcast.status}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      {/* Podcast Table */}
+      <Table
+        title="All Podcasts"
+        columns={columns}
+        data={podcasts}
+        emptyStateMessage="No podcasts have been submitted yet."
+        emptyStateIcon="🎙️"
+      />
     </div>
   )
 } 

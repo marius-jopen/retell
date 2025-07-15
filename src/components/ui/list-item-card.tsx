@@ -35,67 +35,53 @@ const statusVariants = {
 const ListItemCard = forwardRef<HTMLDivElement, ListItemCardProps>(
   ({ title, subtitle, metadata, status, avatar, action, href, variant = 'default', className, ...props }, ref) => {
     const content = (
-      <div 
+      <div
         ref={ref}
         className={cn(
-          'flex items-center justify-between p-4 bg-gray-50 rounded-lg transition-colors',
-          href && 'hover:bg-gray-100 cursor-pointer',
-          variant === 'compact' && 'p-3',
+          'flex items-center space-x-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors',
+          href ? 'cursor-pointer' : '',
+          variant === 'compact' ? 'py-2' : '',
           className
         )}
         {...props}
       >
-        <div className="flex items-center space-x-3 flex-1 min-w-0">
-          {avatar && (
-            <div className="flex-shrink-0">
-              {avatar.src ? (
-                <img
-                  src={avatar.src}
-                  alt={title}
-                  className={cn(
-                    'rounded-full object-cover',
-                    variant === 'compact' ? 'w-8 h-8' : 'w-10 h-10'
-                  )}
-                />
-              ) : (
-                <div className={cn(
-                  'rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center',
-                  variant === 'compact' ? 'w-8 h-8' : 'w-10 h-10'
-                )}>
-                  <span className={cn(
-                    'text-white font-medium',
-                    variant === 'compact' ? 'text-xs' : 'text-sm'
-                  )}>
-                    {avatar.fallback}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-          
-          <div className="flex-1 min-w-0">
-            <h3 className={cn(
-              'font-semibold text-gray-900 truncate',
-              variant === 'compact' ? 'text-xs' : 'text-sm'
-            )}>
-              {title}
-            </h3>
-            {subtitle && (
-              <p className={cn(
-                'text-gray-600 truncate',
-                variant === 'compact' ? 'text-xs' : 'text-sm'
-              )}>
-                {subtitle}
-              </p>
-            )}
-            {metadata && (
-              <p className="text-xs text-gray-500 truncate">
-                {metadata}
-              </p>
+        {/* Avatar */}
+        {avatar && (
+          <div className="flex-shrink-0">
+            {avatar.src ? (
+              <img 
+                src={avatar.src} 
+                alt={title}
+                className="w-8 h-8 rounded-lg object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-gradient-to-br from-gray-500 to-gray-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xs">
+                  {avatar.fallback}
+                </span>
+              </div>
             )}
           </div>
+        )}
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-semibold text-gray-900 truncate">
+            {title}
+          </h3>
+          {subtitle && (
+            <p className="text-xs text-gray-500 mt-0.5 truncate">
+              {subtitle}
+            </p>
+          )}
+          {metadata && (
+            <p className="text-xs text-gray-400 mt-0.5 truncate">
+              {metadata}
+            </p>
+          )}
         </div>
 
+        {/* Status and Action */}
         <div className="flex items-center space-x-2 flex-shrink-0">
           {status && (
             <span className={cn(
@@ -105,7 +91,11 @@ const ListItemCard = forwardRef<HTMLDivElement, ListItemCardProps>(
               {status.label}
             </span>
           )}
-          {action && <div>{action}</div>}
+          {action && (
+            <div>
+              {action}
+            </div>
+          )}
         </div>
       </div>
     )

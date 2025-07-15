@@ -24,23 +24,23 @@ const ContentBox = forwardRef<HTMLDivElement, ContentBoxProps>(
         className={cn('', className)} 
         {...props}
       >
-        <CardHeader className="p-6 border-b border-gray-200">
+        <CardHeader className="p-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold text-gray-900">{title}</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-900">{title}</CardTitle>
             {action && <div>{action}</div>}
           </div>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           {isEmpty && emptyState ? (
-            <div className="text-center py-8">
+            <div className="text-center py-6">
               {emptyState.icon && (
-                <div className="text-4xl mb-4">{emptyState.icon}</div>
+                <div className="text-3xl mb-3">{emptyState.icon}</div>
               )}
-              <p className="text-gray-500 mb-4">{emptyState.message}</p>
-              {emptyState.action && <div>{emptyState.action}</div>}
+              <p className="text-sm text-gray-500">{emptyState.message}</p>
+              {emptyState.action && <div className="mt-3">{emptyState.action}</div>}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {children}
             </div>
           )}

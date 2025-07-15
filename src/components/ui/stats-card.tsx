@@ -29,31 +29,43 @@ const colorMap = {
 
 const StatsCard = forwardRef<HTMLDivElement, StatsCardProps>(
   ({ title, value, icon, color = 'blue', trend, className, ...props }, ref) => {
+    const isEmoji = typeof icon === 'string'
+    
     return (
       <Card ref={ref} className={cn('', className)} {...props}>
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           <div className="flex items-center">
             {icon && (
-              <div className={cn('w-12 h-12 rounded-lg flex items-center justify-center', colorMap[color])}>
-                <div className="text-white">
-                  {icon}
-                </div>
-              </div>
+              <>
+                {isEmoji ? (
+                  <div className="text-3xl mr-3">
+                    {icon}
+                  </div>
+                ) : (
+                  <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center mr-3', colorMap[color])}>
+                    <div className="text-white text-sm">
+                      {icon}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
-            <div className={cn('flex-1', icon && 'ml-4')}>
-              <p className="text-sm font-medium text-gray-600">{title}</p>
-              <div className="flex items-baseline space-x-2">
-                <p className="text-2xl font-bold text-gray-900">{value}</p>
-                {trend && (
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-gray-500 mb-1">{title}</p>
+              <p className="text-xl font-bold text-gray-900 leading-none">{value}</p>
+              {trend && (
+                <div className="flex items-center mt-1">
                   <span className={cn(
-                    'text-sm font-medium',
+                    'text-xs font-medium',
                     trend.isPositive ? 'text-green-600' : 'text-red-600'
                   )}>
                     {trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}%
-                    {trend.label && <span className="text-gray-500 ml-1">{trend.label}</span>}
                   </span>
-                )}
-              </div>
+                  {trend.label && (
+                    <span className="text-xs text-gray-400 ml-1">{trend.label}</span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
