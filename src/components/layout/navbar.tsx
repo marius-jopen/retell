@@ -20,7 +20,7 @@ interface NavbarProps {
 
 const publicNavItems = [
   { href: '/', label: 'Home' },
-  { href: '/catalog', label: 'Catalog' },
+  { href: '/catalog', label: 'Podcasts' },
   { href: '/about', label: 'About' },
 ]
 
@@ -29,10 +29,12 @@ const roleBasedNavItems = {
     { href: '/admin', label: 'Dashboard' },
     { href: '/admin/podcasts', label: 'Podcasts' },
     { href: '/admin/users', label: 'Users' },
+    { href: '/catalog', label: 'Catalog' },
   ],
   author: [
     { href: '/author', label: 'Dashboard' },
     { href: '/author/podcasts', label: 'My Podcasts' },
+    { href: '/catalog', label: 'Podcasts' },
   ],
 }
 
@@ -52,12 +54,12 @@ export default function Navbar({ user }: NavbarProps) {
     : publicNavItems
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-lg border-b border-red-100">
+    <nav className="bg-white/80 backdrop-blur-md shadow-modern border-b border-orange-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center group">
-              <span className="text-xl font-bold text-red-500 group-hover:text-red-600 transition-colors duration-200">
+              <span className="text-xl font-bold text-orange-500 group-hover:text-orange-600 transition-colors duration-200">
                 🎙️ RETELL
               </span>
             </Link>
@@ -69,7 +71,7 @@ export default function Navbar({ user }: NavbarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-red-500 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:bg-red-50"
+                className="text-gray-700 hover:text-orange-500 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:bg-orange-50"
               >
                 {item.label}
               </Link>
@@ -96,7 +98,7 @@ export default function Navbar({ user }: NavbarProps) {
                   variant="outline"
                   size="sm"
                   onClick={handleSignOut}
-                  className="rounded-full border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-all duration-200"
+                  className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200"
                 >
                   👋 Sign Out
                 </Button>
@@ -107,14 +109,14 @@ export default function Navbar({ user }: NavbarProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => router.push('/auth/login')}
-                  className="rounded-full text-red-600 hover:bg-red-50 transition-all duration-200"
+                  className="rounded-full text-orange-600 hover:bg-orange-50 transition-all duration-200"
                 >
                   ✨ Sign In
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => router.push('/auth/signup')}
-                  className="rounded-full bg-red-500 hover:bg-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-modern hover:shadow-modern-lg transition-all duration-200"
                 >
                   🚀 Sign Up
                 </Button>
@@ -123,7 +125,7 @@ export default function Navbar({ user }: NavbarProps) {
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden inline-flex items-center justify-center p-2 rounded-full text-gray-700 hover:text-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-400 transition-all duration-200"
+              className="md:hidden inline-flex items-center justify-center p-2 rounded-full text-gray-700 hover:text-orange-500 hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-400 transition-all duration-200"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               <span className="sr-only">Open main menu</span>
@@ -148,12 +150,12 @@ export default function Navbar({ user }: NavbarProps) {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden animate-in slide-in-from-top-2 duration-200">
-          <div className="px-4 pt-4 pb-6 space-y-2 sm:px-6 bg-white/90 backdrop-blur-md border-t border-red-100">
+          <div className="px-4 pt-4 pb-6 space-y-2 sm:px-6 bg-white/90 backdrop-blur-md border-t border-orange-100">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-red-500 block px-4 py-3 rounded-2xl text-base font-medium transition-all duration-200 hover:bg-red-50"
+                className="text-gray-700 hover:text-orange-500 block px-4 py-3 rounded-modern text-base font-medium transition-all duration-200 hover:bg-orange-50"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.label}

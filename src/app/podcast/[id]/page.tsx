@@ -103,29 +103,29 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
   const totalDuration = episodes.reduce((total: number, ep: Episode) => total + (ep.duration || 0), 0)
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Cover Image */}
+    <div className="min-h-screen bg-orange-50">
+      {/* Hero Section - Smaller */}
+      <div className="bg-gradient-warm text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Cover Image - Smaller */}
             <div className="flex justify-center lg:justify-start">
               <div className="relative">
                 {podcast.cover_image_url ? (
                   <img
                     src={podcast.cover_image_url}
                     alt={podcast.title}
-                    className="w-80 h-80 object-cover rounded-3xl shadow-2xl"
+                    className="w-64 h-64 object-cover rounded-modern-xl shadow-modern-lg"
                   />
                 ) : (
-                  <div className="w-80 h-80 bg-gradient-to-br from-red-300 via-red-400 to-red-500 rounded-3xl flex items-center justify-center shadow-2xl">
-                    <span className="text-white text-6xl font-bold">
+                  <div className="w-64 h-64 bg-gradient-to-br from-orange-300 via-orange-400 to-orange-500 rounded-modern-xl flex items-center justify-center shadow-modern-lg">
+                    <span className="text-white text-4xl font-bold">
                       {podcast.title.substring(0, 2).toUpperCase()}
                     </span>
                   </div>
                 )}
-                <div className="absolute -bottom-4 -right-4 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2">
-                  <span className="text-sm font-semibold text-gray-800">
+                <div className="absolute -bottom-3 -right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
+                  <span className="text-xs font-semibold text-gray-800">
                     {episodes.length} Episodes
                   </span>
                 </div>
@@ -134,33 +134,33 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
 
             {/* Podcast Info */}
             <div className="text-center lg:text-left">
-              <div className="mb-4">
-                <span className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium uppercase tracking-wide">
+              <div className="mb-3">
+                <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide">
                   {podcast.category}
                 </span>
               </div>
               
-              <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+              <h1 className="text-2xl lg:text-3xl font-bold mb-4 leading-tight">
                 {podcast.title}
               </h1>
               
-              <p className="text-xl text-red-100 mb-8 leading-relaxed">
+              <p className="text-sm text-orange-100 mb-6 leading-relaxed">
                 {podcast.description}
               </p>
 
               {/* Author Info */}
-              <div className="flex items-center justify-center lg:justify-start space-x-4 mb-8">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">
+              <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <span className="text-white font-semibold text-xs">
                     {podcast.user_profiles?.full_name?.substring(0, 2).toUpperCase() || 'AU'}
                   </span>
                 </div>
                 <div className="text-left">
-                  <div className="text-lg font-semibold text-white">
+                  <div className="text-base font-semibold text-white">
                     {podcast.user_profiles?.full_name || 'Unknown Author'}
                   </div>
                   {podcast.user_profiles?.company && (
-                    <div className="text-sm text-blue-200">
+                    <div className="text-xs text-orange-200">
                       {podcast.user_profiles.company}
                     </div>
                   )}
@@ -168,51 +168,42 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
               </div>
 
               {/* Podcast Stats */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white">{episodes.length}</div>
-                  <div className="text-sm text-red-200">Episodes</div>
+                  <div className="text-lg font-bold text-white">{episodes.length}</div>
+                  <div className="text-xs text-orange-200">Episodes</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white">{Math.floor(totalDuration / 60)}h</div>
-                  <div className="text-sm text-red-200">Total Duration</div>
+                  <div className="text-lg font-bold text-white">{Math.floor(totalDuration / 60)}h</div>
+                  <div className="text-xs text-orange-200">Total Duration</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white">{podcast.language.toUpperCase()}</div>
-                  <div className="text-sm text-red-200">Language</div>
+                  <div className="text-lg font-bold text-white">{podcast.language.toUpperCase()}</div>
+                  <div className="text-xs text-orange-200">Language</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-white">{podcast.country}</div>
-                  <div className="text-sm text-red-200">Country</div>
+                  <div className="text-lg font-bold text-white">{podcast.country}</div>
+                  <div className="text-xs text-orange-200">Country</div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 {user?.profile.role === 'client' && (
-                  <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 font-semibold px-8 py-4">
+                  <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 py-3 rounded-full">
                     Request License
                   </Button>
                 )}
                 {!user && (
                   <Link href="/auth/signup?role=client">
-                    <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 font-semibold px-8 py-4">
+                    <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 py-3 rounded-full">
                       Sign Up to License
                     </Button>
                   </Link>
                 )}
-                {podcast.rss_url && (
-                  <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-red-600 font-semibold px-8 py-4">
-                    <a href={podcast.rss_url} target="_blank" rel="noopener noreferrer">
-                      RSS Feed
-                    </a>
-                  </Button>
-                )}
-                <Link href="/catalog">
-                  <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-red-600 font-semibold px-8 py-4">
-                    Browse More
-                  </Button>
-                </Link>
+                <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-6 py-3 rounded-full">
+                  Share Podcast
+                </Button>
               </div>
             </div>
           </div>

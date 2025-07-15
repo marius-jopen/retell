@@ -166,10 +166,6 @@ export default function NewEpisodePage({ params }: { params: Promise<{ id: strin
         setError('Audio file is required')
         return
       }
-      if (!scriptFile) {
-        setError('Script file is required')
-        return
-      }
       if (formData.episode_number < 1) {
         setError('Episode number must be at least 1')
         return
@@ -415,18 +411,17 @@ export default function NewEpisodePage({ params }: { params: Promise<{ id: strin
 
           <div>
             <label htmlFor="script_file" className="block text-sm font-medium text-gray-700 mb-2">
-              Script File *
+              Script File (Optional)
             </label>
             <input
               type="file"
               id="script_file"
               accept=".txt,.pdf,.doc,.docx"
               onChange={handleScriptFileChange}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-              required
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
             />
             <p className="mt-2 text-sm text-gray-500">
-              Upload your episode script (TXT, PDF, DOC, DOCX - max 10MB)
+              Upload your episode script if available (TXT, PDF, DOC, DOCX - max 10MB)
             </p>
           </div>
 
