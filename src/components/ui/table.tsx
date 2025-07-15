@@ -1,3 +1,5 @@
+'use client'
+
 import { forwardRef, HTMLAttributes, ReactNode, TdHTMLAttributes, ThHTMLAttributes } from 'react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from './card'

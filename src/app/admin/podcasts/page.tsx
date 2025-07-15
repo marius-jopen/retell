@@ -2,9 +2,8 @@ import { requireAdmin } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { StatsCard } from '@/components/ui/stats-card'
-import { Table, TableColumn } from '@/components/ui/table'
+import AdminPodcastTable from '@/components/admin/admin-podcast-table'
 import Link from 'next/link'
-import PodcastActions from '@/components/admin/podcast-actions'
 
 interface Podcast {
   id: string
@@ -59,26 +58,6 @@ async function getPodcasts() {
   return podcasts as Podcast[]
 }
 
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
-
-function getStatusColor(status: string) {
-  switch (status) {
-    case 'approved': return 'bg-green-100 text-green-800'
-    case 'rejected': return 'bg-red-100 text-red-800'
-    case 'pending': return 'bg-yellow-100 text-yellow-800'
-    case 'draft': return 'bg-gray-100 text-gray-800'
-    default: return 'bg-gray-100 text-gray-800'
-  }
-}
-
 export default async function AdminPodcastsPage() {
   const user = await requireAdmin()
   const podcasts = await getPodcasts()
@@ -89,113 +68,6 @@ export default async function AdminPodcastsPage() {
     approved: podcasts.filter(p => p.status === 'approved').length,
     rejected: podcasts.filter(p => p.status === 'rejected').length
   }
-
-  const columns: TableColumn<Podcast>[] = [
-    {
-      key: 'podcast',
-      title: 'Podcast',
-      render: (_, podcast) => (
-        <div className="flex items-center space-x-3">
-          <div className="flex-shrink-0">
-            {podcast.cover_image_url ? (
-              <img 
-                src={podcast.cover_image_url} 
-                alt={podcast.title}
-                className="w-10 h-10 rounded-lg object-cover"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
-                <span className="text-white font-bold text-xs">
-                  {podcast.title.substring(0, 2).toUpperCase()}
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="min-w-0">
-            <div className="text-sm font-medium text-gray-900 truncate">
-              {podcast.title}
-            </div>
-            <div className="text-xs text-gray-500">
-              {podcast.language.toUpperCase()} • {podcast.country}
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 'author',
-      title: 'Author',
-      render: (_, podcast) => (
-        <div>
-          <div className="text-sm text-gray-900">{podcast.user_profiles?.full_name || 'Unknown Author'}</div>
-          <div className="text-xs text-gray-500">{podcast.user_profiles?.email || 'No email'}</div>
-        </div>
-      ),
-    },
-    {
-      key: 'category',
-      title: 'Category',
-      render: (_, podcast) => (
-        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-          {podcast.category}
-        </span>
-      ),
-    },
-    {
-      key: 'episodes',
-      title: 'Episodes',
-      render: (_, podcast) => (
-        <span className="text-sm text-gray-600">
-          {podcast.episodes.length} episodes
-        </span>
-      ),
-      align: 'center'
-    },
-    {
-      key: 'status',
-      title: 'Status',
-      render: (_, podcast) => (
-        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(podcast.status)}`}>
-          {podcast.status}
-        </span>
-      ),
-      align: 'center'
-    },
-    {
-      key: 'created_at',
-      title: 'Submitted',
-      render: (_, podcast) => (
-        <span className="text-xs text-gray-500">
-          {formatDate(podcast.created_at)}
-        </span>
-      ),
-      sortable: true
-    },
-    {
-      key: 'actions',
-      title: 'Actions',
-      render: (_, podcast) => (
-        <div className="flex space-x-1">
-          <Link href={`/podcast/${podcast.id}`}>
-            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
-              View
-            </Button>
-          </Link>
-          <Link href={`/admin/podcasts/${podcast.id}/edit`}>
-            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
-              Edit
-            </Button>
-          </Link>
-          <PodcastActions
-            podcastId={podcast.id}
-            podcastTitle={podcast.title}
-            status={podcast.status}
-          />
-        </div>
-      ),
-      align: 'right'
-    }
-  ]
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -242,13 +114,7 @@ export default async function AdminPodcastsPage() {
       </div>
 
       {/* Podcast Table */}
-      <Table
-        title="All Podcasts"
-        columns={columns}
-        data={podcasts}
-        emptyStateMessage="No podcasts have been submitted yet."
-        emptyStateIcon="🎙️"
-      />
+      <AdminPodcastTable podcasts={podcasts} />
     </div>
   )
 } 
