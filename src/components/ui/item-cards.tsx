@@ -100,54 +100,7 @@ const PodcastCard = forwardRef<HTMLDivElement, PodcastCardProps>(
 )
 PodcastCard.displayName = 'PodcastCard'
 
-// Stats Card - for displaying metrics and statistics
-export interface StatsCardProps extends HTMLAttributes<HTMLDivElement> {
-  title: string
-  value: string | number
-  icon?: React.ReactNode
-  trend?: {
-    value: number
-    isPositive: boolean
-  }
-  color?: 'blue' | 'green' | 'red' | 'yellow' | 'purple' | 'gray'
-}
 
-const StatsCard = forwardRef<HTMLDivElement, StatsCardProps>(
-  ({ title, value, icon, trend, color = 'blue', className, ...props }, ref) => {
-    const colorClasses = {
-      blue: 'bg-blue-500',
-      green: 'bg-green-500',
-      red: 'bg-red-500',
-      yellow: 'bg-yellow-500',
-      purple: 'bg-purple-500',
-      gray: 'bg-gray-500',
-    }
-
-    return (
-      <Card ref={ref} className={cn('', className)} {...props}>
-        <CardContent className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            {icon && (
-              <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', colorClasses[color])}>
-                {icon}
-              </div>
-            )}
-            <div>
-              <p className="text-sm font-medium text-gray-600">{title}</p>
-              <p className="text-2xl font-bold text-gray-900">{value}</p>
-              {trend && (
-                <p className={cn('text-sm font-medium', trend.isPositive ? 'text-green-600' : 'text-red-600')}>
-                  {trend.isPositive ? '↗' : '↘'} {Math.abs(trend.value)}%
-                </p>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-)
-StatsCard.displayName = 'StatsCard'
 
 // Feature Card - for showcasing features or benefits
 export interface FeatureCardProps extends HTMLAttributes<HTMLDivElement> {
@@ -274,4 +227,4 @@ const PricingCard = forwardRef<HTMLDivElement, PricingCardProps>(
 )
 PricingCard.displayName = 'PricingCard'
 
-export { PodcastCard, StatsCard, FeatureCard, PricingCard } 
+export { PodcastCard, FeatureCard, PricingCard } 

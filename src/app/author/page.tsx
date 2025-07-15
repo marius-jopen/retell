@@ -3,6 +3,10 @@ import { requireAuthor } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/utils'
 import Link from 'next/link'
+import { StatsCard } from '@/components/ui/stats-card'
+import { ActionCard } from '@/components/ui/action-card'
+import { ContentBox } from '@/components/ui/content-box'
+import { ListItemCard } from '@/components/ui/list-item-card'
 
 export default async function AuthorDashboard() {
   const user = await requireAuthor()
@@ -61,34 +65,6 @@ export default async function AuthorDashboard() {
     .order('created_at', { ascending: false })
     .limit(5)
 
-  const stats = [
-    {
-      title: 'Total Podcasts',
-      value: totalPodcasts || 0,
-      color: 'bg-blue-500',
-    },
-    {
-      title: 'Total Episodes',
-      value: totalEpisodes || 0,
-      color: 'bg-green-500',
-    },
-    {
-      title: 'Approved',
-      value: approvedPodcasts || 0,
-      color: 'bg-green-500',
-    },
-    {
-      title: 'Pending Review',
-      value: pendingPodcasts || 0,
-      color: 'bg-yellow-500',
-    },
-    {
-      title: 'Draft',
-      value: draftPodcasts || 0,
-      color: 'bg-gray-500',
-    },
-  ]
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -101,161 +77,165 @@ export default async function AuthorDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          {stats.map((stat) => (
-            <div key={stat.title} className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-center">
-                <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center`}>
-                  <div className="w-4 h-4 bg-white rounded-full"></div>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <StatsCard
+            title="Total Podcasts"
+            value={totalPodcasts || 0}
+            color="orange"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 616 0v6a3 3 0 01-3 3z" />
+              </svg>
+            }
+          />
+
+          <StatsCard
+            title="Total Episodes"
+            value={totalEpisodes || 0}
+            color="amber"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            }
+          />
+
+          <StatsCard
+            title="Approved"
+            value={approvedPodcasts || 0}
+            color="rose"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
+          />
+
+          <StatsCard
+            title="Pending Review"
+            value={pendingPodcasts || 0}
+            color="stone"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }
+          />
+
+          <StatsCard
+            title="Draft"
+            value={draftPodcasts || 0}
+            color="yellow"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            }
+          />
+
+          <StatsCard
+            title="Published"
+            value={(approvedPodcasts || 0)}
+            color="gray"
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
+            }
+          />
         </div>
 
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Link href="/author/upload">
-              <div className="bg-white border border-gray-200 p-6 text-center hover:bg-gray-50 transition-colors">
-                <div className="text-3xl mb-3">🎤</div>
-                <div className="text-sm font-medium text-gray-900">Create New Podcast</div>
-              </div>
-            </Link>
-            <Link href="/author/podcasts">
-              <div className="bg-white border border-gray-200 p-6 text-center hover:bg-gray-50 transition-colors">
-                <div className="text-3xl mb-3">📻</div>
-                <div className="text-sm font-medium text-gray-900">My Podcasts</div>
-              </div>
-            </Link>
-            <Link href="/catalog">
-              <div className="bg-white border border-gray-200 p-6 text-center hover:bg-gray-50 transition-colors">
-                <div className="text-3xl mb-3">🎧</div>
-                <div className="text-sm font-medium text-gray-900">Browse Catalog</div>
-              </div>
-            </Link>
-            <Link href="/author/analytics">
-              <div className="bg-white border border-gray-200 p-6 text-center hover:bg-gray-50 transition-colors">
-                <div className="text-3xl mb-3">📊</div>
-                <div className="text-sm font-medium text-gray-900">Analytics</div>
-              </div>
-            </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <ActionCard
+              title="Create New Podcast"
+              icon="🎙️"
+              href="/author/upload"
+              description="Upload a new podcast"
+            />
+            
+            <ActionCard
+              title="My Podcasts"
+              icon="📻"
+              href="/author/podcasts"
+              description="Manage your content"
+            />
+            
+            <ActionCard
+              title="View Analytics"
+              icon="📈"
+              href="/author/analytics"
+              description="View performance"
+            />
           </div>
         </div>
 
         {/* Content and Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Recent Podcasts */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Your Recent Podcasts</h2>
-            </div>
-            <div className="p-6 space-y-4">
-              {recentPodcasts && recentPodcasts.length > 0 ? (
-                recentPodcasts.map((podcast) => (
-                  <div key={podcast.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-gray-900">{podcast.title}</h3>
-                      <p className="text-sm text-gray-600">
-                        {podcast.category} • {podcast.language.toUpperCase()} • {podcast.episodes?.length || 0} episodes
-                      </p>
-                      <p className="text-xs text-gray-500">Created {formatDate(podcast.created_at)}</p>
-                    </div>
-                    <div className="ml-4 flex items-center space-x-2">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        podcast.status === 'approved' ? 'bg-green-100 text-green-800' :
-                        podcast.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        podcast.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {podcast.status}
-                      </span>
-                      <Link href={`/author/podcasts/${podcast.id}/edit`}>
-                        <Button variant="outline" size="sm">
-                          Edit
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-12">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready to start creating?</h3>
-                  <p className="text-gray-600 mb-6">Upload your first podcast and share your voice with the world!</p>
-                  <Link href="/author/upload">
-                    <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                      Create Your First Podcast
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
-            <div className="p-6 border-t border-gray-200">
+          <ContentBox
+            title="Your Recent Podcasts"
+            isEmpty={!recentPodcasts || recentPodcasts.length === 0}
+            emptyState={{
+              message: "No podcasts yet",
+              icon: "🎙️"
+            }}
+            action={
               <Link href="/author/podcasts">
-                <Button variant="outline" className="w-full">
-                  View All Podcasts
-                </Button>
+                <Button variant="outline" size="sm">View All</Button>
               </Link>
-            </div>
-          </div>
+            }
+          >
+            {recentPodcasts?.map((podcast) => (
+              <ListItemCard
+                key={podcast.id}
+                title={podcast.title}
+                subtitle={`${podcast.category} • ${podcast.language.toUpperCase()}`}
+                metadata={`${podcast.episodes?.length || 0} episodes • Created ${formatDate(podcast.created_at)}`}
+                status={{
+                  label: podcast.status,
+                  variant: podcast.status as any
+                }}
+                avatar={{
+                  fallback: podcast.title.substring(0, 2).toUpperCase()
+                }}
+                href={`/author/podcasts/${podcast.id}/edit`}
+              />
+            ))}
+          </ContentBox>
 
           {/* Recent Episodes */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Recent Episodes</h2>
-            </div>
-            <div className="p-6 space-y-4">
-              {recentEpisodes && recentEpisodes.length > 0 ? (
-                recentEpisodes.map((episode) => (
-                  <div key={episode.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex-1">
-                      <h3 className="text-sm font-semibold text-gray-900">
-                        {episode.title}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        Episode {episode.episode_number} • {(episode.podcasts as any)?.title || 'Unknown Podcast'}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        Created {formatDate(episode.created_at)}
-                      </p>
-                    </div>
-                    <div className="ml-4">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        Published
-                      </span>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-12">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No episodes yet!</h3>
-                  <p className="text-gray-600 mb-6">
-                    {(totalPodcasts || 0) > 0 
-                      ? "Add some episodes to your podcasts to get started!"
-                      : "Create your first podcast, then add episodes to it!"
-                    }
-                  </p>
-                  <Link href={(totalPodcasts || 0) > 0 ? "/author/podcasts" : "/author/upload"}>
-                    <Button className="bg-green-500 hover:bg-green-600 text-white">
-                      {(totalPodcasts || 0) > 0 ? "Add Episodes" : "Create Podcast"}
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
-            <div className="p-6 border-t border-gray-200">
+          <ContentBox
+            title="Recent Episodes"
+            isEmpty={!recentEpisodes || recentEpisodes.length === 0}
+            emptyState={{
+              message: "No episodes yet",
+              icon: "🎵"
+            }}
+            action={
               <Link href="/author/podcasts">
-                <Button variant="outline" className="w-full">
-                  View All Episodes
-                </Button>
+                <Button variant="outline" size="sm">View All</Button>
               </Link>
-            </div>
-          </div>
+            }
+          >
+            {recentEpisodes?.map((episode) => (
+              <ListItemCard
+                key={episode.id}
+                title={episode.title}
+                subtitle={`Episode ${episode.episode_number} • ${(episode.podcasts as any)?.title || 'Unknown Podcast'}`}
+                metadata={`Created ${formatDate(episode.created_at)}`}
+                status={{
+                  label: "Published",
+                  variant: "published"
+                }}
+                avatar={{
+                  fallback: `E${episode.episode_number}`
+                }}
+              />
+            ))}
+          </ContentBox>
         </div>
       </div>
     </div>

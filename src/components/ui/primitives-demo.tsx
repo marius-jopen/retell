@@ -1,6 +1,10 @@
 import { Button } from './button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card'
-import { PodcastCard, StatsCard, FeatureCard, PricingCard } from './item-cards'
+import { PodcastCard, FeatureCard, PricingCard } from './item-cards'
+import { StatsCard } from './stats-card'
+import { ActionCard } from './action-card'
+import { ContentBox } from './content-box'
+import { ListItemCard } from './list-item-card'
 
 export default function PrimitivesDemo() {
   const samplePodcast = {
@@ -119,31 +123,183 @@ export default function PrimitivesDemo() {
             <StatsCard
               title="Total Podcasts"
               value="1,234"
-              icon={<div className="h-4 w-4 rounded-full bg-white"></div>}
+              icon={
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z" />
+                </svg>
+              }
               color="blue"
-              trend={{ value: 12, isPositive: true }}
+              trend={{ value: 12, isPositive: true, label: "this month" }}
             />
             <StatsCard
               title="Total Episodes"
               value="5,678"
-              icon={<div className="h-4 w-4 rounded-full bg-white"></div>}
+              icon={
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              }
               color="green"
               trend={{ value: 8, isPositive: true }}
             />
             <StatsCard
               title="Active Users"
               value="89K"
-              icon={<div className="h-4 w-4 rounded-full bg-white"></div>}
+              icon={
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                </svg>
+              }
               color="purple"
               trend={{ value: 3, isPositive: false }}
             />
             <StatsCard
               title="Revenue"
               value="$45.2K"
-              icon={<div className="h-4 w-4 rounded-full bg-white"></div>}
+              icon={
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
+              }
               color="yellow"
-              trend={{ value: 15, isPositive: true }}
+              trend={{ value: 15, isPositive: true, label: "vs last month" }}
             />
+          </div>
+        </section>
+
+        {/* Action Cards */}
+        <section>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Action Cards</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <ActionCard
+              title="Create Podcast"
+              icon="🎤"
+              description="Start your podcasting journey"
+              onClick={() => console.log('Create podcast clicked')}
+            />
+            <ActionCard
+              title="Browse Catalog"
+              icon="🎧"
+              href="/catalog"
+              description="Explore amazing content"
+              variant="featured"
+            />
+            <ActionCard
+              title="View Analytics"
+              icon="📊"
+              href="/analytics"
+              description="Track your performance"
+            />
+          </div>
+        </section>
+
+        {/* Content Boxes */}
+        <section>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Content Boxes</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ContentBox
+              title="Recent Activity"
+              action={<Button variant="outline" size="sm">View All</Button>}
+            >
+              <ListItemCard
+                title="New Podcast Submission"
+                subtitle="Tech Talk Weekly"
+                metadata="2 hours ago"
+                status={{ label: "pending", variant: "pending" }}
+                avatar={{ fallback: "TT" }}
+              />
+              <ListItemCard
+                title="Episode Published"
+                subtitle="The Future of AI - Episode 42"
+                metadata="4 hours ago"
+                status={{ label: "published", variant: "published" }}
+                avatar={{ fallback: "AI" }}
+              />
+              <ListItemCard
+                title="User Registration"
+                subtitle="John Doe joined"
+                metadata="1 day ago"
+                status={{ label: "active", variant: "success" }}
+                avatar={{ fallback: "JD" }}
+              />
+            </ContentBox>
+
+            <ContentBox
+              title="Popular Content"
+              variant="featured"
+              isEmpty={false}
+            >
+              <ListItemCard
+                title="How to Start Podcasting"
+                subtitle="Complete beginner's guide"
+                metadata="1.2K views • Technology"
+                avatar={{ fallback: "HP" }}
+                href="/podcast/123"
+              />
+              <ListItemCard
+                title="Interview Techniques"
+                subtitle="Master the art of conversation"
+                metadata="890 views • Education"
+                avatar={{ fallback: "IT" }}
+                href="/podcast/456"
+              />
+              <ListItemCard
+                title="Audio Production Tips"
+                subtitle="Professional sound on a budget"
+                metadata="670 views • Tutorial"
+                avatar={{ fallback: "AP" }}
+                href="/podcast/789"
+              />
+            </ContentBox>
+          </div>
+        </section>
+
+        {/* List Item Cards Variants */}
+        <section>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">List Item Card Variants</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Default Size</h3>
+              <div className="space-y-3">
+                <ListItemCard
+                  title="Amazing Podcast Title"
+                  subtitle="by Creative Author"
+                  metadata="Technology • Published 2 days ago"
+                  status={{ label: "approved", variant: "approved" }}
+                  avatar={{ fallback: "AP" }}
+                />
+                <ListItemCard
+                  title="Another Great Episode"
+                  subtitle="Episode 15 • Marketing Mastery"
+                  metadata="by Business Expert • 1 week ago"
+                  status={{ label: "pending", variant: "pending" }}
+                  avatar={{ fallback: "MM" }}
+                  action={<Button variant="outline" size="sm">Review</Button>}
+                />
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Compact Size</h3>
+              <div className="space-y-2">
+                <ListItemCard
+                  title="Quick Update"
+                  subtitle="Short description"
+                  metadata="Just now"
+                  variant="compact"
+                  status={{ label: "new", variant: "info" }}
+                  avatar={{ fallback: "QU" }}
+                />
+                <ListItemCard
+                  title="System Notification"
+                  subtitle="Backup completed"
+                  metadata="5 minutes ago"
+                  variant="compact"
+                  status={{ label: "success", variant: "success" }}
+                  avatar={{ fallback: "SN" }}
+                />
+              </div>
+            </div>
           </div>
         </section>
 
