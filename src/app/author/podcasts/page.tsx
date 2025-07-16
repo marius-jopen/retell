@@ -146,7 +146,7 @@ export default async function AuthorPodcastsPage() {
             podcasts.map((podcast) => (
               <div key={podcast.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
                 {/* Main Content */}
-                <div className="p-6">
+                <div className="p-4">
                   <div className="flex items-start space-x-4">
                     <div className="flex-shrink-0">
                       {podcast.cover_image_url ? (
@@ -254,7 +254,7 @@ export default async function AuthorPodcastsPage() {
                           
                           <div className="flex items-center space-x-2">
                             <Link href={`/author/podcasts/${podcast.id}/episodes/${episode.id}/edit`}>
-                              <Button variant="ghost" size="sm" className="text-xs text-gray-600 hover:text-red-600 hover:bg-red-50">
+                              <Button variant="outline" size="sm" className="text-xs text-gray-600 hover:text-red-600 hover:bg-red-50 border-gray-200 hover:border-red-200">
                                 Edit
                               </Button>
                             </Link>

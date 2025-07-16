@@ -1,8 +1,9 @@
 import { forwardRef, HTMLAttributes } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 import { Button } from './button'
-import { cn } from '@/lib/utils'
+import { cn, formatDate, formatDuration } from '@/lib/utils'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export interface Episode {
   id: string
@@ -27,20 +28,7 @@ export interface EpisodePreviewListProps extends HTMLAttributes<HTMLDivElement> 
   podcastId?: string
 }
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  })
-}
 
-const formatDuration = (seconds?: number) => {
-  if (!seconds) return ''
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-}
 
 
 
@@ -58,7 +46,7 @@ const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
     className,
     ...props 
   }, ref) => {
-    
+    const router = useRouter()
     const isEmpty = !episodes || episodes.length === 0
 
     return (
@@ -141,11 +129,17 @@ const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
                           {/* Actions */}
                           {showActions && getEpisodeHref && (
                             <div className="flex justify-end mt-2">
-                              <Link href={getEpisodeHref(episode)} onClick={(e) => e.stopPropagation()}>
-                                <Button variant="outline" size="sm" className="text-xs h-6 px-2">
-                                  Edit
-                                </Button>
-                              </Link>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="text-xs h-6 px-2"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  router.push(getEpisodeHref(episode))
+                                }}
+                              >
+                                Edit
+                              </Button>
                             </div>
                           )}
                         </div>

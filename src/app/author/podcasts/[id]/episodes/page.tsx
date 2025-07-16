@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { formatDate, formatDuration } from '@/lib/utils'
 import EpisodeActions from '@/components/author/episode-actions'
+import AudioPlayer from '@/components/ui/audio-player'
 
 interface Episode {
   id: string
@@ -246,7 +247,7 @@ export default async function EpisodesPage({ params }: { params: Promise<{ id: s
                           </div>
                           <h3 className="text-lg font-semibold text-gray-900 mb-2 leading-snug">{episode.title}</h3>
                           <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-3">{episode.description}</p>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
                             <span className="bg-gray-100 px-2 py-1 rounded-full">
                               Duration: {formatDuration(episode.duration)}
                             </span>
@@ -255,6 +256,16 @@ export default async function EpisodesPage({ params }: { params: Promise<{ id: s
                             <span>•</span>
                             <span>Updated: {formatDate(episode.updated_at)}</span>
                           </div>
+                          
+                          {/* Audio Player */}
+                          {episode.audio_url && (
+                            <div className="mb-3">
+                              <AudioPlayer 
+                                src={episode.audio_url} 
+                                title={episode.title}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                       

@@ -137,6 +137,17 @@ button.inline-flex.bg-red-700:not([class*="border"]) {
   -webkit-text-fill-color: white !important;
 }
 
+/* Specific fix for destructive button variant with maximum specificity */
+button.inline-flex.bg-red-500.text-white,
+button.inline-flex.bg-red-600.text-white,
+button.inline-flex.bg-red-700.text-white,
+button[class*="bg-gradient-to-r"][class*="from-red-500"],
+button[class*="bg-gradient-to-r"][class*="from-red-500"][class*="text-white"],
+button[class*="bg-gradient-to-r"][class*="to-red-600"][class*="text-white"] {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
 /* Ensure outline buttons keep their intended text colors */
 button[class*="border"].text-red-600,
 button[class*="outline"].text-red-600 {
