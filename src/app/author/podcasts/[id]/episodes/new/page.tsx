@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { Input, TextArea, FileInput } from '@/components/ui'
 import Link from 'next/link'
 import { useToast } from '@/components/ui/toast'
 
@@ -319,116 +320,73 @@ export default function NewEpisodePage({ params }: { params: Promise<{ id: strin
             </div>
           )}
 
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-              Episode Title *
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter episode title"
-              required
-            />
-          </div>
+          <Input
+            label="Episode Title"
+            id="title"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            placeholder="Enter episode title"
+            required
+          />
 
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Description *
-            </label>
-            <textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Describe this episode"
-              required
-            />
-          </div>
+          <TextArea
+            label="Description"
+            id="description"
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            rows={4}
+            placeholder="Describe this episode"
+            required
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label htmlFor="episode_number" className="block text-sm font-medium text-gray-700 mb-2">
-                Episode Number *
-              </label>
-              <input
-                type="number"
-                id="episode_number"
-                value={formData.episode_number}
-                onChange={(e) => setFormData({ ...formData, episode_number: parseInt(e.target.value) || 1 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                min="1"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="season_number" className="block text-sm font-medium text-gray-700 mb-2">
-                Season Number *
-              </label>
-              <input
-                type="number"
-                id="season_number"
-                value={formData.season_number}
-                onChange={(e) => setFormData({ ...formData, season_number: parseInt(e.target.value) || 1 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                min="1"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
-                Duration (MM:SS)
-              </label>
-              <input
-                type="text"
-                id="duration"
-                value={formData.duration}
-                onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="15:30"
-                pattern="[0-9]{1,2}:[0-9]{2}"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="audio_file" className="block text-sm font-medium text-gray-700 mb-2">
-              Audio File *
-            </label>
-            <input
-              type="file"
-              id="audio_file"
-              accept="audio/*"
-              onChange={handleAudioFileChange}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            <Input
+              label="Episode Number"
+              type="number"
+              id="episode_number"
+              value={formData.episode_number}
+              onChange={(e) => setFormData({ ...formData, episode_number: parseInt(e.target.value) || 1 })}
+              min="1"
               required
             />
-            <p className="mt-2 text-sm text-gray-500">
-              Upload your episode audio file (max 100MB)
-            </p>
-          </div>
 
-          <div>
-            <label htmlFor="script_file" className="block text-sm font-medium text-gray-700 mb-2">
-              Script File *
-            </label>
-            <input
-              type="file"
-              id="script_file"
-              accept=".txt,.pdf,.doc,.docx"
-              onChange={handleScriptFileChange}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            <Input
+              label="Season Number"
+              type="number"
+              id="season_number"
+              value={formData.season_number}
+              onChange={(e) => setFormData({ ...formData, season_number: parseInt(e.target.value) || 1 })}
+              min="1"
               required
             />
-            <p className="mt-2 text-sm text-gray-500">
-              Upload your episode script (TXT, PDF, DOC, DOCX - max 10MB)
-            </p>
+
+            <Input
+              label="Duration (MM:SS)"
+              id="duration"
+              value={formData.duration}
+              onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+              placeholder="15:30"
+              pattern="[0-9]{1,2}:[0-9]{2}"
+            />
           </div>
+
+          <FileInput
+            label="Audio File"
+            id="audio_file"
+            accept="audio/*"
+            onChange={handleAudioFileChange}
+            helperText="Upload your episode audio file (max 100MB)"
+            required
+          />
+
+          <FileInput
+            label="Script File"
+            id="script_file"
+            accept=".txt,.pdf,.doc,.docx"
+            onChange={handleScriptFileChange}
+            helperText="Upload your episode script (TXT, PDF, DOC, DOCX - max 10MB)"
+            required
+          />
 
           <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
             <Link href={`/author/podcasts/${podcast.id}/episodes`}>

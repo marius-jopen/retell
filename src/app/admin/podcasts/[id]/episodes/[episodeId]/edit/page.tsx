@@ -1,6 +1,6 @@
 import { EpisodeEdit } from '@/components/episodes'
 
-export default async function EditEpisodePage({ 
+export default async function AdminEpisodeEditPage({ 
   params 
 }: { 
   params: Promise<{ id: string; episodeId: string }> 
@@ -12,9 +12,9 @@ export default async function EditEpisodePage({
     <EpisodeEdit
       podcastId={id}
       episodeId={episodeId}
-      isAdmin={false}
-      backUrl={`/author/podcasts/${id}/episodes`}
-      successRedirectUrl={`/author/podcasts/${id}/episodes`}
+      isAdmin={true}
+      backUrl={`/admin/podcasts/${id}/episodes`}
+      successRedirectUrl={`/admin/podcasts/${id}/episodes`}
     />
   )
 } 

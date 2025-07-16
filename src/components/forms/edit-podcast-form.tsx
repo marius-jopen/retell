@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input, Select, TextArea, FileInput } from '@/components/ui'
 
 interface EditPodcastFormProps {
   podcast: any
@@ -11,6 +12,7 @@ interface EditPodcastFormProps {
   onSubmit: (formData: any, coverImage: File | null) => Promise<void>
   loading?: boolean
   error?: string
+  isCreating?: boolean
 }
 
 export default function EditPodcastForm({
@@ -19,7 +21,8 @@ export default function EditPodcastForm({
   workflowState,
   onSubmit,
   loading = false,
-  error = ''
+  error = '',
+  isCreating = false
 }: EditPodcastFormProps) {
   const [formData, setFormData] = useState({
     title: podcast?.title || '',
@@ -93,10 +96,13 @@ export default function EditPodcastForm({
     <Card className="overflow-hidden">
       <CardHeader className="p-6 border-b border-gray-100">
         <CardTitle className="text-xl font-semibold text-gray-900">
-          Podcast Details
+          {isCreating ? 'Create New Podcast' : 'Podcast Details'}
         </CardTitle>
         <p className="text-sm text-gray-600 mt-1">
-          {isAdmin ? 'Administrative podcast editing and content management' : 'Update your podcast information and settings'}
+          {isCreating 
+            ? 'Fill in the details below to create your podcast'
+            : (isAdmin ? 'Administrative podcast editing and content management' : 'Update your podcast information and settings')
+          }
         </p>
         
         {/* Workflow Status Indicator */}
@@ -131,148 +137,122 @@ export default function EditPodcastForm({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-              Podcast Title *
-              {workflowState?.manual_overrides?.title && (
-                <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-              )}
-            </label>
-            <input
-              type="text"
+            <Input
+              label="Podcast Title"
               id="title"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="Enter podcast title"
             />
+            {workflowState?.manual_overrides?.title && (
+              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+            )}
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Description *
-              {workflowState?.manual_overrides?.description && (
-                <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-              )}
-            </label>
-            <textarea
+            <TextArea
+              label="Description"
               id="description"
               rows={6}
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-y min-h-[140px]"
               placeholder="Describe the podcast"
+              className="min-h-[140px]"
             />
+            {workflowState?.manual_overrides?.description && (
+              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+            )}
           </div>
 
           {/* Status (Admin only) */}
           {isAdmin && (
-            <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-                Status *
-              </label>
-              <select
-                id="status"
-                value={formData.status}
-                onChange={(e) => handleInputChange('status', e.target.value)}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              >
-                <option value="">Select status</option>
-                <option value="draft">Draft</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-              </select>
-            </div>
+            <Select
+              label="Status"
+              id="status"
+              value={formData.status}
+              onChange={(e) => handleInputChange('status', e.target.value)}
+              required
+              placeholder="Select status"
+            >
+              <option value="draft">Draft</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </Select>
           )}
 
           {/* Category */}
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-              Category *
-              {workflowState?.manual_overrides?.category && (
-                <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-              )}
-            </label>
-            <select
+            <Select
+              label="Category"
               id="category"
               value={formData.category}
               onChange={(e) => handleInputChange('category', e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="Select a category"
             >
-              <option value="">Select a category</option>
               {categories.map(category => (
                 <option key={category} value={category}>{category}</option>
               ))}
-            </select>
+            </Select>
+            {workflowState?.manual_overrides?.category && (
+              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+            )}
           </div>
 
           {/* Language */}
           <div>
-            <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-2">
-              Language *
-              {workflowState?.manual_overrides?.language && (
-                <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-              )}
-            </label>
-            <select
+            <Select
+              label="Language"
               id="language"
               value={formData.language}
               onChange={(e) => handleInputChange('language', e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="Select a language"
             >
-              <option value="">Select a language</option>
               {languages.map(lang => (
                 <option key={lang.code} value={lang.code}>{lang.name}</option>
               ))}
-            </select>
+            </Select>
+            {workflowState?.manual_overrides?.language && (
+              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+            )}
           </div>
 
           {/* Country */}
           <div>
-            <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
-              Country *
-              {workflowState?.manual_overrides?.country && (
-                <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-              )}
-            </label>
-            <select
+            <Select
+              label="Country"
               id="country"
               value={formData.country}
               onChange={(e) => handleInputChange('country', e.target.value)}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="Select a country"
             >
-              <option value="">Select a country</option>
               {countries.map(country => (
                 <option key={country} value={country}>{country}</option>
               ))}
-            </select>
+            </Select>
+            {workflowState?.manual_overrides?.country && (
+              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+            )}
           </div>
 
           {/* Cover Image */}
           <div>
-            <label htmlFor="cover_image" className="block text-sm font-medium text-gray-700 mb-2">
-              Cover Image (Optional)
-              {workflowState?.manual_overrides?.cover_image && (
-                <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-              )}
-            </label>
-            <input
-              type="file"
+            <FileInput
+              label="Cover Image (Optional)"
               id="cover_image"
               accept="image/*"
               onChange={handleImageChange}
-              className="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors"
+              helperText="Upload a cover image for the podcast (max 5MB)"
             />
-            <p className="mt-2 text-sm text-gray-500">
-              Upload a cover image for the podcast (max 5MB)
-            </p>
+            {workflowState?.manual_overrides?.cover_image && (
+              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
+            )}
             {podcast?.cover_image_url && (
               <div className="mt-4">
                 <img
@@ -285,19 +265,14 @@ export default function EditPodcastForm({
           </div>
 
           {/* RSS Settings */}
-          <div>
-            <label htmlFor="rss_url" className="block text-sm font-medium text-gray-700 mb-2">
-              RSS Feed URL (Optional)
-            </label>
-            <input
-              type="url"
-              id="rss_url"
-              value={formData.rss_url}
-              onChange={(e) => handleInputChange('rss_url', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="https://podcast-feed.com/rss"
-            />
-          </div>
+          <Input
+            label="RSS Feed URL (Optional)"
+            type="url"
+            id="rss_url"
+            value={formData.rss_url}
+            onChange={(e) => handleInputChange('rss_url', e.target.value)}
+            placeholder="https://podcast-feed.com/rss"
+          />
 
           <div>
             <div className="flex items-center space-x-3">
@@ -306,7 +281,7 @@ export default function EditPodcastForm({
                 id="auto_publish_episodes"
                 checked={formData.auto_publish_episodes}
                 onChange={(e) => handleInputChange('auto_publish_episodes', e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
               />
               <label htmlFor="auto_publish_episodes" className="text-sm text-gray-700">
                 Automatically publish new episodes from RSS feed
@@ -320,10 +295,7 @@ export default function EditPodcastForm({
           {/* Error Message */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-              <div className="flex items-center">
-                <span className="text-red-600 mr-2">⚠️</span>
-                <p className="text-red-700">{error}</p>
-              </div>
+              <p className="text-red-700 text-sm">{error}</p>
             </div>
           )}
 
@@ -335,8 +307,12 @@ export default function EditPodcastForm({
               variant="primary"
               size="lg"
               rounded="full"
+              className="font-semibold"
             >
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading 
+                ? (isCreating ? 'Creating...' : 'Saving...') 
+                : (isCreating ? 'Create Podcast' : 'Save Changes')
+              }
             </Button>
           </div>
         </form>
