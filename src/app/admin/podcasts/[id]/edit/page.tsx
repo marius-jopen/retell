@@ -50,6 +50,18 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
           return
         }
 
+        // Check if user is admin
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+
+        if (!profile || profile.role !== 'admin') {
+          setFetchError('You must be an admin to edit podcasts')
+          return
+        }
+
         // Get podcast data (admin can edit any podcast)
         const { data: podcastData, error: podcastError } = await supabase
           .from('podcasts')
@@ -98,6 +110,17 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         throw new Error('You must be logged in to update a podcast')
+      }
+
+      // Check if user is admin
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+      if (!profile || profile.role !== 'admin') {
+        throw new Error('You must be an admin to update podcasts')
       }
 
       // Upload cover image if provided
@@ -209,13 +232,13 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
             </div>
             
             {/* Title and Description */}
-            <div>
-              <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-                Edit {podcast.title}
-              </h1>
-              <p className="text-gray-600">
-                Administrative podcast editing and content management
-              </p>
+          <div>
+            <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+              Edit {podcast.title}
+            </h1>
+            <p className="text-gray-600">
+              Administrative podcast editing and content management
+            </p>
               {podcast.user_profiles && (
                 <p className="text-sm text-gray-500 mt-1">
                   Author: {podcast.user_profiles.full_name} ({podcast.user_profiles.email})
@@ -240,26 +263,26 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
             onSubmit={handleSubmit}
             loading={loading}
             isAdmin={true}
-          />
-        </div>
+                  />
+                </div>
 
         {/* Right Column - Episodes (Scrollable) */}
         <div className="lg:w-1/3 flex flex-col space-y-4 min-h-0">
           {/* Episode Actions */}
           <div className="space-y-2 flex-shrink-0">
-            <Link href="/admin/episodes" className="block">
-              <Button 
+            <Link href={`/author/podcasts/${podcastId}/episodes`} className="block">
+                  <Button
                 variant="outline" 
                 size="lg" 
                 rounded="full"
                 className="w-full"
               >
                 Manage All Episodes
-              </Button>
-            </Link>
-          </div>
+                  </Button>
+                </Link>
+            </div>
 
-          {/* Episodes List */}
+            {/* Episodes List */}
           <div className="flex-1 min-h-0">
             <EpisodePreviewList
               title={`Episodes (${episodes.length})`}

@@ -253,6 +253,11 @@ export default async function AuthorPodcastsPage() {
                           </div>
                           
                           <div className="flex items-center space-x-2">
+                            <Link href={`/author/podcasts/${podcast.id}/episodes/${episode.id}/edit`}>
+                              <Button variant="ghost" size="sm" className="text-xs text-gray-600 hover:text-red-600 hover:bg-red-50">
+                                Edit
+                              </Button>
+                            </Link>
                             <EpisodeActions
                               episodeId={episode.id}
                               episodeTitle={episode.title}

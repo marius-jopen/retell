@@ -248,13 +248,13 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
             </div>
             
             {/* Title and Description */}
-            <div>
-              <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-                Edit {podcast.title}
-              </h1>
-              <p className="text-gray-600">
-                Update your podcast details and manage episodes
-              </p>
+          <div>
+            <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+              Edit {podcast.title}
+            </h1>
+            <p className="text-gray-600">
+              Update your podcast details and manage episodes
+            </p>
             </div>
           </div>
           <Link href="/author/podcasts">
@@ -269,33 +269,33 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
         <div className="flex flex-col lg:flex-row gap-8 min-h-0">
           {/* Left Column - Podcast Form (Sticky) */}
           <div className="lg:w-2/3 lg:sticky lg:top-8 lg:self-start">
-            {/* Workflow Status Indicator */}
-            {workflowState && (
+                  {/* Workflow Status Indicator */}
+                  {workflowState && (
               <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-sm font-medium text-gray-700">
-                      Current Mode: 
-                    </span>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-sm font-medium text-gray-700">
+                            Current Mode: 
+                          </span>
                     <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
-                      workflowState.mode === 'manual' 
-                        ? 'bg-blue-100 text-blue-800'
-                        : workflowState.mode === 'rss'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-purple-100 text-purple-800'
-                    }`}>
-                      {workflowState.mode.toUpperCase()}
-                    </span>
-                  </div>
+                            workflowState.mode === 'manual' 
+                              ? 'bg-blue-100 text-blue-800'
+                              : workflowState.mode === 'rss'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-purple-100 text-purple-800'
+                          }`}>
+                            {workflowState.mode.toUpperCase()}
+                          </span>
+                        </div>
 
-                </div>
-                {workflowState.mode === 'hybrid' && (
-                  <p className="text-xs text-gray-500 mt-2">
-                    Some fields may be automatically synced from RSS feed
-                  </p>
-                )}
-              </div>
-            )}
+                      </div>
+                      {workflowState.mode === 'hybrid' && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          Some fields may be automatically synced from RSS feed
+                        </p>
+                      )}
+                    </div>
+                  )}
 
             <EditPodcastForm
               podcast={podcast}
@@ -303,23 +303,23 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
               loading={loading}
               isAdmin={false}
               workflowState={workflowState}
-            />
-          </div>
+                    />
+                  </div>
 
           {/* Right Column - Episodes (Scrollable) */}
           <div className="lg:w-1/3 flex flex-col space-y-4 min-h-0">
             {/* Episode Actions */}
             <div className="space-y-2 flex-shrink-0">
               <Link href={`/author/podcasts/${podcastId}/episodes/new`} className="block">
-                <Button 
+                    <Button
                   variant="default" 
                   size="lg" 
                   rounded="full"
                   className="w-full"
                 >
-                  Add Episode
-                </Button>
-              </Link>
+                      Add Episode
+                    </Button>
+                  </Link>
               {episodes.length > 0 && (
                 <Link href={`/author/podcasts/${podcastId}/episodes`} className="block">
                   <Button 
@@ -328,9 +328,9 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                     rounded="full"
                     className="w-full"
                   >
-                    View All Episodes
-                  </Button>
-                </Link>
+                        View All Episodes
+                      </Button>
+                    </Link>
               )}
             </div>
 

@@ -55,23 +55,14 @@ export default function EpisodeActions({ episodeId, episodeTitle, podcastId }: E
   }
 
   return (
-    <div className="flex items-center space-x-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => router.push(`/author/podcasts/${podcastId}/episodes/${episodeId}/edit`)}
-      >
-        Edit
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleDelete}
-        disabled={loading}
-        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-      >
-        {loading ? 'Deleting...' : 'Delete'}
-      </Button>
-    </div>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleDelete}
+      disabled={loading}
+      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+    >
+      {loading ? 'Deleting...' : 'Delete'}
+    </Button>
   )
 } 
