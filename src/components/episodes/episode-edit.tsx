@@ -26,6 +26,7 @@ interface Podcast {
   title: string
   author_id: string
   status: 'draft' | 'pending' | 'approved' | 'rejected'
+  cover_image_url: string | null
 }
 
 interface EpisodeEditProps {
@@ -73,7 +74,7 @@ export default function EpisodeEdit({
         // Build podcast query based on role
         let podcastQuery = supabase
           .from('podcasts')
-          .select('id, title, author_id, status')
+          .select('id, title, author_id, status, cover_image_url')
           .eq('id', podcastId)
 
         // If not admin, restrict to user's own podcasts
@@ -338,13 +339,33 @@ export default function EpisodeEdit({
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {isAdmin ? 'Admin Edit' : 'Edit'} {podcast.title}
-            </h1>
-            <p className="mt-2 text-lg text-gray-600">
-              Update episode "{episode?.title}"
-            </p>
+          <div className="flex items-center space-x-4">
+            {/* Podcast Cover Image */}
+            <div className="flex-shrink-0">
+              {podcast.cover_image_url ? (
+                <img
+                  src={podcast.cover_image_url}
+                  alt={podcast.title}
+                  className="w-16 h-16 rounded-2xl object-cover shadow-sm"
+                />
+              ) : (
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-sm">
+                  <span className="text-white font-bold text-lg">
+                    {podcast.title.substring(0, 2).toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            {/* Title and Description */}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {isAdmin ? 'Admin Edit' : 'Edit'} {podcast.title}
+              </h1>
+              <p className="mt-2 text-lg text-gray-600">
+                Update episode "{episode?.title}"
+              </p>
+            </div>
           </div>
           <Link href={backUrl}>
             <Button variant="outline">Cancel</Button>

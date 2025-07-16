@@ -10,16 +10,25 @@ interface PodcastActionsProps {
   podcastId: string
   podcastTitle: string
   status: 'draft' | 'pending' | 'approved' | 'rejected'
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
 }
 
-export default function PodcastActions({ podcastId, podcastTitle, status }: PodcastActionsProps) {
-  const [loading, setLoading] = useState<'approve' | 'reject' | null>(null)
+export default function PodcastActions({ 
+  podcastId, 
+  podcastTitle, 
+  status, 
+  size = 'sm',
+  className = '' 
+}: PodcastActionsProps) {
+  const [loading, setLoading] = useState<'approve' | 'reject' | 'pending' | null>(null)
   const { addToast } = useToast()
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
 
-  const updatePodcastStatus = async (newStatus: 'approved' | 'rejected') => {
-    setLoading(newStatus === 'approved' ? 'approve' : 'reject')
+  const updatePodcastStatus = async (newStatus: 'approved' | 'rejected' | 'pending') => {
+    const action = newStatus === 'approved' ? 'approve' : newStatus === 'rejected' ? 'reject' : 'pending'
+    setLoading(action)
     
     try {
       const { error } = await supabase
@@ -30,14 +39,20 @@ export default function PodcastActions({ podcastId, podcastTitle, status }: Podc
       if (error) {
         addToast({
           type: 'error',
-          message: `Failed to ${newStatus === 'approved' ? 'approve' : 'reject'} podcast: ${error.message}`
+          message: `Failed to ${action} podcast: ${error.message}`
         })
         return
       }
 
+      const actionMessage = {
+        approved: 'approved',
+        rejected: 'rejected', 
+        pending: 'marked as pending'
+      }[newStatus]
+
       addToast({
         type: 'success',
-        message: `Successfully ${newStatus === 'approved' ? 'approved' : 'rejected'} "${podcastTitle}"`
+        message: `Successfully ${actionMessage} "${podcastTitle}"`
       })
 
       // Refresh the page to show updated status
@@ -52,28 +67,56 @@ export default function PodcastActions({ podcastId, podcastTitle, status }: Podc
     }
   }
 
-  if (status !== 'pending') {
+  const getAvailableActions = () => {
+    switch (status) {
+      case 'pending':
+        return [
+          { action: 'approved', label: 'Approve', variant: 'primary' as const },
+          { action: 'rejected', label: 'Reject', variant: 'destructive' as const }
+        ]
+      case 'approved':
+        return [
+          { action: 'pending', label: 'Mark Pending', variant: 'outline' as const },
+          { action: 'rejected', label: 'Reject', variant: 'destructive' as const }
+        ]
+      case 'rejected':
+        return [
+          { action: 'approved', label: 'Approve', variant: 'primary' as const },
+          { action: 'pending', label: 'Mark Pending', variant: 'outline' as const }
+        ]
+      case 'draft':
+        return [
+          { action: 'pending', label: 'Submit for Review', variant: 'outline' as const }
+        ]
+      default:
+        return []
+    }
+  }
+
+  const availableActions = getAvailableActions()
+
+  if (availableActions.length === 0) {
     return null
   }
 
   return (
-    <div className="flex space-x-2">
-      <Button
-        size="sm"
-        className="bg-green-600 hover:bg-green-700"
-        onClick={() => updatePodcastStatus('approved')}
-        disabled={loading !== null}
-      >
-        {loading === 'approve' ? 'Approving...' : 'Approve'}
-      </Button>
-      <Button
-        size="sm"
-        variant="destructive"
-        onClick={() => updatePodcastStatus('rejected')}
-        disabled={loading !== null}
-      >
-        {loading === 'reject' ? 'Rejecting...' : 'Reject'}
-      </Button>
+    <div className={`flex space-x-2 ${className}`}>
+      {availableActions.map(({ action, label, variant }) => (
+        <Button
+          key={action}
+          size={size}
+          variant={variant}
+          rounded="full"
+          onClick={() => updatePodcastStatus(action as 'approved' | 'rejected' | 'pending')}
+          disabled={loading !== null}
+          className={variant === 'primary' ? 'font-semibold' : ''}
+        >
+          {loading === action ? 
+            `${action === 'approved' ? 'Approving' : action === 'rejected' ? 'Rejecting' : 'Updating'}...` : 
+            label
+          }
+        </Button>
+      ))}
     </div>
   )
 } 

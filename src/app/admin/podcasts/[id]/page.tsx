@@ -1,6 +1,7 @@
 import { requireRole } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import PodcastActions from '@/components/admin/podcast-actions'
 import Link from 'next/link'
 import { formatDate, formatDuration } from '@/lib/utils'
 
@@ -110,10 +111,10 @@ export default async function AdminPodcastViewPage({ params }: { params: Promise
   }
 
   const statusColors = {
-    draft: 'bg-gray-100 text-gray-800',
-    pending: 'bg-yellow-100 text-yellow-800',
-    approved: 'bg-green-100 text-green-800',
-    rejected: 'bg-red-100 text-red-800',
+    draft: 'bg-gray-100 text-gray-800 border-gray-200',
+    pending: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+    approved: 'bg-green-50 text-green-800 border-green-200',
+    rejected: 'bg-red-50 text-red-800 border-red-200',
   }
 
   return (
@@ -121,19 +122,19 @@ export default async function AdminPodcastViewPage({ params }: { params: Promise
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-start justify-between">
+            <div className="flex items-start space-x-6">
               {/* Podcast Cover Image */}
               <div className="flex-shrink-0">
                 {podcast.cover_image_url ? (
                   <img
                     src={podcast.cover_image_url}
                     alt={podcast.title}
-                    className="w-20 h-20 rounded-2xl object-cover shadow-sm"
+                    className="w-24 h-24 rounded-2xl object-cover shadow-lg border border-gray-200"
                   />
                 ) : (
-                  <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-sm">
-                    <span className="text-white font-bold text-xl">
+                  <div className="w-24 h-24 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-2xl">
                       {podcast.title.substring(0, 2).toUpperCase()}
                     </span>
                   </div>
@@ -141,43 +142,60 @@ export default async function AdminPodcastViewPage({ params }: { params: Promise
               </div>
               
               {/* Title and Description */}
-              <div>
-                <div className="flex items-center space-x-3 mb-2">
-                  <h1 className="text-3xl font-semibold text-gray-900">{podcast.title}</h1>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[podcast.status]}`}>
+              <div className="flex-1">
+                <div className="flex items-center space-x-3 mb-3">
+                  <h1 className="text-3xl font-bold text-gray-900">{podcast.title}</h1>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium capitalize border ${statusColors[podcast.status]}`}>
                     {podcast.status}
                   </span>
                 </div>
-                <p className="text-gray-600 mb-2">
+                <p className="text-gray-600 mb-4 leading-relaxed max-w-3xl">
                   {podcast.description}
                 </p>
                 {podcast.user_profiles && (
-                  <p className="text-sm text-gray-500">
-                    Author: {podcast.user_profiles.full_name} ({podcast.user_profiles.email})
-                  </p>
+                  <div className="flex items-center space-x-2 text-sm">
+                    <span className="font-medium text-gray-700">Author:</span>
+                    <span className="text-gray-600">{podcast.user_profiles.full_name}</span>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-gray-500">{podcast.user_profiles.email}</span>
+                  </div>
                 )}
               </div>
             </div>
-            <div className="flex space-x-3">
-              <Link href={`/admin/podcasts/${podcast.id}/edit`}>
-                <Button 
-                  variant="primary" 
-                  size="lg" 
-                  rounded="full"
-                  className="font-semibold"
-                >
-                  Edit Podcast
-                </Button>
-              </Link>
-              <Link href="/admin/podcasts">
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  rounded="full"
-                >
-                  Back to Podcasts
-                </Button>
-              </Link>
+            
+            {/* Action Buttons */}
+            <div className="flex flex-col space-y-3">
+              {/* Admin Actions for Status Changes */}
+              <PodcastActions 
+                podcastId={podcast.id}
+                podcastTitle={podcast.title}
+                status={podcast.status}
+                size="md"
+                className="justify-end"
+              />
+              
+              {/* Management Actions */}
+              <div className="flex space-x-3">
+                <Link href={`/admin/podcasts/${podcast.id}/edit`}>
+                  <Button 
+                    variant="primary" 
+                    size="lg" 
+                    rounded="full"
+                    className="font-semibold"
+                  >
+                    Edit Podcast
+                  </Button>
+                </Link>
+                <Link href="/admin/podcasts">
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    rounded="full"
+                  >
+                    Back to Podcasts
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -186,38 +204,48 @@ export default async function AdminPodcastViewPage({ params }: { params: Promise
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           {/* Podcast Info */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Podcast Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Podcast Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Category</label>
-                  <p className="text-gray-900">{podcast.category}</p>
+                  <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Category</label>
+                  <p className="text-gray-900 font-medium mt-1">{podcast.category}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Language</label>
-                  <p className="text-gray-900">{podcast.language.toUpperCase()}</p>
+                  <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Language</label>
+                  <p className="text-gray-900 font-medium mt-1">{podcast.language.toUpperCase()}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Country</label>
-                  <p className="text-gray-900">{podcast.country}</p>
+                  <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Country</label>
+                  <p className="text-gray-900 font-medium mt-1">{podcast.country || 'Unknown'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Auto-Publish Episodes</label>
-                  <p className="text-gray-900">{podcast.auto_publish_episodes ? 'Yes' : 'No'}</p>
+                  <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Auto-Publish Episodes</label>
+                  <p className="text-gray-900 font-medium mt-1">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      podcast.auto_publish_episodes 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {podcast.auto_publish_episodes ? 'Yes' : 'No'}
+                    </span>
+                  </p>
                 </div>
                 {podcast.rss_url && (
                   <div className="md:col-span-2">
-                    <label className="text-sm font-medium text-gray-600">RSS Feed</label>
-                    <p className="text-gray-900 text-sm break-all">{podcast.rss_url}</p>
+                    <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">RSS Feed</label>
+                    <p className="text-gray-900 text-sm break-all mt-1 bg-gray-50 p-3 rounded-lg border">
+                      {podcast.rss_url}
+                    </p>
                   </div>
                 )}
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Created</label>
-                  <p className="text-gray-900">{formatDate(podcast.created_at)}</p>
+                  <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Created</label>
+                  <p className="text-gray-900 font-medium mt-1">{formatDate(podcast.created_at)}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Last Updated</label>
-                  <p className="text-gray-900">{formatDate(podcast.updated_at)}</p>
+                  <label className="text-sm font-medium text-gray-500 uppercase tracking-wide">Last Updated</label>
+                  <p className="text-gray-900 font-medium mt-1">{formatDate(podcast.updated_at)}</p>
                 </div>
               </div>
             </div>
@@ -225,25 +253,29 @@ export default async function AdminPodcastViewPage({ params }: { params: Promise
 
           {/* Stats */}
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center shadow-sm">
-                  <div className="w-6 h-6 bg-white rounded-full"></div>
+                <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center shadow-sm">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Episodes</p>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Episodes</p>
                   <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center shadow-sm">
-                  <div className="w-6 h-6 bg-white rounded-full"></div>
+                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-sm">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Duration</p>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Duration</p>
                   <p className="text-3xl font-bold text-gray-900">{Math.floor(stats.totalDuration / 60)}m</p>
                 </div>
               </div>
@@ -252,8 +284,8 @@ export default async function AdminPodcastViewPage({ params }: { params: Promise
         </div>
 
         {/* Episodes List */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-5 border-b border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">Episodes</h2>
@@ -261,7 +293,7 @@ export default async function AdminPodcastViewPage({ params }: { params: Promise
                   {stats.total} episodes • {Math.floor(stats.totalDuration / 60)} minutes total
                 </p>
               </div>
-              <Link href={`/author/podcasts/${podcast.id}/episodes`}>
+              <Link href={`/admin/podcasts/${podcast.id}/episodes`}>
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -323,11 +355,11 @@ export default async function AdminPodcastViewPage({ params }: { params: Promise
                 ))}
               
               {episodes.length > 10 && (
-                <div className="p-6 text-center border-t border-gray-100 bg-gray-50">
+                <div className="p-6 text-center border-t border-gray-200 bg-gray-50">
                   <p className="text-sm text-gray-600 mb-4">
                     Showing 10 of {episodes.length} episodes
                   </p>
-                  <Link href={`/author/podcasts/${podcast.id}/episodes`}>
+                  <Link href={`/admin/podcasts/${podcast.id}/episodes`}>
                     <Button 
                       variant="outline" 
                       size="sm" 
