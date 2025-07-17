@@ -14,6 +14,8 @@ export type { FileInputProps } from './file-input'
 // Other UI components
 export { Button } from './button'
 export { Card, CardHeader, CardTitle, CardContent } from './card'
+export { PodcastCard } from './podcast-card'
+export { FilterBar } from './filter-bar'
 export { StatsCard } from './stats-card'
 export { ContentBox } from './content-box'
 export { ListItemCard } from './list-item-card'
