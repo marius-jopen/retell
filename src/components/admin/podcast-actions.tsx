@@ -100,18 +100,17 @@ export default function PodcastActions({
   }
 
   return (
-    <div className={`flex space-x-2 ${className}`}>
+    <div className={`flex space-x-1 ${className}`}>
       {availableActions.map(({ action, label, variant }) => (
         <Button
           key={action}
-          size={size}
           variant={variant}
-          rounded="full"
+          size="sm"
           onClick={() => updatePodcastStatus(action as 'approved' | 'rejected' | 'pending')}
           disabled={loading !== null}
-          className={variant === 'primary' ? 'font-semibold' : ''}
+          className="text-xs px-2 py-1 h-7"
         >
-          {loading === action ? 
+          {loading === (action === 'approved' ? 'approve' : action === 'rejected' ? 'reject' : 'pending') ? 
             `${action === 'approved' ? 'Approving' : action === 'rejected' ? 'Rejecting' : 'Updating'}...` : 
             label
           }

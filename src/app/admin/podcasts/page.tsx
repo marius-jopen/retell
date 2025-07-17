@@ -2,7 +2,7 @@ import { requireAdmin } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { StatsCard } from '@/components/ui/stats-card'
-import AdminPodcastTable from '@/components/admin/admin-podcast-table'
+import { AdminPodcastClient } from '@/components/admin/admin-podcast-client'
 import Link from 'next/link'
 
 interface Podcast {
@@ -54,6 +54,14 @@ async function getPodcasts() {
     console.error('Error fetching podcasts:', error)
     return []
   }
+  
+  // Debug log to see what we're getting
+  console.log('Fetched podcasts:', podcasts?.slice(0, 2)?.map(p => ({
+    id: p.id,
+    title: p.title,
+    author_id: p.author_id,
+    user_profiles: p.user_profiles
+  })))
   
   return podcasts as Podcast[]
 }
@@ -114,7 +122,7 @@ export default async function AdminPodcastsPage() {
       </div>
 
       {/* Podcast Table */}
-      <AdminPodcastTable podcasts={podcasts} />
+      <AdminPodcastClient podcasts={podcasts} />
     </div>
   )
 } 
