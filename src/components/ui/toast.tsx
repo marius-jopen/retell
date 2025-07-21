@@ -23,32 +23,38 @@ const ToastContext = createContext<{
   removeToast: (id: string) => void
 } | null>(null)
 
-// Monkey Island-style podcast humor messages
+// LucasArts point-and-click adventure style podcast humor messages
 const getHumorMessage = (type: Toast['type']): string => {
   const messages = {
     success: [
-      "🎙️ Ahoy! Your podcast be sailing smooth waters, matey!",
-      "🏴‍☠️ Arrr! That be a fine piece of audio treasure!",
-      "🎧 Your listeners be cheering from the crow's nest!",
-      "⚓ Success! Even the ship's parrot be applauding!",
-      "🗺️ Navigation successful! X marks the spot of great content!",
-      "🦜 Polly says: 'That be some mighty fine podcasting!'"
+      "🎙️ Achievement unlocked! Your podcast powers have increased.",
+      "🏆 Congratulations! You've successfully used PODCAST on INTERNET.",
+      "✨ Your microphone glows with a mysterious podcast energy...",
+      "🎧 *DING* The universe approves of your audio wizardry!",
+      "🚀 Mission accomplished! Your podcast rocket has launched successfully.",
+      "🎯 *Click* That worked better than expected! Nice job, audio adventurer.",
+      "🌟 The Secret of Podcast Island has been unlocked!",
+      "🎮 *Victory fanfare plays* Your podcast quest is progressing smoothly!"
     ],
     error: [
-      "💥 Blimey! Seems we've hit a reef in the audio seas!",
-      "🔥 Shiver me timbers! The podcast ship needs repairs!",
-      "🌊 Batten down the hatches! We've got a storm brewing!",
-      "💣 Yo ho ho! The audio cannon misfired!",
-      "🚫 Curse the scallywags! Something went awry!",
-      "⚠️ All hands on deck! The podcast ship be taking water!"
+      "💥 Oh no! You can't USE SAVE on BROKEN EPISODE.",
+      "🔧 *Error sound* That's not quite right. Try using REPAIR on PODCAST.",
+      "⚡ The podcast machine made a concerning buzzing noise...",
+      "🚫 I don't think that verb will work in this podcast context.",
+      "💻 *Sad computer beep* The podcast spirits are displeased today.",
+      "🎭 Plot twist! Something unexpected happened in your audio adventure.",
+      "🔥 Warning: Podcast combustion detected! Please try again.",
+      "❌ *Record scratch* That didn't go according to the script..."
     ],
     info: [
-      "📻 Ahoy there! The radio waves carry news!",
-      "🗣️ Hear ye, hear ye! The town crier has word!",
-      "🎵 The ship's musician has a tune to share!",
-      "📜 A message in a bottle has washed ashore!",
-      "🔔 The ship's bell rings with tidings!",
-      "🎪 Gather 'round the campfire for a tale!"
+      "📻 A mysterious podcast message appears in your inventory!",
+      "🗣️ *Narrator voice* Meanwhile, in the land of audio content...",
+      "🎵 You hear the distant sound of podcast progress being made.",
+      "📜 A helpful hint appears on your podcast HUD!",
+      "🔔 *Notification chime* The podcast gods have spoken!",
+      "💭 You suddenly remember something important about podcasting...",
+      "🎪 Breaking news from the Department of Audio Adventures!",
+      "📡 Your podcast communication device is receiving a transmission..."
     ]
   }
   
@@ -79,7 +85,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const addToast = (toast: Omit<Toast, 'id'>) => {
     const id = Math.random().toString(36).substr(2, 9)
     // Add humor message if not already present
-    const humorMessage = toast.message.includes('🎙️') || toast.message.includes('🏴‍☠️') 
+    const humorMessage = toast.message.includes('🎙️') || toast.message.includes('🎧') || toast.message.includes('*') 
       ? toast.message 
       : getHumorMessage(toast.type)
     
@@ -150,13 +156,13 @@ function ToastItem({ toast, onRemove, index }: ToastItemProps) {
   const getToastStyles = (type: Toast['type']) => {
     switch (type) {
       case 'success':
-        return 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white border-green-300'
-      case 'error':
         return 'bg-gradient-to-r from-red-400 via-red-500 to-red-600 text-white border-red-300'
+      case 'error':
+        return 'bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white border-red-400'
       case 'info':
-        return 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 text-white border-blue-300'
+        return 'bg-gradient-to-r from-red-400 via-red-500 to-red-600 text-white border-red-300'
       default:
-        return 'bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 text-white border-gray-300'
+        return 'bg-gradient-to-r from-red-400 via-red-500 to-red-600 text-white border-red-300'
     }
   }
 
@@ -185,6 +191,19 @@ function ToastItem({ toast, onRemove, index }: ToastItemProps) {
     }
   }
 
+  const getBackgroundStyle = (type: Toast['type']) => {
+    switch (type) {
+      case 'success':
+        return 'linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95))'
+      case 'error':
+        return 'linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(185, 28, 28, 0.95))'
+      case 'info':
+        return 'linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95))'
+      default:
+        return 'linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95))'
+    }
+  }
+
   return (
     <div 
       className={`
@@ -196,7 +215,7 @@ function ToastItem({ toast, onRemove, index }: ToastItemProps) {
       `}
       style={{
         animationDelay: `${index * 100}ms`,
-        background: `linear-gradient(135deg, ${toast.type === 'success' ? 'rgba(34, 197, 94, 0.95)' : toast.type === 'error' ? 'rgba(239, 68, 68, 0.95)' : 'rgba(59, 130, 246, 0.95)'}, ${toast.type === 'success' ? 'rgba(22, 163, 74, 0.95)' : toast.type === 'error' ? 'rgba(220, 38, 38, 0.95)' : 'rgba(37, 99, 235, 0.95)'})`
+        background: getBackgroundStyle(toast.type)
       }}
     >
       <div className="flex items-start space-x-3">
@@ -221,7 +240,7 @@ function ToastItem({ toast, onRemove, index }: ToastItemProps) {
         </div>
       </div>
       
-      {/* Toast slice decoration */}
+      {/* Toast slice decoration - now red themed */}
       <div className="absolute -top-1 -left-1 w-2 h-2 bg-white/30 rounded-full"></div>
       <div className="absolute -top-1 -right-1 w-2 h-2 bg-white/30 rounded-full"></div>
       <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white/30 rounded-full"></div>

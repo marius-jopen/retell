@@ -1,6 +1,7 @@
 import { requireRole } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { StatsCard } from '@/components/ui/stats-card'
 import Link from 'next/link'
 import AuthorPodcastActions from '@/components/author/podcast-actions'
 import RSSUpdate from '@/components/rss/rss-update'
@@ -22,7 +23,6 @@ interface Podcast {
     id: string
     title: string
     episode_number: number
-    status: 'draft' | 'pending' | 'approved' | 'rejected'
     created_at: string
   }>
 }
@@ -38,7 +38,6 @@ async function getAuthorPodcasts(authorId: string) {
         id,
         title,
         episode_number,
-        status,
         created_at
       )
     `)
@@ -67,9 +66,6 @@ export default async function AuthorPodcastsPage() {
   
   const stats = {
     total: podcasts.length,
-    draft: podcasts.filter(p => p.status === 'draft').length,
-    pending: podcasts.filter(p => p.status === 'pending').length,
-    approved: podcasts.filter(p => p.status === 'approved').length,
     totalEpisodes: podcasts.reduce((sum, p) => sum + p.episodes.length, 0)
   }
 
@@ -79,21 +75,30 @@ export default async function AuthorPodcastsPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-semibold text-gray-900">
                 My Podcasts
               </h1>
               <p className="mt-2 text-gray-600">
                 Manage your podcast content and episodes
               </p>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex space-x-3">
               <Link href="/author/upload">
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  rounded="full"
+                  className="font-semibold"
+                >
                   Create New Podcast
                 </Button>
               </Link>
               <Link href="/author">
-                <Button variant="outline">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  rounded="full"
+                >
                   Back to Dashboard
                 </Button>
               </Link>
@@ -102,99 +107,57 @@ export default async function AuthorPodcastsPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Podcasts</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-gray-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Draft</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.draft}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Approved</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Episodes</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalEpisodes}</p>
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <StatsCard
+            title="Total Podcasts"
+            value={stats.total}
+            icon="🎙️"
+            color="red"
+          />
+          <StatsCard
+            title="Total Episodes"
+            value={stats.totalEpisodes}
+            icon="🎵"
+            color="red"
+          />
         </div>
 
         {/* Podcast List */}
         <div className="space-y-6">
           {podcasts.length === 0 ? (
-            <div className="bg-white rounded-lg shadow text-center py-16">
-              <div className="text-6xl mb-4">🎙️</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No podcasts yet</h3>
-              <p className="text-gray-600 mb-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 text-center py-16">
+              <div className="text-6xl mb-6">🎙️</div>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">No podcasts yet</h3>
+              <p className="text-gray-600 mb-8 max-w-md mx-auto">
                 Get started by creating your first podcast and share your voice with the world.
               </p>
               <Link href="/author/upload">
-                <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+                <Button 
+                  variant="primary" 
+                  size="lg" 
+                  rounded="full"
+                  className="font-semibold"
+                >
                   Create Your First Podcast
                 </Button>
               </Link>
             </div>
           ) : (
             podcasts.map((podcast) => (
-              <div key={podcast.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300">
+              <div key={podcast.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
                 {/* Main Content */}
-                <div className="p-6">
+                <div className="p-4">
                   <div className="flex items-start space-x-4">
                     <div className="flex-shrink-0">
                       {podcast.cover_image_url ? (
                         <img 
                           src={podcast.cover_image_url} 
                           alt={podcast.title}
-                          className="h-24 w-24 rounded-lg object-cover"
+                          className="h-20 w-20 rounded-2xl object-cover shadow-sm"
                         />
                       ) : (
-                        <div className="h-24 w-24 rounded-lg bg-gray-300 flex items-center justify-center">
-                          <span className="text-gray-600 font-bold text-xl">
+                        <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-sm">
+                          <span className="text-white font-bold text-lg">
                             {podcast.title.substring(0, 2).toUpperCase()}
                           </span>
                         </div>
@@ -202,26 +165,20 @@ export default async function AuthorPodcastsPage() {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <h3 className="text-xl font-semibold text-gray-900">{podcast.title}</h3>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800`}>
-                            Published
-                          </span>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="text-xl font-semibold text-gray-900 mb-1">{podcast.title}</h3>
+                          <p className="text-gray-600 line-clamp-2 text-sm leading-relaxed">
+                            {podcast.description}
+                          </p>
                         </div>
                       </div>
                       
-                      <p className="mt-2 text-gray-600 line-clamp-2">
-                        {podcast.description}
-                      </p>
-                      
                       {/* Metadata */}
-                      <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                        <span className="capitalize">{podcast.category}</span>
+                      <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-gray-500">
+                        <span className="capitalize font-medium">{podcast.category}</span>
                         <span>•</span>
-                        <span>{podcast.language.toUpperCase()}</span>
-                        <span>•</span>
-                        <span>{podcast.country}</span>
+                        <span className="font-medium">{podcast.language.toUpperCase()}</span>
                         <span>•</span>
                         <span>{podcast.episodes.length} episodes</span>
                         <span>•</span>
@@ -234,17 +191,17 @@ export default async function AuthorPodcastsPage() {
                   <div className="mt-6 flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Link href={`/podcast/${podcast.id}`}>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" rounded="full">
                           View
                         </Button>
                       </Link>
                       <Link href={`/author/podcasts/${podcast.id}/edit`}>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" rounded="full">
                           Edit
                         </Button>
                       </Link>
                       <Link href={`/author/podcasts/${podcast.id}/episodes`}>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" rounded="full">
                           Episodes
                         </Button>
                       </Link>
@@ -270,37 +227,34 @@ export default async function AuthorPodcastsPage() {
 
                 {/* Episodes Preview */}
                 {podcast.episodes.length > 0 && (
-                  <div className="bg-gray-50 border-t px-6 py-4">
+                  <div className="bg-gray-50 border-t border-gray-100 px-6 py-5 rounded-b-2xl">
                     <div className="flex items-center justify-between mb-4">
                       <h4 className="text-sm font-semibold text-gray-900">Recent Episodes</h4>
                       <Link href={`/author/podcasts/${podcast.id}/episodes`}>
-                        <Button variant="ghost" size="sm" className="text-xs">
+                        <Button variant="ghost" size="sm" className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50">
                           View All {podcast.episodes.length} →
                         </Button>
                       </Link>
                     </div>
                     
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {podcast.episodes.slice(0, 3).map((episode) => (
-                        <div key={episode.id} className="flex items-center justify-between p-3 bg-white rounded-lg">
+                        <div key={episode.id} className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
                           <div className="flex items-center space-x-3">
                             <div className="flex-shrink-0">
-                              <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-gray-500 text-white text-xs font-medium">
-                                #{episode.episode_number}
-                              </span>
+                              <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white font-medium text-xs">
+                                {episode.episode_number}
+                              </div>
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-gray-900 truncate">{episode.title}</p>
-                              <p className="text-xs text-gray-500">{formatDate(episode.created_at)}</p>
+                              <p className="text-xs text-gray-500 mt-0.5">{formatDate(episode.created_at)}</p>
                             </div>
                           </div>
                           
                           <div className="flex items-center space-x-2">
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              Published
-                            </span>
                             <Link href={`/author/podcasts/${podcast.id}/episodes/${episode.id}/edit`}>
-                              <Button variant="ghost" size="sm" className="text-xs">
+                              <Button variant="outline" size="sm" className="text-xs text-gray-600 hover:text-red-600 hover:bg-red-50 border-gray-200 hover:border-red-200">
                                 Edit
                               </Button>
                             </Link>

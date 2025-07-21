@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Input, Select } from '@/components/ui'
 import { useToast } from '@/components/ui/toast'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
@@ -109,101 +110,70 @@ export default function UserEditModal({ user, isOpen, onClose, currentUserId }: 
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="full_name"
-              name="full_name"
-              value={formData.full_name}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              required
-            />
-          </div>
+          <Input
+            label="Full Name"
+            id="full_name"
+            name="full_name"
+            value={formData.full_name}
+            onChange={handleInputChange}
+            required
+          />
+
+          <Input
+            label="Email"
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-              Role
-            </label>
-            <select
+            <Select
+              label="Role"
               id="role"
               name="role"
               value={formData.role}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               disabled={user.id === currentUserId} // Don't allow changing own role
             >
               <option value="client">Client</option>
               <option value="author">Author</option>
               <option value="admin">Admin</option>
-            </select>
+            </Select>
             {user.id === currentUserId && (
               <p className="text-xs text-gray-500 mt-1">You cannot change your own role</p>
             )}
           </div>
 
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-              Company
-            </label>
-            <input
-              type="text"
-              id="company"
-              name="company"
-              value={formData.company}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              placeholder="Optional"
-            />
-          </div>
+          <Input
+            label="Company"
+            id="company"
+            name="company"
+            value={formData.company}
+            onChange={handleInputChange}
+            placeholder="Optional"
+          />
 
-          <div>
-            <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
-              Country
-            </label>
-            <input
-              type="text"
-              id="country"
-              name="country"
-              value={formData.country}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              placeholder="Optional"
-            />
-          </div>
+          <Input
+            label="Country"
+            id="country"
+            name="country"
+            value={formData.country}
+            onChange={handleInputChange}
+            placeholder="Optional"
+          />
 
-          <div>
-            <label htmlFor="avatar_url" className="block text-sm font-medium text-gray-700 mb-1">
-              Avatar URL
-            </label>
-            <input
-              type="url"
-              id="avatar_url"
-              name="avatar_url"
-              value={formData.avatar_url}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              placeholder="Optional"
-            />
-          </div>
+          <Input
+            label="Avatar URL"
+            type="url"
+            id="avatar_url"
+            name="avatar_url"
+            value={formData.avatar_url}
+            onChange={handleInputChange}
+            placeholder="Optional"
+          />
 
           <div className="flex justify-end space-x-3 pt-4">
             <Button

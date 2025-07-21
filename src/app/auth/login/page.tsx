@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui'
 import { getRedirectForRole } from '@/lib/auth'
 
 export default function LoginPage() {
@@ -48,7 +49,7 @@ export default function LoginPage() {
           router.refresh() // Refresh to update server-side auth state
         }
       }
-    } catch (error) {
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -73,7 +74,7 @@ export default function LoginPage() {
       }
 
       setMagicLinkSent(true)
-    } catch (error) {
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -92,7 +93,7 @@ export default function LoginPage() {
                 ✨ Check Your Email!
               </h2>
               <p className="text-gray-600 mb-2">
-                🎉 We've sent a magic link to
+                🎉 We&apos;ve sent a magic link to
               </p>
               <p className="text-red-600 font-semibold mb-8">
                 {email}
@@ -126,10 +127,10 @@ export default function LoginPage() {
             Welcome Back! ✨
           </h2>
           <p className="text-red-100 mb-8">
-            🎧 Ready to dive back into your podcast journey? Let's get you signed in!
+            🎧 Ready to dive back into your podcast journey? Let&apos;s get you signed in!
           </p>
           <p className="text-red-100/80">
-            Don't have an account yet?{' '}
+            Don&apos;t have an account yet?{' '}
             <Link href="/auth/signup" className="font-medium text-white hover:text-red-200 underline decoration-white/50 hover:decoration-white transition-all">
               🚀 Create one here
             </Link>
@@ -140,39 +141,31 @@ export default function LoginPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
         <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-8 py-12 border border-white/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
           <form className="space-y-6" onSubmit={handleEmailLogin}>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                📧 Email Address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
-                placeholder="your@email.com"
-              />
-            </div>
+            <Input
+              label="📧 Email Address"
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              className="bg-white/80 backdrop-blur-sm border-red-200"
+            />
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                🔐 Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
-                placeholder="Your secret password"
-              />
-            </div>
+            <Input
+              label="🔐 Password"
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Your secret password"
+              className="bg-white/80 backdrop-blur-sm border-red-200"
+            />
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-in fade-in-0 slide-in-from-top-2 duration-300">

@@ -344,7 +344,7 @@ export default function PodcastWorkflowManager({
                 type="url"
                 value={transitionData.rss_url}
                 onChange={(e) => setTransitionData({ ...transitionData, rss_url: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                 placeholder="https://your-podcast-feed.com/rss"
                 required
               />

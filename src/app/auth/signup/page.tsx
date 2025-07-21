@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { Input, Select } from '@/components/ui'
 import { UserRole } from '@/lib/auth'
 
 export default function SignupPage() {
@@ -16,7 +16,6 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createBrowserSupabaseClient()
 
   useEffect(() => {
     const roleParam = searchParams.get('role') as UserRole
@@ -76,7 +75,7 @@ export default function SignupPage() {
             Join the Adventure! ✨
           </h2>
           <p className="text-red-100 mb-8">
-            🎙️ Ready to share your amazing podcast stories with the world? Let's create your account!
+            🎙️ Ready to share your amazing podcast stories with the world? Let&apos;s create your account!
           </p>
           <p className="text-red-100/80">
             Already have an account?{' '}
@@ -90,70 +89,56 @@ export default function SignupPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
         <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-8 py-12 border border-white/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
           <form className="space-y-6" onSubmit={handleSignup}>
-            <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-2">
-                👤 Full Name
-              </label>
-              <input
-                id="full_name"
-                name="full_name"
-                type="text"
-                autoComplete="name"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
-                placeholder="Your awesome name"
-              />
-            </div>
+            <Input
+              label="👤 Full Name"
+              id="full_name"
+              name="full_name"
+              type="text"
+              autoComplete="name"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Your awesome name"
+              className="bg-white/80 backdrop-blur-sm border-red-200"
+            />
+
+            <Input
+              label="📧 Email Address"
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              className="bg-white/80 backdrop-blur-sm border-red-200"
+            />
+
+            <Input
+              label="🔐 Password"
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Create a strong password"
+              className="bg-white/80 backdrop-blur-sm border-red-200"
+            />
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                📧 Email Address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
-                placeholder="your@email.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                🔐 Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
-                placeholder="Create a strong password"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-                🎯 I am a...
-              </label>
-              <select
+              <Select
+                label="🎯 I am a..."
                 id="role"
                 name="role"
                 value={role}
                 onChange={(e) => setRole(e.target.value as UserRole)}
-                className="block w-full px-4 py-3 border border-red-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all bg-white/80 backdrop-blur-sm"
+                className="bg-white/80 backdrop-blur-sm border-red-200"
               >
                 <option value="author">🎙️ Author (Upload content)</option>
-              </select>
+              </Select>
               <div className="mt-3 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl border border-red-100">
                 <p className="text-sm text-gray-700">
                   {role === 'author' && '🎨 Perfect! You\'ll be able to upload and manage your amazing podcast content'}

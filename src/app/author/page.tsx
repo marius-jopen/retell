@@ -1,8 +1,8 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { requireAuthor } from '@/lib/auth'
-import { Button } from '@/components/ui/button'
-import { formatDate } from '@/lib/utils'
-import Link from 'next/link'
+import { StatsCard } from '@/components/ui/stats-card'
+import { ActionCard } from '@/components/ui/action-card'
+import { PodcastList } from '@/components/ui/podcast-list'
 
 export default async function AuthorDashboard() {
   const user = await requireAuthor()
@@ -33,6 +33,7 @@ export default async function AuthorDashboard() {
       created_at,
       category,
       language,
+      cover_image_url,
       episodes (
         id,
         title,
@@ -42,52 +43,6 @@ export default async function AuthorDashboard() {
     .eq('author_id', user.id)
     .order('created_at', { ascending: false })
     .limit(5)
-
-  // Get recent episodes for author's content
-  const { data: recentEpisodes } = await supabase
-    .from('episodes')
-    .select(`
-      id,
-      title,
-      episode_number,
-      created_at,
-      podcasts!episodes_podcast_id_fkey (
-        id,
-        title,
-        author_id
-      )
-    `)
-    .eq('podcasts.author_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(5)
-
-  const stats = [
-    {
-      title: 'Total Podcasts',
-      value: totalPodcasts || 0,
-      color: 'bg-blue-500',
-    },
-    {
-      title: 'Total Episodes',
-      value: totalEpisodes || 0,
-      color: 'bg-green-500',
-    },
-    {
-      title: 'Approved',
-      value: approvedPodcasts || 0,
-      color: 'bg-green-500',
-    },
-    {
-      title: 'Pending Review',
-      value: pendingPodcasts || 0,
-      color: 'bg-yellow-500',
-    },
-    {
-      title: 'Draft',
-      value: draftPodcasts || 0,
-      color: 'bg-gray-500',
-    },
-  ]
 
   return (
     <div className="min-h-screen bg-gray-50">

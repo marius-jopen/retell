@@ -1,6 +1,8 @@
 import { requireAdmin } from '@/lib/auth'
 import { createAdminSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
+import { StatsCard } from '@/components/ui/stats-card'
+import AdminUserTable from '@/components/admin/admin-user-table'
 import Link from 'next/link'
 import UserRoleActions from '@/components/admin/user-role-actions'
 import UserAccordion from '@/components/admin/user-accordion'

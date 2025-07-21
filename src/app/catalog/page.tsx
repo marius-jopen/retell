@@ -1,6 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { CatalogClient } from '@/components/catalog/catalog-client'
 
 export default async function CatalogPage() {
   const supabase = await createServerSupabaseClient()
@@ -26,8 +25,8 @@ export default async function CatalogPage() {
       <div className="bg-gradient-warm text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <h1 className="text-5xl font-bold mb-4">
-              Discover Amazing Podcasts
+            <h1 className="text-3xl font-bold mb-2">
+              Discover Podcasts
             </h1>
             <p className="text-xl text-orange-100 max-w-3xl mx-auto">
               Explore premium podcast content from talented creators worldwide. Find your next favorite show.

@@ -9,20 +9,6 @@ import { useToast } from '@/components/ui/toast'
 import EpisodeActions from '@/components/author/episode-actions'
 import { formatDate } from '@/lib/utils'
 
-interface Episode {
-  id: string
-  title: string
-  description: string
-  episode_number: number
-  season_number: number | null
-  duration: number | null
-  status: 'draft' | 'pending' | 'approved' | 'rejected'
-  created_at: string
-  updated_at: string
-  audio_url: string | null
-  script_url: string | null
-}
-
 interface Podcast {
   id: string
   title: string
@@ -56,76 +42,6 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
   const { addToast } = useToast()
-
-  const categories = [
-    'Business',
-    'Technology',
-    'Entertainment',
-    'Education',
-    'News',
-    'Health',
-    'Sports',
-    'Music',
-    'Comedy',
-    'True Crime',
-    'Science',
-    'History',
-    'Politics',
-    'Arts',
-    'Other'
-  ]
-
-  const languages = [
-    { code: 'en', name: 'English' },
-    { code: 'es', name: 'Spanish' },
-    { code: 'fr', name: 'French' },
-    { code: 'de', name: 'German' },
-    { code: 'it', name: 'Italian' },
-    { code: 'pt', name: 'Portuguese' },
-    { code: 'nl', name: 'Dutch' },
-    { code: 'pl', name: 'Polish' },
-    { code: 'ru', name: 'Russian' },
-    { code: 'zh', name: 'Chinese (Mandarin)' },
-    { code: 'ja', name: 'Japanese' },
-    { code: 'ko', name: 'Korean' },
-    { code: 'ar', name: 'Arabic' },
-    { code: 'hi', name: 'Hindi' },
-    { code: 'other', name: 'Other' }
-  ]
-
-  const countries = [
-    'United States',
-    'Canada',
-    'United Kingdom',
-    'Australia',
-    'Germany',
-    'France',
-    'Spain',
-    'Italy',
-    'Netherlands',
-    'Japan',
-    'South Korea',
-    'Brazil',
-    'Mexico',
-    'Argentina',
-    'India',
-    'China',
-    'Russia',
-    'Other'
-  ]
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'bg-green-100 text-green-800'
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'rejected':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
 
   const formatDuration = (seconds: number | null) => {
     if (!seconds) return 'N/A'
@@ -188,29 +104,8 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
     }
   }
 
-  const uploadCoverImage = async (file: File, podcastId: string) => {
-    try {
-      const base64Url = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-          const base64 = reader.result as string
-          resolve(base64)
-        }
-        reader.onerror = () => reject(new Error('Failed to read file'))
-        reader.readAsDataURL(file)
-      })
-      
-      return base64Url
-    } catch (error) {
-      console.error('Error converting image to base64:', error)
-      return null
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (formData: any, coverImage: File | null) => {
     setLoading(true)
-    setError('')
 
     try {
       let coverImageUrl = podcast?.cover_image_url
@@ -500,6 +395,24 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* Episodes List */}
+            <div className="flex-1 min-h-0">
+              <EpisodePreviewList
+                title={`Episodes (${episodes.length})`}
+                episodes={episodes.map(ep => ({
+                  ...ep,
+                  season_number: ep.season_number || undefined,
+                  duration: ep.duration || undefined
+                }))}
+                maxHeight="100%"
+                emptyStateMessage="No episodes yet"
+                emptyStateIcon="🎙️"
+                showActions={true}
+                getEpisodeHref={(episode) => `/author/podcasts/${podcastId}/episodes/${episode.id}/edit`}
+                className="h-full w-full"
+              />
             </div>
           </div>
         </div>

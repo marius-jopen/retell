@@ -241,7 +241,7 @@ export default function PrivacyPolicyPage() {
           {/* Back to Home */}
           <div className="text-center pt-8 border-t border-gray-200">
             <Link href="/">
-              <Button className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl px-8 py-3 hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-105">
+              <Button className="bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-105">
                 🏠 Back to Home
               </Button>
             </Link>

@@ -57,6 +57,7 @@ export default function Navbar({ user }: NavbarProps) {
     <nav className="bg-white/80 backdrop-blur-md shadow-modern border-b border-orange-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
+          {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center group">
               <span className="text-xl font-bold text-orange-500 group-hover:text-orange-600 transition-colors duration-200">
@@ -66,7 +67,7 @@ export default function Navbar({ user }: NavbarProps) {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -79,20 +80,25 @@ export default function Navbar({ user }: NavbarProps) {
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             {user ? (
-              <div className="flex items-center space-x-4">
-                <div className="hidden md:block">
-                  <span className="text-sm text-gray-700">
-                    {user.profile.full_name}
-                  </span>
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ml-2 transition-all duration-200 ${
+              <div className="flex items-center space-x-3">
+                <div className="hidden md:flex items-center space-x-3">
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-gray-900">
+                      {user.profile.full_name}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {user.profile.role === 'admin' ? 'Administrator' : 'Content Creator'}
+                    </div>
+                  </div>
+                  <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
                     user.profile.role === 'admin' 
-                      ? 'bg-red-100 text-red-700 shadow-sm' 
-                      : 'bg-orange-100 text-orange-700 shadow-sm'
+                      ? 'bg-red-50 text-red-700 border border-red-200' 
+                      : 'bg-red-50 text-red-700 border border-red-200'
                   }`}>
-                    {user.profile.role === 'admin' ? '👑' : '✨'} {user.profile.role}
-                  </span>
+                    {user.profile.role === 'admin' ? 'Admin' : 'Author'}
+                  </div>
                 </div>
                 <Button
                   variant="outline"
@@ -100,7 +106,7 @@ export default function Navbar({ user }: NavbarProps) {
                   onClick={handleSignOut}
                   className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200"
                 >
-                  👋 Sign Out
+                  Sign Out
                 </Button>
               </div>
             ) : (
@@ -111,14 +117,14 @@ export default function Navbar({ user }: NavbarProps) {
                   onClick={() => router.push('/auth/login')}
                   className="rounded-full text-orange-600 hover:bg-orange-50 transition-all duration-200"
                 >
-                  ✨ Sign In
+                  Sign In
                 </Button>
                 <Button
                   size="sm"
                   onClick={() => router.push('/auth/signup')}
                   className="rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-modern hover:shadow-modern-lg transition-all duration-200"
                 >
-                  🚀 Sign Up
+                  Get Started
                 </Button>
               </div>
             )}
@@ -129,19 +135,15 @@ export default function Navbar({ user }: NavbarProps) {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               <span className="sr-only">Open main menu</span>
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+              {!isMenuOpen ? (
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              ) : (
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -161,6 +163,31 @@ export default function Navbar({ user }: NavbarProps) {
                 {item.label}
               </Link>
             ))}
+            
+            {/* Mobile User Info */}
+            {user && (
+              <div className="pt-4 mt-4 border-t border-gray-100">
+                <div className="px-4 py-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-base font-medium text-gray-900">
+                        {user.profile.full_name}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {user.profile.role === 'admin' ? 'Administrator' : 'Content Creator'}
+                      </div>
+                    </div>
+                    <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
+                      user.profile.role === 'admin' 
+                        ? 'bg-red-50 text-red-700 border border-red-200' 
+                        : 'bg-red-50 text-red-700 border border-red-200'
+                    }`}>
+                      {user.profile.role === 'admin' ? 'Admin' : 'Author'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

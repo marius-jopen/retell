@@ -15,7 +15,6 @@ interface Episode {
   duration: number | null
   episode_number: number
   season_number: number | null
-  status: 'draft' | 'pending' | 'approved' | 'rejected'
   created_at: string
   updated_at: string
 }
@@ -25,17 +24,27 @@ interface Podcast {
   title: string
   description: string
   author_id: string
+  cover_image_url: string | null
   status: 'draft' | 'pending' | 'approved' | 'rejected'
   episodes: Episode[]
+  user_profiles?: {
+    full_name: string
+    email: string
+  }
 }
 
-async function getPodcastWithEpisodes(podcastId: string, authorId: string): Promise<Podcast | null> {
+async function getPodcastWithEpisodes(podcastId: string, userId: string, isAdmin: boolean): Promise<Podcast | null> {
   const supabase = await createServerSupabaseClient()
   
-  const { data: podcast, error } = await supabase
+  // Build query based on user role
+  let query = supabase
     .from('podcasts')
     .select(`
       *,
+      user_profiles (
+        full_name,
+        email
+      ),
       episodes (
         id,
         title,
@@ -45,14 +54,18 @@ async function getPodcastWithEpisodes(podcastId: string, authorId: string): Prom
         duration,
         episode_number,
         season_number,
-        status,
         created_at,
         updated_at
       )
     `)
     .eq('id', podcastId)
-    .eq('author_id', authorId)
-    .single()
+
+  // If not admin, restrict to user's own podcasts
+  if (!isAdmin) {
+    query = query.eq('author_id', userId)
+  }
+
+  const { data: podcast, error } = await query.single()
 
   if (error) {
     console.error('Error fetching podcast:', error)
@@ -89,7 +102,8 @@ export default async function EpisodesPage({
   const { id } = await params
   const { selected } = await searchParams
   
-  const podcast = await getPodcastWithEpisodes(id, user.id)
+  const isAdmin = user.profile.role === 'admin'
+  const podcast = await getPodcastWithEpisodes(id, user.id, isAdmin)
 
   if (!podcast) {
     return (

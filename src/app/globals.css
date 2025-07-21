@@ -49,18 +49,7 @@ body {
   border-radius: 32px;
 }
 
-/* Modern card shadows */
-.shadow-modern {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
 
-.shadow-modern-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-.shadow-modern-hover {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
 
 /* Warm color classes to replace cold colors */
 .bg-cold-50 { background-color: var(--warm-50); }
@@ -155,21 +144,55 @@ select:not(:placeholder-shown) {
   color: #000000 !important;
 }
 
-/* Ensure button text is never light gray */
-button {
-  color: inherit !important;
-}
-
-/* Override any light gray text in buttons */
+/* Override any light gray text in buttons - but respect color variants */
 button .text-gray-400,
 button .text-gray-500,
 button .text-gray-600 {
   color: #111827 !important; /* gray-900 */
 }
 
-/* Ensure button text has proper contrast */
-button:not([class*="text-white"]):not([class*="text-blue"]):not([class*="text-red"]):not([class*="text-green"]) {
+/* Ensure button text has proper contrast - but only for buttons without explicit text colors */
+button:not([class*="text-white"]):not([class*="text-blue"]):not([class*="text-red"]):not([class*="text-green"]):not([class*="bg-red"]):not([class*="bg-blue"]):not([class*="bg-green"]):not([class*="bg-yellow"]) {
   color: #111827 !important; /* gray-900 */
+}
+
+/* Force white text on red/colored buttons with maximum specificity - but NOT outline buttons */
+button.bg-red-600:not([class*="border"]),
+button.bg-red-500:not([class*="border"]),
+button.bg-red-700:not([class*="border"]),
+button.bg-red-800:not([class*="border"]),
+button[class*="bg-red"]:not([class*="border"]):not([class*="outline"]),
+button[class*="bg-blue"]:not([class*="border"]):not([class*="outline"]), 
+button[class*="bg-green"]:not([class*="border"]):not([class*="outline"]),
+button[class*="bg-yellow"]:not([class*="border"]):not([class*="outline"]) {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+/* Additional specificity for our solid button component variants */
+button.inline-flex.bg-red-600:not([class*="border"]),
+button.inline-flex.bg-red-500:not([class*="border"]),
+button.inline-flex.bg-red-700:not([class*="border"]) {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+/* Specific fix for destructive button variant with maximum specificity */
+button.inline-flex.bg-red-500.text-white,
+button.inline-flex.bg-red-600.text-white,
+button.inline-flex.bg-red-700.text-white,
+button[class*="bg-gradient-to-r"][class*="from-red-500"],
+button[class*="bg-gradient-to-r"][class*="from-red-500"][class*="text-white"],
+button[class*="bg-gradient-to-r"][class*="to-red-600"][class*="text-white"] {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+/* Ensure outline buttons keep their intended text colors */
+button[class*="border"].text-red-600,
+button[class*="outline"].text-red-600 {
+  color: #dc2626 !important; /* red-600 */
+  -webkit-text-fill-color: #dc2626 !important;
 }
 
 /* Specific overrides for button variants */
@@ -211,18 +234,7 @@ p[class*="text-gray-"] {
   color: #4b5563 !important; /* gray-600 - ensure readability */
 }
 
-/* Modern button styles */
-.btn-modern {
-  @apply rounded-full px-6 py-3 font-medium transition-all duration-200 shadow-modern hover:shadow-modern-lg;
-}
 
-.btn-modern-primary {
-  @apply btn-modern bg-orange-500 hover:bg-orange-600 text-white;
-}
-
-.btn-modern-secondary {
-  @apply btn-modern bg-white border border-orange-200 text-orange-600 hover:bg-orange-50;
-}
 
 /* Sticky layout utilities */
 .sticky-sidebar {
@@ -234,7 +246,7 @@ p[class*="text-gray-"] {
 
 /* Card hover effects */
 .card-hover {
-  @apply transition-all duration-300 hover:shadow-modern-hover hover:-translate-y-1;
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
 }
 
 /* Consistent card heights */

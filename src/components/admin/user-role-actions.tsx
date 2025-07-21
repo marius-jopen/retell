@@ -14,12 +14,12 @@ interface UserRoleActionsProps {
 }
 
 export default function UserRoleActions({ userId, currentRole, userName, currentUserId }: UserRoleActionsProps) {
-  const [loading, setLoading] = useState<'admin' | 'author' | 'client' | null>(null)
+  const [loading, setLoading] = useState<'author' | null>(null)
   const { addToast } = useToast()
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
 
-  const updateUserRole = async (newRole: 'admin' | 'author' | 'client') => {
+  const updateUserRole = async (newRole: 'author') => {
     setLoading(newRole)
     
     try {
@@ -60,17 +60,6 @@ export default function UserRoleActions({ userId, currentRole, userName, current
 
   return (
     <div className="flex space-x-1">
-      {currentRole !== 'admin' && (
-        <Button
-          size="sm"
-          variant="outline"
-          className="text-xs"
-          onClick={() => updateUserRole('admin')}
-          disabled={loading !== null}
-        >
-          {loading === 'admin' ? 'Updating...' : 'Make Admin'}
-        </Button>
-      )}
       {currentRole !== 'author' && (
         <Button
           size="sm"
@@ -80,17 +69,6 @@ export default function UserRoleActions({ userId, currentRole, userName, current
           disabled={loading !== null}
         >
           {loading === 'author' ? 'Updating...' : 'Make Author'}
-        </Button>
-      )}
-      {currentRole !== 'client' && (
-        <Button
-          size="sm"
-          variant="outline"
-          className="text-xs"
-          onClick={() => updateUserRole('client')}
-          disabled={loading !== null}
-        >
-          {loading === 'client' ? 'Updating...' : 'Make Client'}
         </Button>
       )}
     </div>

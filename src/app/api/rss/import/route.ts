@@ -132,13 +132,12 @@ export async function POST(request: NextRequest) {
 
       // Download and store RSS feed image if available
       const rssImageUrl = feed.image?.url || feed.itunes?.image
-      if (rssImageUrl && rssImageUrl !== existingPodcast.rss_image_url) {
+      if (rssImageUrl && rssImageUrl !== existingPodcast.cover_image_url) {
         console.log('Downloading RSS feed image:', rssImageUrl)
         const imageResult = await downloadAndStoreImage(rssImageUrl, existingPodcast.id, 'rss-cover')
         
         if (imageResult.success) {
           updates.cover_image_url = imageResult.imageUrl
-          updates.rss_image_url = rssImageUrl // Store original RSS image URL for reference
           podcastUpdated = true
           console.log('RSS feed image downloaded successfully')
           coverImageUrl = imageResult.imageUrl
@@ -146,7 +145,6 @@ export async function POST(request: NextRequest) {
           console.warn('Failed to download RSS feed image:', imageResult.error)
           // Fall back to direct URL
           updates.cover_image_url = rssImageUrl
-          updates.rss_image_url = rssImageUrl
           podcastUpdated = true
           coverImageUrl = rssImageUrl
         }
@@ -178,7 +176,6 @@ export async function POST(request: NextRequest) {
       podcast = { ...existingPodcast, ...updates }
     } else {
       // Create new podcast
-      let rssImageUrl = null
       let imageResult = null
       
       // Download and store RSS feed image if available
@@ -189,13 +186,11 @@ export async function POST(request: NextRequest) {
         
         if (imageResult.success) {
           coverImageUrl = imageResult.imageUrl
-          rssImageUrl = feedImageUrl
           console.log('RSS feed image downloaded successfully for new podcast')
         } else {
           console.warn('Failed to download RSS feed image for new podcast:', imageResult.error)
           // Fall back to direct URL
           coverImageUrl = feedImageUrl
-          rssImageUrl = feedImageUrl
         }
       }
 
@@ -205,16 +200,13 @@ export async function POST(request: NextRequest) {
           title: feed.title,
           description: feed.description || feed.itunes?.summary || '',
           cover_image_url: coverImageUrl,
-          rss_image_url: rssImageUrl,
-          author_id: user.profile.id,
+          author_id: user.id,
           category: feed.itunes?.category?.[0] || 'General',
           language: feed.language || 'en',
-          country: 'Unknown', // RSS feeds don't usually have country info
+          country: 'Unknown',
           status: 'draft',
           rss_url: rssUrl,
-          auto_publish_episodes: true, // Default to auto-publish
-          rss_sync_enabled: true, // Enable RSS sync for imported podcasts
-          manual_overrides: {} // Track manual overrides
+          auto_publish_episodes: true
         })
         .select()
         .single()
