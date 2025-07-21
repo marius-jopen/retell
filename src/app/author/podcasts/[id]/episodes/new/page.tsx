@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,8 @@ interface Podcast {
   status: 'draft' | 'pending' | 'approved' | 'rejected'
 }
 
-export default function NewEpisodePage({ params }: { params: { id: string } }) {
+export default function NewEpisodePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const [podcast, setPodcast] = useState<Podcast | null>(null)
   const [formData, setFormData] = useState({
     title: '',
@@ -34,7 +35,6 @@ export default function NewEpisodePage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const fetchPodcast = async () => {
       try {
-        const { id } = params
 
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
