@@ -3,6 +3,8 @@ import { requireAuthor } from '@/lib/auth'
 import { StatsCard } from '@/components/ui/stats-card'
 import { ActionCard } from '@/components/ui/action-card'
 import { PodcastList } from '@/components/ui/podcast-list'
+import { formatDate } from '@/lib/utils'
+import Link from 'next/link'
 
 export default async function AuthorDashboard() {
   const user = await requireAuthor()
@@ -44,6 +46,15 @@ export default async function AuthorDashboard() {
     .order('created_at', { ascending: false })
     .limit(5)
 
+  // Create stats array for display
+  const stats = [
+    { title: 'Total Podcasts', value: totalPodcasts || 0, color: 'bg-blue-500' },
+    { title: 'Total Episodes', value: totalEpisodes || 0, color: 'bg-green-500' },
+    { title: 'Approved', value: approvedPodcasts || 0, color: 'bg-emerald-500' },
+    { title: 'Pending', value: pendingPodcasts || 0, color: 'bg-yellow-500' },
+    { title: 'Drafts', value: draftPodcasts || 0, color: 'bg-gray-500' },
+  ]
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -58,9 +69,9 @@ export default async function AuthorDashboard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           {stats.map((stat) => (
-            <div key={stat.title} className="bg-white rounded-modern shadow-modern p-6">
+            <div key={stat.title} className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex items-center">
-                <div className={`w-10 h-10 ${stat.color} rounded-modern flex items-center justify-center`}>
+                <div className={`w-10 h-10 ${stat.color} rounded-xl flex items-center justify-center`}>
                   <div className="w-4 h-4 bg-white rounded-full"></div>
                 </div>
                 <div className="ml-4">
