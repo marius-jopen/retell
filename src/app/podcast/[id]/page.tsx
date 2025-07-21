@@ -5,6 +5,8 @@ import { PodcastHero } from '@/components/podcast/podcast-hero'
 import { PodcastSidebar } from '@/components/podcast/podcast-sidebar'
 import { EpisodesList } from '@/components/podcast/episodes-list'
 import { ErrorState } from '@/components/ui/error-state'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 type Episode = Database['public']['Tables']['episodes']['Row']
 type Podcast = Database['public']['Tables']['podcasts']['Row'] & {
@@ -80,8 +82,11 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
     )
   }
 
-  const episodes = podcast.episodes || []
-
+    const episodes = podcast.episodes || []
+  
+  // Calculate total duration of all episodes (in minutes)
+  const totalDuration = episodes.reduce((sum, episode) => sum + (episode.duration || 0), 0)
+  
   return (
     <div className="min-h-screen bg-orange-50">
       {/* Hero Section - Smaller */}

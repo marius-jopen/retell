@@ -1,5 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { CatalogClient } from '@/components/catalog/catalog-client'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export default async function CatalogPage() {
   const supabase = await createServerSupabaseClient()
