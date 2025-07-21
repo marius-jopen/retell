@@ -88,7 +88,7 @@ export default async function EpisodesPage({ params }: { params: Promise<{ id: s
         <div className="text-center py-16">
           <div className="text-6xl mb-6">🎙️</div>
           <h1 className="text-2xl font-semibold text-gray-900 mb-3">Podcast Not Found</h1>
-          <p className="text-gray-600 mb-8 max-w-md mx-auto">The podcast you're looking for doesn't exist or you don't have permission to view it.</p>
+          <p className="text-gray-600 mb-8 max-w-md mx-auto">The podcast you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.</p>
           <Link href={isAdmin ? "/admin/podcasts" : "/author/podcasts"}>
             <Button 
               variant="primary" 

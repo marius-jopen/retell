@@ -1,8 +1,5 @@
 import { requireRole } from '@/lib/auth'
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { Button } from '@/components/ui/button'
-import { formatDate } from '@/lib/utils'
-import Link from 'next/link'
 import { StatsCard } from '@/components/ui/stats-card'
 import { ActionCard } from '@/components/ui/action-card'
 import { PodcastList } from '@/components/ui/podcast-list'
@@ -55,7 +52,7 @@ export default async function AdminDashboard() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
         <p className="mt-2 text-lg text-gray-600">
-          Welcome back, {user.profile.full_name}! Here's your system overview.
+          Welcome back, {user.profile.full_name}! Here&apos;s your system overview.
         </p>
       </div>
 

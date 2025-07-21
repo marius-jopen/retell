@@ -1,6 +1,17 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
+interface PricingTier {
+  name: string
+  price: string
+  period: string
+  description: string
+  features: string[]
+  highlighted: boolean
+  buttonText: string
+  color: string
+}
+
 export default function PricingPage() {
   const pricingTiers = [
     {
@@ -57,14 +68,14 @@ export default function PricingPage() {
     }
   ]
 
-  const getCardClasses = (tier: any) => {
+  const getCardClasses = (tier: PricingTier) => {
     if (tier.highlighted) {
       return "bg-white border-2 border-red-500 shadow-2xl scale-105 relative"
     }
     return "bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-shadow"
   }
 
-  const getButtonClasses = (tier: any) => {
+  const getButtonClasses = (tier: PricingTier) => {
     if (tier.highlighted) {
       return "w-full bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-105"
     }
@@ -102,7 +113,7 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {pricingTiers.map((tier, index) => (
+          {pricingTiers.map((tier, _) => (
             <div key={tier.name} className={`${getCardClasses(tier)} rounded-3xl p-8 relative`}>
               {tier.highlighted && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -129,7 +140,7 @@ export default function PricingPage() {
               </div>
 
               <div className="space-y-4">
-                <h4 className="font-semibold text-gray-900 text-center mb-4">What's included:</h4>
+                <h4 className="font-semibold text-gray-900 text-center mb-4">What&apos;s included:</h4>
                 <ul className="space-y-3">
                   {tier.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
@@ -161,7 +172,7 @@ export default function PricingPage() {
           <div className="space-y-8">
             <div className="bg-gray-50 rounded-2xl p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                What's included in the commercial license?
+                What&apos;s included in the commercial license?
               </h3>
               <p className="text-gray-700 leading-relaxed">
                 Our commercial license allows you to use podcast content for business purposes including 
@@ -176,7 +187,7 @@ export default function PricingPage() {
               </h3>
               <p className="text-gray-700 leading-relaxed">
                 Yes! You can change your plan at any time. Upgrades take effect immediately, while 
-                downgrades take effect at the next billing cycle. We'll prorate any differences 
+                downgrades take effect at the next billing cycle. We&apos;ll prorate any differences 
                 and ensure you get the most value from your subscription.
               </p>
             </div>
@@ -186,7 +197,7 @@ export default function PricingPage() {
                 What happens if I exceed my download limit?
               </h3>
               <p className="text-gray-700 leading-relaxed">
-                If you approach your monthly download limit, we'll notify you via email. You can either 
+                If you approach your monthly download limit, we&apos;ll notify you via email. You can either 
                 upgrade to a higher tier or purchase additional downloads for $2.99 per download. 
                 We never cut off access without warning.
               </p>

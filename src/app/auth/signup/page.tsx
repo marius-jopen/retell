@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input, Select } from '@/components/ui'
 import { UserRole } from '@/lib/auth'
@@ -17,7 +16,6 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
-  const supabase = createBrowserSupabaseClient()
 
   useEffect(() => {
     const roleParam = searchParams.get('role') as UserRole
@@ -77,7 +75,7 @@ export default function SignupPage() {
             Join the Adventure! ✨
           </h2>
           <p className="text-red-100 mb-8">
-            🎙️ Ready to share your amazing podcast stories with the world? Let's create your account!
+            🎙️ Ready to share your amazing podcast stories with the world? Let&apos;s create your account!
           </p>
           <p className="text-red-100/80">
             Already have an account?{' '}

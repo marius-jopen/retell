@@ -1,8 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { requireAuthor } from '@/lib/auth'
-import { Button } from '@/components/ui/button'
-import { formatDate } from '@/lib/utils'
-import Link from 'next/link'
 import { StatsCard } from '@/components/ui/stats-card'
 import { ActionCard } from '@/components/ui/action-card'
 import { PodcastList } from '@/components/ui/podcast-list'

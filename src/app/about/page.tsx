@@ -173,7 +173,7 @@ export default function AboutPage() {
               <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-3xl p-8 border border-orange-100">
                 <h3 className="text-xl font-bold text-gray-900 mb-6">🌐 Global Impact</h3>
                 <p className="text-gray-700 text-lg leading-relaxed">
-                  From Europe to Asia to the Americas, we're creating a shared space where local voices become global properties.
+                  From Europe to Asia to the Americas, we&apos;re creating a shared space where local voices become global properties.
                 </p>
                 <div className="mt-6 p-4 bg-white rounded-xl border border-red-100">
                   <p className="text-center text-red-600 font-semibold">
@@ -205,7 +205,7 @@ export default function AboutPage() {
                   RETELL was founded by <strong>Marie Luise Nolte</strong> and <strong>Nina Glaser</strong> — two media professionals with deep experience in podcast development, licensing, and storytelling.
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                  Backed by <strong>IFB Hamburg</strong> and supported by a growing network of producers, legal experts, and technologists, we're scaling a model that has already led to international sales.
+                  Backed by <strong>IFB Hamburg</strong> and supported by a growing network of producers, legal experts, and technologists, we&apos;re scaling a model that has already led to international sales.
                 </p>
                 <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border border-red-100">
                   <p className="text-center text-lg text-gray-700">
@@ -227,7 +227,7 @@ export default function AboutPage() {
                 💬 Get In Touch
               </h2>
               <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                Whether you're a creator looking to license your show or a company looking to acquire your next hit — RETELL can help you move faster, smarter, and further.
+                Whether you&apos;re a creator looking to license your show or a company looking to acquire your next hit — RETELL can help you move faster, smarter, and further.
               </p>
             </div>
             <div className="max-w-2xl mx-auto">

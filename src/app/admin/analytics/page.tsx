@@ -4,11 +4,10 @@ import { Button } from '@/components/ui/button'
 import { StatsCard } from '@/components/ui/stats-card'
 import { ContentBox } from '@/components/ui/content-box'
 import { ListItemCard } from '@/components/ui/list-item-card'
-import { formatDate } from '@/lib/utils'
 import Link from 'next/link'
 
 export default async function AnalyticsPage() {
-  const user = await requireRole(['admin'])
+  await requireRole(['admin'])
   const supabase = await createAdminSupabaseClient()
 
   // Get comprehensive stats
@@ -18,22 +17,16 @@ export default async function AnalyticsPage() {
     { count: totalEpisodes },
     { count: approvedPodcasts },
     { count: pendingPodcasts },
-    { count: draftPodcasts },
-    { count: rejectedPodcasts },
     { count: adminUsers },
-    { count: authorUsers },
-    { count: clientUsers }
+    { count: authorUsers }
   ] = await Promise.all([
     supabase.from('user_profiles').select('id', { count: 'exact', head: true }),
     supabase.from('podcasts').select('id', { count: 'exact', head: true }),
     supabase.from('episodes').select('id', { count: 'exact', head: true }),
     supabase.from('podcasts').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
     supabase.from('podcasts').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('podcasts').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
-    supabase.from('podcasts').select('id', { count: 'exact', head: true }).eq('status', 'rejected'),
     supabase.from('user_profiles').select('id', { count: 'exact', head: true }).eq('role', 'admin'),
-    supabase.from('user_profiles').select('id', { count: 'exact', head: true }).eq('role', 'author'),
-    supabase.from('user_profiles').select('id', { count: 'exact', head: true }).eq('role', 'client')
+    supabase.from('user_profiles').select('id', { count: 'exact', head: true }).eq('role', 'author')
   ])
 
   // Get recent activity trends (last 7 days)
@@ -90,7 +83,7 @@ export default async function AnalyticsPage() {
 
   const creatorStats = topCreators?.reduce((acc: Record<string, { name: string; count: number; email: string }>, podcast) => {
     const authorId = podcast.author_id
-    const profile = podcast.user_profiles as any
+    const profile = podcast.user_profiles as { full_name?: string | null; email?: string | null }
     if (authorId && profile) {
       if (!acc[authorId]) {
         acc[authorId] = { name: profile.full_name || 'Unknown', count: 0, email: profile.email || '' }
@@ -107,7 +100,6 @@ export default async function AnalyticsPage() {
   // Calculate approval rates
   const totalSubmissions = totalPodcasts || 0
   const approvalRate = totalSubmissions > 0 ? ((approvedPodcasts || 0) / totalSubmissions * 100).toFixed(1) : '0'
-  const pendingRate = totalSubmissions > 0 ? ((pendingPodcasts || 0) / totalSubmissions * 100).toFixed(1) : '0'
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,7 +110,7 @@ export default async function AnalyticsPage() {
             <div>
               <h1 className="text-3xl font-semibold text-gray-900">📊 Platform Analytics</h1>
               <p className="mt-2 text-gray-600">
-                Comprehensive insights into your platform's performance and growth
+                Comprehensive insights into your platform&apos;s performance and growth
               </p>
             </div>
             <Link href="/admin">

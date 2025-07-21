@@ -68,7 +68,7 @@ async function getPodcastWithEpisodes(podcastId: string): Promise<Podcast | null
 }
 
 export default async function AdminEpisodesPage({ params }: { params: Promise<{ id: string }> }) {
-  const user = await requireRole(['admin'])
+  await requireRole(['admin'])
   
   // Await params in Next.js 15
   const { id } = await params
@@ -81,7 +81,7 @@ export default async function AdminEpisodesPage({ params }: { params: Promise<{ 
         <div className="text-center py-16">
           <div className="text-6xl mb-6">🎙️</div>
           <h1 className="text-2xl font-semibold text-gray-900 mb-3">Podcast Not Found</h1>
-          <p className="text-gray-600 mb-8 max-w-md mx-auto">The podcast you're looking for doesn't exist.</p>
+          <p className="text-gray-600 mb-8 max-w-md mx-auto">The podcast you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/admin/podcasts">
             <Button 
               variant="primary" 

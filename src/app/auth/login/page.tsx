@@ -49,7 +49,7 @@ export default function LoginPage() {
           router.refresh() // Refresh to update server-side auth state
         }
       }
-    } catch (error) {
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -74,7 +74,7 @@ export default function LoginPage() {
       }
 
       setMagicLinkSent(true)
-    } catch (error) {
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -93,7 +93,7 @@ export default function LoginPage() {
                 ✨ Check Your Email!
               </h2>
               <p className="text-gray-600 mb-2">
-                🎉 We've sent a magic link to
+                🎉 We&apos;ve sent a magic link to
               </p>
               <p className="text-red-600 font-semibold mb-8">
                 {email}
@@ -127,10 +127,10 @@ export default function LoginPage() {
             Welcome Back! ✨
           </h2>
           <p className="text-red-100 mb-8">
-            🎧 Ready to dive back into your podcast journey? Let's get you signed in!
+            🎧 Ready to dive back into your podcast journey? Let&apos;s get you signed in!
           </p>
           <p className="text-red-100/80">
-            Don't have an account yet?{' '}
+            Don&apos;t have an account yet?{' '}
             <Link href="/auth/signup" className="font-medium text-white hover:text-red-200 underline decoration-white/50 hover:decoration-white transition-all">
               🚀 Create one here
             </Link>

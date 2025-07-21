@@ -67,7 +67,7 @@ async function getPodcasts() {
 }
 
 export default async function AdminPodcastsPage() {
-  const user = await requireAdmin()
+  await requireAdmin()
   const podcasts = await getPodcasts()
   
   const stats = {

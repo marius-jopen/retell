@@ -53,11 +53,12 @@ export async function POST(request: NextRequest) {
       console.log('🔍 Checking if profile was created by trigger...')
       // Check if user profile was created by trigger using admin client or regular client
       const client = adminSupabase || supabase
-      let { data: profile, error: profileError } = await client
+      const { data: profileData, error: profileError } = await client
         .from('user_profiles')
         .select('*')
         .eq('id', data.user.id)
         .single()
+      let profile = profileData
 
       if (profileError || !profile) {
         console.log('⚠️ Trigger did not create profile, using fallback method...')
