@@ -11,7 +11,7 @@ interface EpisodeActionsProps {
   episodeTitle: string
 }
 
-export default function EpisodeActions({ episodeId, episodeTitle, podcastId }: EpisodeActionsProps) {
+export default function EpisodeActions({ episodeId, episodeTitle }: EpisodeActionsProps) {
   const [loading, setLoading] = useState(false)
   const { addToast } = useToast()
   const router = useRouter()
