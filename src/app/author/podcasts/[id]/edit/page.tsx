@@ -8,6 +8,18 @@ import Link from 'next/link'
 import { useToast } from '@/components/ui/toast'
 import EpisodeActions from '@/components/author/episode-actions'
 import { formatDate } from '@/lib/utils'
+import { EpisodePreviewList } from '@/components/ui/episode-preview-list'
+
+interface Episode {
+  id: string
+  title: string
+  description: string
+  episode_number: number
+  season_number?: number
+  duration?: number
+  created_at: string
+  updated_at: string
+}
 
 interface Podcast {
   id: string
