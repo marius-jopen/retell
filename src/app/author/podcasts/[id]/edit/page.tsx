@@ -43,6 +43,46 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
   const supabase = createBrowserSupabaseClient()
   const { addToast } = useToast()
 
+  // Define categories for the dropdown
+  const categories = [
+    'Arts',
+    'Business',
+    'Comedy',
+    'Education',
+    'Fiction',
+    'Government',
+    'Health & Fitness',
+    'History',
+    'Kids & Family',
+    'Leisure',
+    'Music',
+    'News',
+    'Religion & Spirituality',
+    'Science',
+    'Society & Culture',
+    'Sports',
+    'Technology',
+    'True Crime',
+    'TV & Film'
+  ]
+
+  // Define languages for the dropdown
+  const languages = [
+    { code: 'en', name: 'English' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
+    { code: 'it', name: 'Italian' },
+    { code: 'pt', name: 'Portuguese' },
+    { code: 'nl', name: 'Dutch' },
+    { code: 'zh', name: 'Chinese' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'ko', name: 'Korean' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'ar', name: 'Arabic' },
+    { code: 'hi', name: 'Hindi' }
+  ]
+
   const formatDuration = (seconds: number | null) => {
     if (!seconds) return 'N/A'
     const mins = Math.floor(seconds / 60)
@@ -252,7 +292,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       required
                       rows={4}
-                      className="w-full px-4 py-3 border border-orange-200 rounded-modern focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                              className="w-full px-4 py-3 border border-orange-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                       placeholder="Describe your podcast"
                     />
                   </div>
