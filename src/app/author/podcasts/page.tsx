@@ -261,7 +261,6 @@ export default async function AuthorPodcastsPage() {
                             <EpisodeActions
                               episodeId={episode.id}
                               episodeTitle={episode.title}
-                              podcastId={podcast.id}
                             />
                           </div>
                         </div>
