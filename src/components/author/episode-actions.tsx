@@ -9,7 +9,6 @@ import { createBrowserSupabaseClient } from '@/lib/supabase'
 interface EpisodeActionsProps {
   episodeId: string
   episodeTitle: string
-  podcastId: string
 }
 
 export default function EpisodeActions({ episodeId, episodeTitle, podcastId }: EpisodeActionsProps) {

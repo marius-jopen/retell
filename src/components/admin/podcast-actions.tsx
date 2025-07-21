@@ -57,7 +57,7 @@ export default function PodcastActions({
 
       // Refresh the page to show updated status
       router.refresh()
-    } catch (error) {
+    } catch {
       addToast({
         type: 'error',
         message: `An error occurred while updating the podcast status`

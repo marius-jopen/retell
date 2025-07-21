@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
 
     // Update podcast metadata if needed
     let podcastUpdated = false
-    const updates: any = {}
+    const updates: Record<string, unknown> = {}
 
     if (feed.title && feed.title !== podcast.title) {
       updates.title = feed.title

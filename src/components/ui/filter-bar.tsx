@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Input } from './input'
 import { Select } from './select'
 
 interface FilterBarProps {

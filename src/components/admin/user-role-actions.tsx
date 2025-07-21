@@ -43,7 +43,7 @@ export default function UserRoleActions({ userId, currentRole, userName, current
 
       // Refresh the page to show updated role
       router.refresh()
-    } catch (error) {
+    } catch {
       addToast({
         type: 'error',
         message: `An error occurred while updating the user role`

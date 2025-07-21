@@ -74,7 +74,7 @@ export default function UserEditModal({ user, isOpen, onClose, currentUserId }: 
 
       onClose()
       router.refresh()
-    } catch (error) {
+    } catch {
       addToast({
         type: 'error',
         message: 'An error occurred while updating the user'

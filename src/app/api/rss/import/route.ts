@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     
     if (existingPodcast) {
       // Update existing podcast metadata from RSS feed
-      const updates: any = {}
+      const updates: Record<string, unknown> = {}
       let podcastUpdated = false
 
       if (feed.title && feed.title !== existingPodcast.title) {

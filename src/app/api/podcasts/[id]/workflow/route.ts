@@ -101,7 +101,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   }
 }
 
-async function handleWorkflowTransition(podcastId: string, data: any) {
+async function handleWorkflowTransition(podcastId: string, data: { to: string; rss_url?: string; sync_now?: boolean; preserve_manual_changes?: boolean }) {
   const { to, rss_url, sync_now, preserve_manual_changes } = data
 
   if (!to) {
