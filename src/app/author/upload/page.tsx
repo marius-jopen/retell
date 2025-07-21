@@ -48,7 +48,7 @@ export default function AuthorUploadPage() {
       }
 
       // Create podcast
-      const { data: podcast, error: podcastError } = await supabase
+      const { error: podcastError } = await supabase
         .from('podcasts')
         .insert({
           title: formData.title.trim(),

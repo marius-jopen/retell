@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase'
+
 
 export interface ImageDownloadResult {
   success: boolean

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
 type Episode = Database['public']['Tables']['episodes']['Row']
-type Podcast = Database['public']['Tables']['podcasts']['Row'] & {
+type PodcastType = Database['public']['Tables']['podcasts']['Row'] & {
   episodes: Episode[]
   user_profiles: {
     full_name: string

@@ -84,7 +84,7 @@ export default function NewEpisodePage({ params }: { params: { id: string } }) {
       }
 
       // Create episode record
-      const { data: episode, error: episodeError } = await supabase
+      const { error: episodeError } = await supabase
         .from('episodes')
         .insert({
           podcast_id: podcast.id,
@@ -145,7 +145,7 @@ export default function NewEpisodePage({ params }: { params: { id: string } }) {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Create New Episode</h1>
         <p className="mt-2 text-lg text-gray-600">
-          Add a new episode to "{podcast.title}"
+          Add a new episode to &quot;{podcast.title}&quot;
         </p>
       </div>
 

@@ -258,7 +258,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET endpoint to update all RSS feeds for a user
-export async function GET(_: NextRequest) {
+export async function GET() {
   try {
     const user = await getCurrentUser()
     if (!user) {
