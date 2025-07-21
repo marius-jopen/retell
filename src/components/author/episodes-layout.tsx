@@ -14,7 +14,6 @@ interface Episode {
   duration: number | null
   episode_number: number
   season_number: number | null
-  status: 'draft' | 'pending' | 'approved' | 'rejected'
   created_at: string
   updated_at: string
 }
@@ -89,14 +88,11 @@ export default function EpisodesLayout({
           <span className="inline-flex items-center justify-center h-8 w-8 bg-orange-600 text-white text-sm font-medium rounded-full">
             #{selectedEpisode.episode_number}
           </span>
-          <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
-            selectedEpisode.status === 'approved' ? 'bg-green-100 text-green-800' :
-            selectedEpisode.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-            selectedEpisode.status === 'rejected' ? 'bg-red-100 text-red-800' :
-            'bg-gray-100 text-gray-800'
-          }`}>
-            {selectedEpisode.status}
-          </span>
+          {selectedEpisode.season_number && (
+            <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+              Season {selectedEpisode.season_number}
+            </span>
+          )}
         </div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">
           {selectedEpisode.title}

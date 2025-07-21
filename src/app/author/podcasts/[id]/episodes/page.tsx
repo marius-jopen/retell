@@ -182,14 +182,11 @@ export default async function EpisodesPage({
                             <span className="inline-flex items-center justify-center h-8 w-8 bg-orange-600 text-white text-sm font-medium rounded-full">
                               #{episode.episode_number}
                             </span>
-                            <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
-                              episode.status === 'approved' ? 'bg-green-100 text-green-800' :
-                              episode.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              episode.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {episode.status}
-                            </span>
+                            {episode.season_number && (
+                              <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                Season {episode.season_number}
+                              </span>
+                            )}
                           </div>
                           
                           <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -220,7 +217,6 @@ export default async function EpisodesPage({
                           <EpisodeActions
                             episodeId={episode.id}
                             episodeTitle={episode.title}
-                            podcastId={podcast.id}
                           />
                         </div>
                       </div>
