@@ -392,61 +392,7 @@ export default function EditPodcastPage({ params }: { params: Promise<{ id: stri
           {/* Right Column - Episodes (Sticky) */}
           <div className="lg:col-span-1">
             <div className="sticky-sidebar">
-              <div className="bg-white rounded-modern-lg shadow-modern border border-orange-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-lg font-semibold text-gray-900">Episodes</h2>
-                  <p className="text-sm text-gray-600">{episodes.length} episodes</p>
-                </div>
 
-                <div className="p-6">
-                  <div className="space-y-4">
-                    {episodes.length === 0 ? (
-                      <div className="text-center py-8">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">No episodes yet</h3>
-                        <p className="text-gray-600 mb-4">Start creating episodes for your podcast</p>
-                        <Link href={`/author/podcasts/${podcastId}/episodes/new`}>
-                          <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
-                            Create First Episode
-                          </Button>
-                        </Link>
-                      </div>
-                    ) : (
-                      episodes.slice(0, 5).map((episode) => (
-                        <div key={episode.id} className="bg-orange-50 p-4 rounded-modern border border-orange-200">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-2 mb-2">
-                                <span className="inline-flex items-center justify-center h-6 w-6 bg-orange-600 text-white text-xs font-medium rounded-full">
-                                  #{episode.episode_number}
-                                </span>
-                                <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                                  Published
-                                </span>
-                              </div>
-                              <h3 className="text-sm font-medium text-gray-900 mb-1 truncate">
-                                {episode.title}
-                              </h3>
-                              <div className="text-xs text-gray-500">
-                                <div>Created: {formatDate(episode.created_at)}</div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-
-                  {episodes.length > 5 && (
-                    <div className="mt-6 text-center">
-                      <Link href={`/author/podcasts/${podcastId}/episodes`}>
-                        <Button variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50">
-                          View All Episodes
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
 
             {/* Episodes List */}
