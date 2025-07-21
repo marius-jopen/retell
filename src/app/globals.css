@@ -3,6 +3,17 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Warm color palette */
+  --warm-50: #fef7ed;
+  --warm-100: #fef0dd;
+  --warm-200: #fcddb5;
+  --warm-300: #f9bc7c;
+  --warm-400: #f59e0b;
+  --warm-500: #d97706;
+  --warm-600: #c2410c;
+  --warm-700: #9a3412;
+  --warm-800: #7c2d12;
+  --warm-900: #57190a;
 }
 
 @theme inline {
@@ -24,6 +35,46 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Modern rounded design utilities */
+.rounded-modern {
+  border-radius: 16px;
+}
+
+.rounded-modern-lg {
+  border-radius: 24px;
+}
+
+.rounded-modern-xl {
+  border-radius: 32px;
+}
+
+/* Modern card shadows */
+.shadow-modern {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-modern-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-modern-hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Warm color classes to replace cold colors */
+.bg-cold-50 { background-color: var(--warm-50); }
+.bg-cold-100 { background-color: var(--warm-100); }
+.bg-cold-200 { background-color: var(--warm-200); }
+.bg-cold-500 { background-color: var(--warm-500); }
+.bg-cold-600 { background-color: var(--warm-600); }
+
+.text-cold-600 { color: var(--warm-600); }
+.text-cold-700 { color: var(--warm-700); }
+.text-cold-800 { color: var(--warm-800); }
+
+.border-cold-200 { border-color: var(--warm-200); }
+.border-cold-300 { border-color: var(--warm-300); }
 
 /* Force input fields to always have black text - Override Tailwind */
 input,
@@ -194,45 +245,52 @@ p[class*="text-gray-"] {
   color: #4b5563 !important; /* gray-600 - ensure readability */
 }
 
-/* Line clamp utilities for text truncation */
-.line-clamp-1 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+/* Modern button styles */
+.btn-modern {
+  @apply rounded-full px-6 py-3 font-medium transition-all duration-200 shadow-modern hover:shadow-modern-lg;
 }
 
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+.btn-modern-primary {
+  @apply btn-modern bg-orange-500 hover:bg-orange-600 text-white;
 }
 
-.line-clamp-3 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+.btn-modern-secondary {
+  @apply btn-modern bg-white border border-orange-200 text-orange-600 hover:bg-orange-50;
 }
 
-.line-clamp-4 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+/* Sticky layout utilities */
+.sticky-sidebar {
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
 }
 
-.line-clamp-5 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-modern-hover hover:-translate-y-1;
 }
 
-.line-clamp-6 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
+/* Consistent card heights */
+.card-equal-height {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-equal-height .card-content {
+  flex: 1;
+}
+
+/* Modern gradient backgrounds using warm colors */
+.bg-gradient-warm {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #c2410c 100%);
+}
+
+.bg-gradient-warm-light {
+  background: linear-gradient(135deg, #fef7ed 0%, #fef0dd 50%, #fcddb5 100%);
+}
+
+.bg-gradient-warm-dark {
+  background: linear-gradient(135deg, #d97706 0%, #c2410c 50%, #9a3412 100%);
 }

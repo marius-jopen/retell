@@ -6,26 +6,28 @@ export default function HomePage() {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
-              <span className="block">Premium Podcast</span>
-              <span className="block text-red-100">Content Marketplace</span>
+      <section className="relative bg-gradient-warm text-white overflow-hidden">
+        <div className="absolute inset-0 bg-orange-600/20 backdrop-blur-sm"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+          <div className="text-center animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+              <span className="block text-orange-100">Welcome to</span>
+              <span className="block animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
+                🎙️ RETELL ✨
+              </span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed text-red-50">
               Connect podcast creators with content buyers. Discover high-quality podcast content ready for licensing, or showcase your own productions to reach new audiences.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-              <Link href="/catalog" className="flex-1">
-                <Button size="lg" className="w-full bg-white text-red-600 hover:bg-red-50 font-semibold py-3">
-                  Browse Content
+            <div className="flex flex-col sm:flex-row gap-6 justify-center animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-700">
+              <Link href="/catalog">
+                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 shadow-modern-lg hover:shadow-modern-hover transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+                  🎧 Explore Podcasts
                 </Button>
               </Link>
-              <Link href="/auth/signup?role=author" className="flex-1">
-                <Button size="lg" variant="outline" className="w-full border-2 border-white text-white hover:bg-white hover:text-red-600 font-semibold py-3">
-                  Become a Creator
+              <Link href="/auth/signup?role=author">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-orange-600 shadow-modern hover:shadow-modern-lg transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+                  🎤 Start Creating
                 </Button>
               </Link>
             </div>
@@ -33,8 +35,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* What We Do Section */}
-      <section className="py-16 lg:py-20 bg-gray-50">
+      {/* Features Section */}
+      <section className="py-24 bg-gradient-warm-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -197,25 +199,29 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 lg:py-20 bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Get Started?
-          </h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto text-red-50">
-            Join our growing community of podcast creators and content buyers. Start exploring premium podcast content today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <Link href="/auth/signup?role=client" className="flex-1">
-              <Button size="lg" className="w-full bg-white text-red-600 hover:bg-red-50 font-semibold py-3">
-                License Content
-              </Button>
-            </Link>
-            <Link href="/auth/signup?role=author" className="flex-1">
-              <Button size="lg" variant="outline" className="w-full border-2 border-white text-white hover:bg-white hover:text-red-600 font-semibold py-3">
-                Share Your Content
-              </Button>
-            </Link>
+      <section className="py-24 bg-gradient-warm-dark text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-orange-600/30 backdrop-blur-sm"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
+            <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">
+              ✨ Ready to Start Your Journey?
+            </h2>
+            <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed opacity-90">
+              🎉 Join thousands of amazing creators already using RETELL to share their incredible podcast stories with the world! 
+              Your adventure starts here! 🚀
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link href="/auth/signup?role=author">
+                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 shadow-modern-lg hover:shadow-modern-hover transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+                  🎤 Start Creating Now
+                </Button>
+              </Link>
+              <Link href="/catalog">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-orange-600 shadow-modern hover:shadow-modern-lg transition-all duration-300 rounded-full px-8 py-4 text-lg font-semibold">
+                  🎧 Explore Amazing Content
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
