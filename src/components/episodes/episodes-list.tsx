@@ -224,7 +224,6 @@ export default function EpisodesList({
                           <EpisodeActions
                             episodeId={episode.id}
                             episodeTitle={episode.title}
-                            podcastId={podcast.id}
                           />
                         )}
                       </div>
