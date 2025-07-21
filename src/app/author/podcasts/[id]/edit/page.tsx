@@ -33,7 +33,6 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
   const [episodes, setEpisodes] = useState<Episode[]>([])
   const [loading, setLoading] = useState(false)
   const [fetchError, setFetchError] = useState('')
-  const router = useRouter()
   const supabase = createBrowserSupabaseClient()
   const { addToast } = useToast()
 
@@ -89,7 +88,7 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
     fetchPodcast()
   }, [params, supabase])
 
-  const handleSubmit = async (formData: any, coverImage: File | null) => {
+  const handleSubmit = async (formData: Record<string, unknown>, coverImage: File | null) => {
     setLoading(true)
 
     try {
@@ -147,11 +146,11 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
         setPodcast(updatedPodcast)
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating podcast:', error)
       addToast({
         type: 'error',
-        message: error.message || 'Failed to update podcast'
+        message: error instanceof Error ? error.message : 'Failed to update podcast'
       })
     } finally {
       setLoading(false)
