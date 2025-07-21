@@ -85,7 +85,7 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
     const episodes = podcast.episodes || []
   
   // Calculate total duration of all episodes (in minutes)
-  const totalDuration = episodes.reduce((sum, episode) => sum + (episode.duration || 0), 0)
+  const totalDuration = episodes.reduce((sum: number, episode: Episode) => sum + (episode.duration || 0), 0)
   
   return (
     <div className="min-h-screen bg-orange-50">
