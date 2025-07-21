@@ -110,7 +110,7 @@ export default async function EpisodesPage({
       <div className="min-h-screen bg-orange-50 flex items-center justify-center">
         <div className="max-w-md mx-auto px-4 text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Podcast Not Found</h1>
-          <p className="text-gray-600 mb-6">The podcast you're looking for doesn't exist or you don't have permission to view it.</p>
+          <p className="text-gray-600 mb-6">The podcast you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.</p>
           <Link href="/author/podcasts">
             <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">Back to Podcasts</Button>
           </Link>

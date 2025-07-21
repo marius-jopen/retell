@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { CatalogClient } from '@/components/catalog/catalog-client'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
@@ -145,7 +144,7 @@ export default async function CatalogPage() {
                 </div>
                 <h3 className="text-2xl font-semibold text-gray-900 mb-4">No podcasts found</h3>
                 <p className="text-gray-600 text-lg max-w-md mx-auto mb-8">
-                  We're working hard to bring you amazing podcast content. Check back soon for new releases!
+                  We&apos;re working hard to bring you amazing podcast content. Check back soon for new releases!
                 </p>
                 <div className="flex justify-center space-x-4">
                   <Link href="/auth/signup?role=author">

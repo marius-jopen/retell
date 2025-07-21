@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
-import { Input, TextArea, FileInput } from '@/components/ui'
+import { Input, TextArea } from '@/components/ui'
 import Link from 'next/link'
 import { useToast } from '@/components/ui/toast'
 
@@ -24,12 +24,9 @@ export default function NewEpisodePage({ params }: { params: { id: string } }) {
     season_number: 1,
     duration: ''
   })
-  const [audioFile, setAudioFile] = useState<File | null>(null)
-  const [scriptFile, setScriptFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [fetchError, setFetchError] = useState('')
-  const [podcastId, setPodcastId] = useState<string>('')
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
   const { addToast } = useToast()
@@ -38,7 +35,6 @@ export default function NewEpisodePage({ params }: { params: { id: string } }) {
     const fetchPodcast = async () => {
       try {
         const { id } = params
-        setPodcastId(id)
 
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {

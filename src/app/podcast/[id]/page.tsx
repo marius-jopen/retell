@@ -1,7 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { getCurrentUser } from '@/lib/auth'
 import { Database } from '@/types/database'
-import { PodcastHero } from '@/components/podcast/podcast-hero'
 import { PodcastSidebar } from '@/components/podcast/podcast-sidebar'
 import { EpisodesList } from '@/components/podcast/episodes-list'
 import { ErrorState } from '@/components/ui/error-state'

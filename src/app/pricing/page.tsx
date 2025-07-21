@@ -113,7 +113,7 @@ export default function PricingPage() {
       {/* Pricing Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {pricingTiers.map((tier, _) => (
+          {pricingTiers.map((tier) => (
             <div key={tier.name} className={`${getCardClasses(tier)} rounded-3xl p-8 relative`}>
               {tier.highlighted && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">

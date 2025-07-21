@@ -6,8 +6,7 @@ import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useToast } from '@/components/ui/toast'
-import EpisodeActions from '@/components/author/episode-actions'
-import { formatDate } from '@/lib/utils'
+
 import { EpisodePreviewList } from '@/components/ui/episode-preview-list'
 
 interface Episode {
