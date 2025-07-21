@@ -26,7 +26,6 @@ const PodcastCard = forwardRef<HTMLDivElement, PodcastCardProps>(
       <Card
         ref={ref}
         variant={variant === 'featured' ? 'gradient' : 'default'}
-        interactive={href ? 'hover' : 'none'}
         rounded={variant === 'featured' ? 'xl' : 'default'}
         className={cn('overflow-hidden', className)}
         {...props}
@@ -75,7 +74,7 @@ const PodcastCard = forwardRef<HTMLDivElement, PodcastCardProps>(
         </CardContent>
 
         {showActions && (
-          <CardFooter justify="between">
+          <CardFooter className="justify-between">
             <Button variant="outline" size="sm">
               Preview
             </Button>
@@ -120,7 +119,6 @@ const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
       <Card
         ref={ref}
         variant="default"
-        interactive="hover"
         className={cn('text-center', className)}
         {...props}
       >
@@ -134,7 +132,7 @@ const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
           <CardDescription className="leading-relaxed">{description}</CardDescription>
         </CardContent>
         {action && (
-          <CardFooter justify="center">
+          <CardFooter className="justify-center">
             {action.href ? (
               <Link href={action.href}>
                 <Button variant="outline">{action.label}</Button>
