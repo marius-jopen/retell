@@ -52,6 +52,7 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
   const [generalStatus, setGeneralStatus] = useState<'draft' | 'pending' | 'approved' | 'rejected' | ''>('')
   const [generalCategory, setGeneralCategory] = useState('')
   const [generalRss, setGeneralRss] = useState('')
+  const [generalCountry, setGeneralCountry] = useState('DE')
 
   useEffect(() => {
     const fetchPodcast = async () => {
@@ -97,9 +98,19 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
           license_countries: (podcastData as any).license_countries?.map((c: any) => c.country_code) || [],
         })
 
+        const defaultCountry = podcastData?.country || 'DE'
         setGeneralStatus((podcastData?.status as any) || '')
         setGeneralCategory(podcastData?.category || '')
         setGeneralRss(podcastData?.rss_url || '')
+        setGeneralCountry(defaultCountry)
+        
+        // Initialize selectedCountry to the default country
+        setSelectedCountry(defaultCountry)
+        
+        // Initialize form fields with podcast data (since default country is selected)
+        setLocalTitle(podcastData?.title || '')
+        setLocalDescription(podcastData?.description || '')
+        setLocalCoverDataUrl(podcastData?.cover_image_url || null)
 
         // Load country translations for this podcast
         const { data: countryTrans } = await supabase
@@ -109,16 +120,56 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
 
         const map: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
         ;(countryTrans || []).forEach((row: any) => {
-          map[row.country_code] = {
-            title: row.title,
-            description: row.description,
-            cover_image_url: row.cover_image_url || null,
+          // Only include valid country codes that are not the default country
+          const code = row.country_code
+          if (code && 
+              code.length === 2 && 
+              code !== defaultCountry && 
+              countryNameByCode(code) !== 'Unknown') {
+            map[code] = {
+              title: row.title,
+              description: row.description,
+              cover_image_url: row.cover_image_url || null,
+            }
           }
         })
+        console.log('Country translations loaded:', map)
+        console.log('Raw country translations from DB:', countryTrans)
         setCountryTranslations(map)
-
-        // Initialize left column with base or DE-specific values
-        const preset = map['DE']
+        
+        // Clean up any invalid translations from the database
+        if (countryTrans && countryTrans.length > 0) {
+          const invalidCodes = countryTrans
+            .map((row: any) => row.country_code)
+            .filter((code: string) => 
+              !code || 
+              code.length !== 2 || 
+              code === defaultCountry || 
+              countryNameByCode(code) === 'Unknown'
+            )
+          
+          if (invalidCodes.length > 0) {
+            console.log('Cleaning up invalid country codes:', invalidCodes)
+            // Delete invalid translations from database
+            for (const code of invalidCodes) {
+              await supabase
+                .from('podcast_country_translations')
+                .delete()
+                .eq('podcast_id', id)
+                .eq('country_code', code)
+            }
+          }
+        }
+        
+        // If selectedCountry is invalid, reset to default
+        if (!selectedCountry || 
+            selectedCountry === 'Unknown' || 
+            (selectedCountry !== defaultCountry && !map[selectedCountry])) {
+          setSelectedCountry(defaultCountry)
+        }
+        
+        // Initialize left column with base or default country-specific values
+        const preset = map[defaultCountry]
         setLocalTitle(preset?.title || (podcastData?.title ?? ''))
         setLocalDescription(preset?.description || (podcastData?.description ?? ''))
         setLocalCoverDataUrl(preset?.cover_image_url || (podcastData?.cover_image_url ?? null))
@@ -291,9 +342,73 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
                 Update your podcast information and settings
               </p>
             </div>
-            <Link href="/author/podcasts">
-              <Button variant="outline">← Back to Podcasts</Button>
-            </Link>
+            <div className="flex gap-3">
+              <Link href="/author/podcasts">
+                <Button variant="outline">← Back to Podcasts</Button>
+              </Link>
+              <Button 
+                variant="default"
+                className="bg-red-600 hover:bg-red-700 text-white"
+                disabled={loading}
+                onClick={async () => {
+                  if (!podcastId) return
+                  setLoading(true)
+                  
+                  try {
+                    // Save general info (status, category, RSS, default country)
+                    let podcastUpdateData: any = { 
+                      status: generalStatus, 
+                      category: generalCategory, 
+                      rss_url: generalRss, 
+                      country: generalCountry,
+                      updated_at: new Date().toISOString() 
+                    }
+                    
+                    // If default country is selected, also update the base title/description
+                    if (selectedCountry === (generalCountry || 'DE')) {
+                      podcastUpdateData.title = localTitle
+                      podcastUpdateData.description = localDescription
+                      // Note: cover image handling would go here if needed
+                    }
+                    
+                    const { error: generalError } = await supabase
+                      .from('podcasts')
+                      .update(podcastUpdateData)
+                      .eq('id', podcastId)
+                    
+                    if (generalError) throw generalError
+
+                    // Save country-specific translation if a non-default country is selected
+                    if (selectedCountry !== (generalCountry || 'DE') && (localTitle || localDescription)) {
+                      const { error: countryError } = await supabase
+                        .from('podcast_country_translations')
+                        .upsert({
+                          podcast_id: podcastId,
+                          country_code: selectedCountry,
+                          title: localTitle || '',
+                          description: localDescription || '',
+                          cover_image_url: localCoverDataUrl || null,
+                          updated_at: new Date().toISOString(),
+                        }, { onConflict: 'podcast_id,country_code' } as any)
+                      
+                      if (countryError) throw countryError
+                    }
+                    
+                    addToast({ type: 'success', message: 'All changes saved successfully!' })
+                    
+                    // Refresh data
+                    window.location.reload()
+                    
+                  } catch (error: any) {
+                    addToast({ type: 'error', message: `Save failed: ${error.message}` })
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+              >
+                {loading ? 'Saving...' : 'Save All Changes'}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -302,8 +417,8 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
           <div className="lg:w-2/3 lg:sticky lg:top-8 lg:self-start">
             <EditPodcastForm
               podcast={podcast}
-              onSubmit={handleSubmit}
-              loading={loading}
+              onSubmit={async () => {}} // No-op function since we handle saving in the header
+              loading={false} // Don't show loading in form since we control it from header
               isAdmin={false}
               countryTitle={localTitle}
               countryDescription={localDescription}
@@ -336,136 +451,187 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
                   ))}
                 </Select>
                 <Input label="RSS Feed URL (Optional)" id="rss_author" type="url" value={generalRss} onChange={(e) => setGeneralRss(e.target.value)} placeholder="https://.../rss" />
-                <div className="text-right">
-                  <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white" onClick={async () => {
-                    if (!podcastId) return
-                    const { error } = await supabase
-                      .from('podcasts')
-                      .update({ status: generalStatus, category: generalCategory, rss_url: generalRss, updated_at: new Date().toISOString() })
-                      .eq('id', podcastId)
-                    if (error) addToast({ type: 'error', message: error.message })
-                    else addToast({ type: 'success', message: 'General info saved' })
-                  }}>Save general info</Button>
-                </div>
+                <Select label="Default Country" id="country_author" value={generalCountry} onChange={(e) => setGeneralCountry(e.target.value)}>
+                  {[
+                    // Germany first
+                    { code: 'DE', name: countryNameByCode('DE') },
+                    // Then all other countries alphabetically
+                    ...COUNTRIES.filter(c => c.code !== 'DE').map(c => ({ code: c.code, name: countryNameByCode(c.code) })).sort((a, b) => a.name.localeCompare(b.name))
+                  ].map((country) => (
+                    <option key={country.code} value={country.code}>{country.name}</option>
+                  ))}
+                </Select>
+
               </div>
             </div>
 
-            {/* Country-specific selector (same as admin) */}
+            {/* Country-specific content */}
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
               <div className="text-sm font-medium text-gray-900 mb-3">Country-specific content</div>
 
-              {/* Active country bubbles */}
+              {/* Country bubbles - Default country + translations */}
               <div className="mb-3 flex flex-wrap gap-2">
-                {(['DE', ...Object.keys(countryTranslations)
-                    .filter((c) => c !== 'DE')
-                    .sort((a, b) => countryNameByCode(a).localeCompare(countryNameByCode(b)))
-                  ]).map((code) => (
-                  <div key={code} className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${code === selectedCountry ? 'bg-red-600 text-white border-red-600' : 'bg-white text-gray-700 border-gray-300'}`}>
-                    <button
-                      onClick={() => {
-                        setSelectedCountry(code)
-                        const t = countryTranslations[code]
-                        setLocalTitle(t?.title || (podcast?.title ?? ''))
-                        setLocalDescription(t?.description || (podcast?.description ?? ''))
-                        setLocalCoverDataUrl(t?.cover_image_url || (podcast?.cover_image_url ?? null))
-                      }}
-                      type="button"
-                      title={countryNameByCode(code)}
-                      className={`focus:outline-none ${code === selectedCountry ? 'text-white' : ''}`}
-                    >
-                      {countryNameByCode(code)}
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Remove ${countryNameByCode(code)}`}
-                      className={`ml-1 rounded-full px-1.5 ${code === selectedCountry ? 'text-white hover:bg-red-700' : 'hover:bg-gray-100'}`}
-                      onClick={async (e) => {
-                        e.stopPropagation()
-                        if (!podcastId) return
-                        await supabase
-                          .from('podcast_country_translations')
-                          .delete()
-                          .eq('podcast_id', podcastId)
-                          .eq('country_code', code)
-
-                        setCountryTranslations((prev) => {
-                          const copy = { ...prev }
-                          delete copy[code]
-                          return copy
-                        })
-
-                        if (code === selectedCountry) {
+                {/* Always show default country first (no X button) */}
+                {(() => {
+                  const defaultCountry = generalCountry || 'DE'
+                  const isDefaultSelected = selectedCountry === defaultCountry
+                  
+                  return (
+                    <div key={defaultCountry} className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${isDefaultSelected ? 'bg-red-600 border-red-600 text-white' : 'bg-white border-gray-300'}`}>
+                      <button
+                        onClick={() => {
+                          setSelectedCountry(defaultCountry)
+                          // Load default country content (base podcast data)
                           setLocalTitle(podcast?.title ?? '')
                           setLocalDescription(podcast?.description ?? '')
                           setLocalCoverDataUrl(podcast?.cover_image_url ?? null)
-                        }
-                        addToast({ type: 'success', message: `${countryNameByCode(code)} removed` })
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mb-4">
-                <Listbox value={selectedCountry} onChange={(code) => {
-                  setSelectedCountry(code)
-                  const t = countryTranslations[code]
-                  setLocalTitle(t?.title || (podcast?.title ?? ''))
-                  setLocalDescription(t?.description || (podcast?.description ?? ''))
-                  setLocalCoverDataUrl(t?.cover_image_url || (podcast?.cover_image_url ?? null))
-                }}>
-                  <div className="relative">
-                    <Listbox.Button className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-left text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500">
-                      <span className="block truncate">{countryNameByCode(selectedCountry)}</span>
-                    </Listbox.Button>
-                    <Listbox.Options className="absolute z-10 mt-2 max-h-64 w-full overflow-auto rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
-                      {COUNTRIES.map((c) => (
-                        <Listbox.Option key={c.code} value={c.code} className={({ active }) => `cursor-pointer select-none px-3 py-2 text-sm ${active ? 'bg-red-50 text-gray-900' : 'text-gray-700'}`}>
-                          {({ selected }) => (
-                            <div className="flex items-center justify-between">
-                              <span className="truncate">{countryNameByCode(c.code)}</span>
-                              {(countryTranslations[c.code] || selected) && <span className="ml-2 text-red-600">✔</span>}
-                            </div>
-                          )}
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </div>
-                </Listbox>
-              </div>
-
-              <div className="text-xs text-gray-600 mb-3">Use the fields in the left column to edit Title, Description, and Cover for the selected country. Save below to store this as a country translation.</div>
-
-              <div className="text-right">
-                <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white" onClick={async () => {
-                  if (!podcastId) return
-                  const { error } = await supabase
-                    .from('podcast_country_translations')
-                    .upsert({
-                      podcast_id: podcastId,
-                      country_code: selectedCountry,
-                      title: localTitle || '',
-                      description: localDescription || '',
-                      cover_image_url: localCoverDataUrl || null,
-                      updated_at: new Date().toISOString(),
-                    }, { onConflict: 'podcast_id,country_code' } as any)
-                  if (error) {
-                    addToast({ type: 'error', message: `Save failed: ${error.message}` })
-                    return
-                  }
-                  const { data: refetch } = await supabase
-                    .from('podcast_country_translations')
-                    .select('country_code,title,description,cover_image_url')
-                    .eq('podcast_id', podcastId)
-                  const updated: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
-                  ;(refetch || []).forEach((row: any) => {
-                    updated[row.country_code] = { title: row.title, description: row.description, cover_image_url: row.cover_image_url || null }
+                        }}
+                        type="button"
+                        title={`${countryNameByCode(defaultCountry)} (Default)`}
+                        className={`focus:outline-none ${isDefaultSelected ? 'text-white' : 'text-red-600'}`}
+                      >
+                        {countryNameByCode(defaultCountry)}
+                      </button>
+                      {/* No X button for default country */}
+                    </div>
+                  )
+                })()}
+                
+                {/* Translation country bubbles (with X button) */}
+                {Object.keys(countryTranslations)
+                  .filter(code => {
+                    // Filter out invalid/unknown countries and the default country
+                    const defaultCountry = generalCountry || 'DE'
+                    return code && 
+                           code !== defaultCountry && 
+                           countryNameByCode(code) !== 'Unknown' && 
+                           code.length === 2
                   })
-                  setCountryTranslations(updated)
-                  addToast({ type: 'success', message: 'Country content saved' })
-                }}>Save country content</Button>
+                  .sort((a, b) => countryNameByCode(a).localeCompare(countryNameByCode(b)))
+                  .map((code) => {
+                    const isSelected = selectedCountry === code
+                    
+                    return (
+                      <div key={code} className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${isSelected ? 'bg-red-600 border-red-600 text-white' : 'bg-white border-gray-300'}`}>
+                        <button
+                          onClick={() => {
+                            setSelectedCountry(code)
+                            // Load translation content
+                            const t = countryTranslations[code]
+                            setLocalTitle(t?.title || (podcast?.title ?? ''))
+                            setLocalDescription(t?.description || (podcast?.description ?? ''))
+                            setLocalCoverDataUrl(t?.cover_image_url || (podcast?.cover_image_url ?? null))
+                          }}
+                          type="button"
+                          title={countryNameByCode(code)}
+                          className={`focus:outline-none ${isSelected ? 'text-white' : 'text-red-600'}`}
+                        >
+                          {countryNameByCode(code)}
+                        </button>
+                        {/* X button for translation countries */}
+                        <button
+                          type="button"
+                          aria-label={`Remove ${countryNameByCode(code)}`}
+                          className={`ml-1 rounded-full px-1.5 ${isSelected ? 'text-white hover:bg-red-700' : 'text-red-600 hover:bg-gray-100'}`}
+                          onClick={async (e) => {
+                            e.stopPropagation()
+                            if (!podcastId) return
+                            
+                            // Delete from database
+                            await supabase
+                              .from('podcast_country_translations')
+                              .delete()
+                              .eq('podcast_id', podcastId)
+                              .eq('country_code', code)
+
+                            // Remove from local state
+                            setCountryTranslations((prev) => {
+                              const copy = { ...prev }
+                              delete copy[code]
+                              return copy
+                            })
+
+                            // If deleting the selected country, switch back to default country
+                            if (code === selectedCountry) {
+                              const defaultCountry = generalCountry || 'DE'
+                              setSelectedCountry(defaultCountry)
+                              setLocalTitle(podcast?.title ?? '')
+                              setLocalDescription(podcast?.description ?? '')
+                              setLocalCoverDataUrl(podcast?.cover_image_url ?? null)
+                            }
+                            addToast({ type: 'success', message: `${countryNameByCode(code)} removed` })
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    )
+                  })}
+              </div>
+
+              {/* Country selection dropdown and Add Country button */}
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    Select country to add translation:
+                  </label>
+                  <select
+                    id="countryDropdown"
+                    value=""
+                    onChange={(e) => {
+                      if (!e.target.value) return
+                      const newCountry = e.target.value
+                      const defaultCountry = generalCountry || 'DE'
+                      
+                      // Don't allow adding the default country as a translation
+                      if (newCountry === defaultCountry) {
+                        addToast({ type: 'error', message: 'Cannot add default country as translation' })
+                        e.target.value = ''
+                        return
+                      }
+                      
+                      // Don't allow adding if already exists
+                      if (countryTranslations[newCountry]) {
+                        addToast({ type: 'error', message: 'Translation for this country already exists' })
+                        e.target.value = ''
+                        return
+                      }
+                      
+                      // Add new country translation (use current form values)
+                      setCountryTranslations(prev => ({
+                        ...prev,
+                        [newCountry]: {
+                          title: localTitle || podcast?.title || '',
+                          description: localDescription || podcast?.description || '',
+                          cover_image_url: localCoverDataUrl
+                        }
+                      }))
+                      
+                      // Select the new country and keep current form values
+                      setSelectedCountry(newCountry)
+                      
+                      addToast({ type: 'success', message: `Added ${countryNameByCode(newCountry)} translation` })
+                      
+                      // Reset dropdown
+                      e.target.value = ''
+                    }}
+                    className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    <option value="">Select country to add...</option>
+                    {COUNTRIES
+                      .filter(country => {
+                        const defaultCountry = generalCountry || 'DE'
+                        return country.code !== defaultCountry && !countryTranslations[country.code]
+                      })
+                      .map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {country.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+
               </div>
             </div>
 

@@ -5,7 +5,7 @@ import { PodcastCard } from '@/components/ui/podcast-card'
 import { FilterBar } from '@/components/ui/filter-bar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { COUNTRIES } from '@/lib/countries'
+import { countryNameByCode } from '@/lib/countries'
 
 interface Episode {
   id: string
@@ -23,6 +23,8 @@ interface Podcast {
   country: string
   cover_image_url: string | null
   episodes?: Episode[]
+  license_countries?: string[]
+  translations?: Array<{ language_code: string; title: string; description: string }>
 }
 
 interface CatalogClientProps {
@@ -32,21 +34,48 @@ interface CatalogClientProps {
 export function CatalogClient({ podcasts }: CatalogClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
-  const [selectedLanguage, setSelectedLanguage] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('')
 
-  // Extract unique categories and languages
+  // Extract unique categories from podcasts
   const categories = useMemo(() => {
     const uniqueCategories = [...new Set(podcasts.map(p => p.category).filter(Boolean))]
     return uniqueCategories.sort()
   }, [podcasts])
 
-  const languages = useMemo(() => {
-    const uniqueLanguages = [...new Set(podcasts.map(p => p.language).filter(Boolean))]
-    return uniqueLanguages.sort()
+  // Extract unique countries from podcasts (default country + license countries + translation countries)
+  const countries = useMemo(() => {
+    const countrySet = new Set<string>()
+    
+    podcasts.forEach(podcast => {
+      // Add default country (fallback to 'DE' if empty/null)
+      const defaultCountry = podcast.country || 'DE'
+      countrySet.add(defaultCountry)
+      
+      // Add license countries
+      if (podcast.license_countries) {
+        podcast.license_countries.forEach(code => {
+          if (code && code.trim()) {
+            countrySet.add(code)
+          }
+        })
+      }
+      
+      // Add translation countries
+      if (podcast.translations) {
+        podcast.translations.forEach(t => {
+          if (t.language_code && t.language_code.trim()) {
+            countrySet.add(t.language_code)
+          }
+        })
+      }
+    })
+    
+    // Convert to array with country names, filter out 'Unknown', and sort
+    return Array.from(countrySet)
+      .map(code => ({ code, name: countryNameByCode(code) }))
+      .filter(country => country.name !== 'Unknown')
+      .sort((a, b) => a.name.localeCompare(b.name))
   }, [podcasts])
-
-  const countries = COUNTRIES
 
   // Filter podcasts based on search and filters
   const filteredPodcasts = useMemo(() => {
@@ -57,12 +86,15 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
         podcast.category.toLowerCase().includes(searchQuery.toLowerCase())
 
       const matchesCategory = !selectedCategory || podcast.category === selectedCategory
-      const matchesLanguage = !selectedLanguage || podcast.language === selectedLanguage
-      const matchesCountry = !selectedCountry || podcast.country === selectedCountry
+      
+      const matchesCountry = !selectedCountry || 
+        podcast.country === selectedCountry ||
+        (podcast.license_countries && podcast.license_countries.includes(selectedCountry)) ||
+        (podcast.translations && podcast.translations.some(t => t.language_code === selectedCountry))
 
-      return matchesSearch && matchesCategory && matchesLanguage && matchesCountry
+      return matchesSearch && matchesCategory && matchesCountry
     })
-  }, [podcasts, searchQuery, selectedCategory, selectedLanguage, selectedCountry])
+  }, [podcasts, searchQuery, selectedCategory, selectedCountry])
 
   if (podcasts.length === 0) {
     return (
@@ -90,14 +122,11 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
       <FilterBar
         onSearchChange={setSearchQuery}
         onCategoryChange={setSelectedCategory}
-        onLanguageChange={setSelectedLanguage}
         onCountryChange={setSelectedCountry}
         searchValue={searchQuery}
         categoryValue={selectedCategory}
-        languageValue={selectedLanguage}
         countryValue={selectedCountry}
         categories={categories}
-        languages={languages}
         countries={countries}
         resultCount={filteredPodcasts.length}
       />
@@ -117,7 +146,6 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
             onClick={() => {
               setSearchQuery('')
               setSelectedCategory('')
-              setSelectedLanguage('')
               setSelectedCountry('')
             }}
             variant="outline"

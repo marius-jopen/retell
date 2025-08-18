@@ -6,7 +6,7 @@ import { CatalogClient } from '@/components/catalog/catalog-client'
 export default async function CatalogPage() {
   const supabase = await createServerSupabaseClient()
 
-  // Get approved podcasts
+  // Get approved podcasts with all related data
   const { data: podcasts } = await supabase
     .from('podcasts')
     .select(`
@@ -18,7 +18,7 @@ export default async function CatalogPage() {
         episode_number
       ),
       license_countries:podcast_license_countries(country_code),
-      translations:podcast_translations(language_code,title,description)
+      translations:podcast_country_translations(country_code,title,description)
     `)
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
@@ -43,7 +43,11 @@ export default async function CatalogPage() {
         <CatalogClient podcasts={(podcasts || []).map((p: any) => ({
           ...p,
           license_countries: p.license_countries?.map((c: any) => c.country_code) || [],
-          translations: p.translations || [],
+          translations: p.translations?.map((t: any) => ({
+            language_code: t.country_code,
+            title: t.title,
+            description: t.description
+          })) || [],
         }))} />
       </div>
     </div>

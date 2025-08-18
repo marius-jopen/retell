@@ -184,12 +184,7 @@ export default function EditPodcastForm({
 
           {/* Removed license countries and translations per request */}
 
-          {/* Submit */}
-          <div className="flex justify-end space-x-4 pt-6 border-t border-gray-100">
-            <Button type="submit" disabled={loading} variant="primary" size="lg" rounded="full" className="font-semibold">
-              {loading ? (isCreating ? 'Creating...' : 'Saving...') : (isCreating ? 'Create Podcast' : 'Save Changes')}
-            </Button>
-          </div>
+
         </form>
       </CardContent>
     </Card>
