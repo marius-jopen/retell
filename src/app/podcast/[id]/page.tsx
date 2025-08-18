@@ -8,6 +8,7 @@ import { EpisodesList } from '@/components/podcast/episodes-list'
 import { ErrorState } from '@/components/ui/error-state'
 import { Button } from '@/components/ui/button'
 import { COUNTRIES, countryNameByCode } from '@/lib/countries'
+import { LANGUAGES } from '@/lib/languages'
 import Link from 'next/link'
 
 type Episode = Database['public']['Tables']['episodes']['Row']
@@ -24,14 +25,23 @@ interface PodcastDetailPageProps {
   params: Promise<{ id: string }>
 }
 
+// Helper function to get language name
+const getLanguageName = (languageCode: string): string => {
+  const language = LANGUAGES.find(lang => lang.code === languageCode)
+  return language ? language.name : languageCode.toUpperCase()
+}
+
 export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
   const [podcast, setPodcast] = useState<PodcastType | null>(null)
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('DE') // Default country
+  const [selectedLanguage, setSelectedLanguage] = useState('de') // Default language
   const [countryTranslations, setCountryTranslations] = useState<Record<string, { title: string; description: string; cover_image_url: string | null }>>({})
+  const [languageTranslations, setLanguageTranslations] = useState<Record<string, { title: string; description: string; cover_image_url: string | null }>>({})
   const [availableCountries, setAvailableCountries] = useState<string[]>([])
+  const [availableLanguages, setAvailableLanguages] = useState<string[]>([])
   
   const supabase = createBrowserSupabaseClient()
 
@@ -107,9 +117,43 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
           })
         }
 
+        // Get language translations
+        const { data: languageTrans } = await supabase
+          .from('podcast_translations')
+          .select('language_code, title, description')
+          .eq('podcast_id', id)
+
+        // Process language translations
+        const languageTranslationsMap: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
+        const languages = [podcastData.language] // Start with default language
+        
+        // Add default language data
+        languageTranslationsMap[podcastData.language] = {
+          title: podcastData.title,
+          description: podcastData.description,
+          cover_image_url: podcastData.cover_image_url
+        }
+
+        // Add translated languages
+        if (languageTrans) {
+          languageTrans.forEach((trans: any) => {
+            if (trans.language_code && trans.language_code !== podcastData.language) {
+              languageTranslationsMap[trans.language_code] = {
+                title: trans.title,
+                description: trans.description,
+                cover_image_url: podcastData.cover_image_url // Use same cover for languages
+              }
+              languages.push(trans.language_code)
+            }
+          })
+        }
+
         setCountryTranslations(translationsMap)
+        setLanguageTranslations(languageTranslationsMap)
         setAvailableCountries(countries)
+        setAvailableLanguages(languages)
         setSelectedCountry(podcastData.country)
+        setSelectedLanguage(podcastData.language)
         setPodcast(podcastData)
         setLoading(false)
 
@@ -165,7 +209,15 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
   }
 
   const episodes = podcast.episodes || []
-  const currentTranslation = countryTranslations[selectedCountry] || countryTranslations[podcast.country]
+  // Priority: Language translation > Country translation > Default podcast
+  const currentTranslation = languageTranslations[selectedLanguage] || 
+                             countryTranslations[selectedCountry] || 
+                             countryTranslations[podcast.country] ||
+                             {
+                               title: podcast.title,
+                               description: podcast.description,
+                               cover_image_url: podcast.cover_image_url
+                             }
   
   // Calculate total duration of all episodes (in minutes)
   const totalDuration = episodes.reduce((sum: number, episode: Episode) => sum + (episode.duration || 0), 0)
@@ -267,7 +319,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                   Country: {countryNameByCode(selectedCountry)}
                 </span>
                 <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
-                  Language: {podcast.language || 'Unknown'}
+                  Language: {getLanguageName(selectedLanguage)}
                 </span>
               </div>
               
@@ -313,7 +365,39 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                 </div>
               )}
 
-
+              {/* Language Selector */}
+              {availableLanguages.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-white/90 mb-3 uppercase tracking-wide">
+                    {availableLanguages.length > 1 ? 'Available Languages' : 'Available Language'}
+                  </h3>
+                  <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                    {availableLanguages.map((languageCode) => (
+                      <button
+                        key={languageCode}
+                        onClick={() => availableLanguages.length > 1 && setSelectedLanguage(languageCode)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          availableLanguages.length > 1 ? 'transform hover:scale-105 active:scale-95' : ''
+                        } shadow-lg hover:shadow-xl ${
+                          selectedLanguage === languageCode
+                            ? 'bg-white text-orange-600 shadow-white/25'
+                            : availableLanguages.length > 1 
+                              ? 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50 cursor-pointer'
+                              : 'bg-white/10 text-white border border-white/30 cursor-default'
+                        }`}
+                      >
+                        {getLanguageName(languageCode)}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-white/70 mt-2 text-center lg:text-left">
+                    {availableLanguages.length > 1 
+                      ? 'Click to see content in different languages'
+                      : 'This podcast is available in this language'
+                    }
+                  </p>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
