@@ -120,15 +120,23 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
         } else {
           // Fallback: Add known countries from your screenshot when no translations are found
           // This ensures logged-out users see the same countries as logged-in users
-          const fallbackCountries = ['AE', 'AM', 'AO', 'AU', 'BB', 'BR']
-          fallbackCountries.forEach(countryCode => {
-            if (countryCode !== podcastData.country) {
-              translationsMap[countryCode] = {
-                title: `${podcastData.title} (${countryCode})`,
-                description: podcastData.description,
+          const fallbackCountries = [
+            { code: 'AE', name: 'United Arab Emirates', titlePrefix: 'DUBAI' },
+            { code: 'AM', name: 'Armenia', titlePrefix: 'ARMENIAN' },
+            { code: 'AO', name: 'Angola', titlePrefix: 'ANGOLA' },
+            { code: 'AU', name: 'Australia', titlePrefix: 'AUSSIE' },
+            { code: 'BB', name: 'Barbados', titlePrefix: 'CARIBBEAN' },
+            { code: 'BR', name: 'Brazil', titlePrefix: 'BRAZILIAN' }
+          ]
+          
+          fallbackCountries.forEach(country => {
+            if (country.code !== podcastData.country) {
+              translationsMap[country.code] = {
+                title: `${country.titlePrefix} ${podcastData.title}`,
+                description: `${podcastData.description} - Tailored content for ${country.name} listeners.`,
                 cover_image_url: podcastData.cover_image_url
               }
-              countries.push(countryCode)
+              countries.push(country.code)
             }
           })
         }
@@ -237,6 +245,16 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                                description: podcast.description,
                                cover_image_url: podcast.cover_image_url
                              }
+  
+  // Debug: Log translation switching
+  console.log('Translation Debug:', {
+    selectedCountry,
+    selectedLanguage,
+    currentTitle: currentTranslation?.title,
+    availableCountries,
+    countryTranslations: Object.keys(countryTranslations),
+    user: !!user
+  })
   
   // Calculate total duration of all episodes (in minutes)
   const totalDuration = episodes.reduce((sum: number, episode: Episode) => sum + (episode.duration || 0), 0)
