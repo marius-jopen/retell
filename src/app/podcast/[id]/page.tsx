@@ -98,6 +98,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
           error: countryError, 
           count: countryTrans?.length || 0 
         })
+        console.log('Country translations full data:', countryTrans)
         
 
 
@@ -141,6 +142,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
           error: languageError, 
           count: languageTrans?.length || 0 
         })
+        console.log('Language translations full data:', languageTrans)
         
 
 
@@ -171,6 +173,13 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
 
 
 
+        
+        console.log('Final processed data:')
+        console.log('- translationsMap:', translationsMap)
+        console.log('- languageTranslationsMap:', languageTranslationsMap)
+        console.log('- countries:', countries)
+        console.log('- languages:', languages)
+        console.log('- languageTranslationsMap.de content:', languageTranslationsMap.de)
         
         setCountryTranslations(translationsMap)
         setLanguageTranslations(languageTranslationsMap)
@@ -233,9 +242,10 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
   }
 
   const episodes = podcast.episodes || []
-  // Priority: Language translation > Country translation > Default podcast
-  const currentTranslation = languageTranslations[selectedLanguage] || 
-                             countryTranslations[selectedCountry] || 
+  // Priority: Country translation > Language translation > Default podcast
+  // This allows country switching to work properly
+  const currentTranslation = countryTranslations[selectedCountry] ||
+                             languageTranslations[selectedLanguage] || 
                              countryTranslations[podcast.country] ||
                              {
                                title: podcast.title,
