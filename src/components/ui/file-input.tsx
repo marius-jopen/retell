@@ -12,7 +12,7 @@ export const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '_')
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-1">
         {label && (
           <label 
             htmlFor={inputId} 
@@ -26,8 +26,8 @@ export const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
           id={inputId}
           type="file"
           className={cn(
-            "block w-full text-sm text-gray-500",
-            "file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0",
+            "block w-full text-sm text-gray-600",
+            "file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0",
             "file:text-sm file:font-semibold file:bg-red-50 file:text-red-700",
             "hover:file:bg-red-100 file:transition-colors",
             "focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2",
@@ -41,7 +41,7 @@ export const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
           <p className="text-sm text-red-600">{error}</p>
         )}
         {helperText && !error && (
-          <p className="text-sm text-gray-500">{helperText}</p>
+          <p className="text-xs text-gray-500">{helperText}</p>
         )}
       </div>
     )

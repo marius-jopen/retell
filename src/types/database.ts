@@ -33,6 +33,38 @@ export interface Database {
           updated_at?: string
         }
       }
+      podcast_country_translations: {
+        Row: {
+          id: string
+          podcast_id: string
+          country_code: string
+          title: string
+          description: string
+          cover_image_url: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          podcast_id: string
+          country_code: string
+          title: string
+          description: string
+          cover_image_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          podcast_id?: string
+          country_code?: string
+          title?: string
+          description?: string
+          cover_image_url?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
       podcasts: {
         Row: {
           id: string

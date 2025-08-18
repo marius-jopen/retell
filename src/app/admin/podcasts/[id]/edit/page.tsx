@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/toast'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import EditPodcastForm from '@/components/forms/edit-podcast-form'
 import { EpisodePreviewList, Episode } from '@/components/ui/episode-preview-list'
+import { COUNTRIES, countryNameByCode } from '@/lib/countries'
 
 interface Podcast {
   id: string
@@ -31,6 +32,7 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
   const [podcastId, setPodcastId] = useState('')
   const [podcast, setPodcast] = useState<Podcast | null>(null)
   const [episodes, setEpisodes] = useState<Episode[]>([])
+  const [selectedCountry, setSelectedCountry] = useState<string>('DE')
   const [loading, setLoading] = useState(false)
   const [fetchError, setFetchError] = useState('')
   const router = useRouter()
@@ -266,14 +268,31 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
                   />
                 </div>
 
-        {/* Right Column - Episodes (Scrollable) */}
+        {/* Right Column - Translations + Episodes */}
         <div className="lg:w-1/3 flex flex-col space-y-4 min-h-0">
-          {/* Episode Actions */}
-         
+          {/* Country translations selector */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-4">
+            <div className="text-sm font-medium text-gray-900 mb-3">Country-specific Titles & Descriptions</div>
+            <div className="flex items-center gap-2 mb-3">
+              <select
+                className="text-sm border-gray-300 rounded-md px-3 py-2 flex-1"
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+              >
+                {COUNTRIES.map(c => (
+                  <option key={c.code} value={c.code}>{countryNameByCode(c.code)}</option>
+                ))}
+              </select>
+              <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">Add</Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {/* bubbles placeholder until wired to data */}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">Select a country to create or edit localized title and description. Active countries appear in red.</p>
+          </div>
 
-            {/* Episodes List */}
+          {/* Episodes List */}
           <div className="flex-1 min-h-0">
-            
             <EpisodePreviewList
               title={`Episodes (${episodes.length})`}
               episodes={episodes.slice(0, 5)}

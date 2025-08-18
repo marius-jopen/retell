@@ -78,15 +78,8 @@ export default function EditPodcastForm({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        return
-      }
-      
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        return
-      }
+      if (!file.type.startsWith('image/')) return
+      if (file.size > 5 * 1024 * 1024) return
       setCoverImage(file)
     }
   }
@@ -112,294 +105,61 @@ export default function EditPodcastForm({
             : (isAdmin ? 'Administrative podcast editing and content management' : 'Update your podcast information and settings')
           }
         </p>
-        
-        {/* Workflow Status Indicator */}
-        {workflowState && !isAdmin && (
-          <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-sm font-medium text-gray-700">
-                  Current Mode: 
-                </span>
-                <span className={`ml-2 px-2 py-1 text-xs font-medium rounded-full ${
-                  workflowState.mode === 'manual' 
-                    ? 'bg-blue-100 text-blue-800'
-                    : workflowState.mode === 'rss'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-purple-100 text-purple-800'
-                }`}>
-                  {workflowState.mode.toUpperCase()}
-                </span>
-              </div>
-            </div>
-            {workflowState.mode === 'hybrid' && (
-              <p className="text-xs text-gray-500 mt-2">
-                Some fields may be automatically synced from RSS feed
-              </p>
-            )}
-          </div>
-        )}
       </CardHeader>
 
       <CardContent className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
+        <form onSubmit={handleSubmit} className="space-y-10">
+          {/* General Info */}
           <div>
-            <Input
-              label="Podcast Title"
-              id="title"
-              value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
-              required
-              placeholder="Enter podcast title"
-            />
-            {workflowState?.manual_overrides?.title && (
-              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-            )}
-          </div>
+            <h3 className="text-base font-semibold text-gray-900 mb-4">General Info</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {isAdmin && (
+                <Select label="Status" id="status" value={formData.status} onChange={(e) => handleInputChange('status', e.target.value)} required placeholder="Select status">
+                  <option value="draft">Draft</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </Select>
+              )}
 
-          {/* Description */}
-          <div>
-            <TextArea
-              label="Description"
-              id="description"
-              rows={6}
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              required
-              placeholder="Describe the podcast"
-              className="min-h-[140px]"
-            />
-            {workflowState?.manual_overrides?.description && (
-              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-            )}
-          </div>
+              <Select label="Category" id="category" value={formData.category} onChange={(e) => handleInputChange('category', e.target.value)} required placeholder="Select a category">
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </Select>
 
-          {/* Status (Admin only) */}
-          {isAdmin && (
-            <Select
-              label="Status"
-              id="status"
-              value={formData.status}
-              onChange={(e) => handleInputChange('status', e.target.value)}
-              required
-              placeholder="Select status"
-            >
-              <option value="draft">Draft</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </Select>
-          )}
+              {/* Language/Country removed in General per request */}
 
-          {/* Category */}
-          <div>
-            <Select
-              label="Category"
-              id="category"
-              value={formData.category}
-              onChange={(e) => handleInputChange('category', e.target.value)}
-              required
-              placeholder="Select a category"
-            >
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </Select>
-            {workflowState?.manual_overrides?.category && (
-              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-            )}
-          </div>
-
-          {/* Language */}
-          <div>
-            <Select
-              label="Language"
-              id="language"
-              value={formData.language}
-              onChange={(e) => handleInputChange('language', e.target.value)}
-              required
-              placeholder="Select a language"
-            >
-              {languages.map(lang => (
-                <option key={lang.code} value={lang.code}>{lang.name}</option>
-              ))}
-            </Select>
-            {workflowState?.manual_overrides?.language && (
-              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-            )}
-          </div>
-
-          {/* Country */}
-          <div>
-            <Select
-              label="Country"
-              id="country"
-              value={formData.country}
-              onChange={(e) => handleInputChange('country', e.target.value)}
-              required
-              placeholder="Select a country"
-            >
-              {countries.map(country => (
-                <option key={country} value={country}>{country}</option>
-              ))}
-            </Select>
-            {workflowState?.manual_overrides?.country && (
-              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-            )}
-          </div>
-
-          {/* License Countries (Multi-select chips) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">License Countries</label>
-            <div className="flex flex-wrap gap-2">
-              {['US','CA','GB','AU','DE','FR','ES','IT','NL','JP','KR','BR','MX','AR','IN','CN','RU'].map(code => (
-                <button
-                  type="button"
-                  key={code}
-                  onClick={() => setLicenseCountries(prev => prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code])}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
-                    licenseCountries.includes(code)
-                      ? 'bg-red-600 text-white border-red-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  {code}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 mt-2">Select the countries where licensing is allowed. These will be visible and filterable in the catalog.</p>
-          </div>
-
-          {/* Translations */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">Translations (Title & Description)</label>
-              <button
-                type="button"
-                onClick={() => setTranslations(prev => [...prev, { language_code: 'en', title: '', description: '' }])}
-                className="text-xs text-red-600 hover:text-red-700"
-              >
-                + Add translation
-              </button>
-            </div>
-            <div className="space-y-4">
-              {translations.map((t, idx) => (
-                <div key={idx} className="border border-gray-200 rounded-lg p-3">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
-                    <select
-                      value={t.language_code}
-                      onChange={(e) => {
-                        const code = e.target.value
-                        setTranslations(prev => prev.map((x, i) => i === idx ? { ...x, language_code: code } : x))
-                      }}
-                      className="text-sm border-gray-300 rounded-md px-2 py-1"
-                    >
-                      {languages.map(l => (
-                        <option key={l.code} value={l.code}>{l.name}</option>
-                      ))}
-                    </select>
-                    <input
-                      placeholder="Translated title"
-                      value={t.title}
-                      onChange={(e) => setTranslations(prev => prev.map((x, i) => i === idx ? { ...x, title: e.target.value } : x))}
-                      className="text-sm border-gray-300 rounded-md px-3 py-2 md:col-span-2"
-                    />
-                  </div>
-                  <textarea
-                    placeholder="Translated description"
-                    rows={3}
-                    value={t.description}
-                    onChange={(e) => setTranslations(prev => prev.map((x, i) => i === idx ? { ...x, description: e.target.value } : x))}
-                    className="w-full text-sm border-gray-300 rounded-md px-3 py-2"
-                  />
-                  <div className="text-right mt-2">
-                    <button
-                      type="button"
-                      onClick={() => setTranslations(prev => prev.filter((_, i) => i !== idx))}
-                      className="text-xs text-gray-500 hover:text-gray-700"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 mt-2">Add optional translations. If not provided, the original language content will be shown.</p>
-          </div>
-
-          {/* Cover Image */}
-          <div>
-            <FileInput
-              label="Cover Image (Optional)"
-              id="cover_image"
-              accept="image/*"
-              onChange={handleImageChange}
-              helperText="Upload a cover image for the podcast (max 5MB)"
-            />
-            {workflowState?.manual_overrides?.cover_image && (
-              <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
-            )}
-            {podcast?.cover_image_url && (
-              <div className="mt-4">
-                <img
-                  src={podcast.cover_image_url}
-                  alt="Current cover"
-                  className="w-24 h-24 object-cover rounded-xl border border-gray-200"
-                />
+              <div className="md:col-span-2">
+                <Input label="RSS Feed URL (Optional)" type="url" id="rss_url" value={formData.rss_url} onChange={(e) => handleInputChange('rss_url', e.target.value)} placeholder="https://podcast-feed.com/rss" />
               </div>
-            )}
+            </div>
           </div>
 
-          {/* RSS Settings */}
-          <Input
-            label="RSS Feed URL (Optional)"
-            type="url"
-            id="rss_url"
-            value={formData.rss_url}
-            onChange={(e) => handleInputChange('rss_url', e.target.value)}
-            placeholder="https://podcast-feed.com/rss"
-          />
+          {/* Country-specific */}
+          <div className="pt-6 border-t border-gray-200">
+            <h3 className="text-base font-semibold text-gray-900 mb-4">Country-specific</h3>
+            <div className="space-y-6">
+              <Input label="Podcast Title" id="title" value={formData.title} onChange={(e) => handleInputChange('title', e.target.value)} required placeholder="Enter podcast title" />
 
-          <div>
-            <div className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                id="auto_publish_episodes"
-                checked={formData.auto_publish_episodes}
-                onChange={(e) => handleInputChange('auto_publish_episodes', e.target.checked)}
-                className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-              />
-              <label htmlFor="auto_publish_episodes" className="text-sm text-gray-700">
-                Automatically publish new episodes from RSS feed
-              </label>
+              <TextArea label="Description" id="description" rows={6} value={formData.description} onChange={(e) => handleInputChange('description', e.target.value)} required placeholder="Describe the podcast" className="min-h-[140px]" />
+
+              <FileInput label="Cover Image (Optional)" id="cover_image" accept="image/*" onChange={handleImageChange} helperText="Upload a cover image for the podcast (max 5MB)" />
+              {podcast?.cover_image_url && (
+                <div className="mt-2">
+                  <div className="text-xs text-gray-500 mb-1">Current cover</div>
+                  <img src={podcast.cover_image_url} alt="Current cover" className="w-20 h-20 object-cover rounded-lg border border-gray-200" />
+                </div>
+              )}
             </div>
-            <p className="mt-2 text-sm text-gray-500">
-              When enabled (default), new episodes from RSS feeds are automatically published. When disabled, they need approval.
-            </p>
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-              <p className="text-red-700 text-sm">{error}</p>
-            </div>
-          )}
+          {/* Removed license countries and translations per request */}
 
-          {/* Submit Button */}
+          {/* Submit */}
           <div className="flex justify-end space-x-4 pt-6 border-t border-gray-100">
-            <Button
-              type="submit"
-              disabled={loading}
-              variant="primary"
-              size="lg"
-              rounded="full"
-              className="font-semibold"
-            >
-              {loading 
-                ? (isCreating ? 'Creating...' : 'Saving...') 
-                : (isCreating ? 'Create Podcast' : 'Save Changes')
-              }
+            <Button type="submit" disabled={loading} variant="primary" size="lg" rounded="full" className="font-semibold">
+              {loading ? (isCreating ? 'Creating...' : 'Saving...') : (isCreating ? 'Create Podcast' : 'Save Changes')}
             </Button>
           </div>
         </form>
