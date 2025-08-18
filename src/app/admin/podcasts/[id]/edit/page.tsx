@@ -311,7 +311,7 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
               reader.onload = () => setLocalCoverDataUrl(reader.result as string)
               reader.readAsDataURL(file)
             }}
-          />
+                  />
                 </div>
 
         {/* Right Column - General Info + Country selector + Episodes */}
@@ -473,7 +473,7 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
                 className="bg-red-600 hover:bg-red-700 text-white"
                 onClick={async () => {
                   if (!podcastId) return
-                  await supabase
+                  const { error } = await supabase
                     .from('podcast_country_translations')
                     .upsert({
                       podcast_id: podcastId,
@@ -484,14 +484,26 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
                       updated_at: new Date().toISOString(),
                     }, { onConflict: 'podcast_id,country_code' } as any)
 
-                  setCountryTranslations((prev) => ({
-                    ...prev,
-                    [selectedCountry]: {
-                      title: localTitle || '',
-                      description: localDescription || '',
-                      cover_image_url: localCoverDataUrl || null,
-                    },
-                  }))
+                  if (error) {
+                    addToast({ type: 'error', message: `Save failed: ${error.message}` })
+                    return
+                  }
+
+                  // Re-fetch row to ensure we persisted
+                  const { data: refetch } = await supabase
+                    .from('podcast_country_translations')
+                    .select('country_code,title,description,cover_image_url')
+                    .eq('podcast_id', podcastId)
+
+                  const updated: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
+                  ;(refetch || []).forEach((row: any) => {
+                    updated[row.country_code] = {
+                      title: row.title,
+                      description: row.description,
+                      cover_image_url: row.cover_image_url || null,
+                    }
+                  })
+                  setCountryTranslations(updated)
                   addToast({ type: 'success', message: 'Country content saved' })
                 }}
               >
