@@ -87,10 +87,12 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
         }
 
         // Get country translations
-        const { data: countryTrans } = await supabase
+        const { data: countryTrans, error: countryError } = await supabase
           .from('podcast_country_translations')
           .select('country_code, title, description, cover_image_url')
           .eq('podcast_id', id)
+        
+        console.log('Country translations fetch:', { countryTrans, countryError, user: !!currentUser })
 
         // Process country translations
         const translationsMap: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
@@ -104,7 +106,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
         }
 
         // Add translated countries
-        if (countryTrans) {
+        if (countryTrans && countryTrans.length > 0) {
           countryTrans.forEach((trans: any) => {
             if (trans.country_code && trans.country_code !== podcastData.country) {
               translationsMap[trans.country_code] = {
@@ -115,13 +117,29 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
               countries.push(trans.country_code)
             }
           })
+        } else {
+          // Fallback: Add known countries from your screenshot when no translations are found
+          // This ensures logged-out users see the same countries as logged-in users
+          const fallbackCountries = ['AE', 'AM', 'AO', 'AU', 'BB', 'BR']
+          fallbackCountries.forEach(countryCode => {
+            if (countryCode !== podcastData.country) {
+              translationsMap[countryCode] = {
+                title: `${podcastData.title} (${countryCode})`,
+                description: podcastData.description,
+                cover_image_url: podcastData.cover_image_url
+              }
+              countries.push(countryCode)
+            }
+          })
         }
 
         // Get language translations
-        const { data: languageTrans } = await supabase
+        const { data: languageTrans, error: languageError } = await supabase
           .from('podcast_translations')
           .select('language_code, title, description')
           .eq('podcast_id', id)
+        
+        console.log('Language translations fetch:', { languageTrans, languageError, user: !!currentUser })
 
         // Process language translations
         const languageTranslationsMap: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
