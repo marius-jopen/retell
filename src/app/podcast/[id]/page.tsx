@@ -259,9 +259,15 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
 
             {/* Podcast Info */}
             <div className="text-center lg:text-left">
-              <div className="mb-3">
+              <div className="mb-3 flex flex-wrap gap-2">
                 <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
                   Category: {podcast.category}
+                </span>
+                <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+                  Country: {countryNameByCode(selectedCountry)}
+                </span>
+                <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+                  Language: {podcast.language || 'Unknown'}
                 </span>
               </div>
               
@@ -274,20 +280,24 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
               </p>
 
               {/* Country Selector - More Prominent */}
-              {availableCountries.length > 1 && (
+              {availableCountries.length > 0 && (
                 <div className="mb-6">
                   <h3 className="text-sm font-semibold text-white/90 mb-3 uppercase tracking-wide">
-                    Select Your Country
+                    {availableCountries.length > 1 ? 'Available in Multiple Countries' : 'Available Country'}
                   </h3>
                   <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                     {availableCountries.map((countryCode) => (
                       <button
                         key={countryCode}
-                        onClick={() => setSelectedCountry(countryCode)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl ${
+                        onClick={() => availableCountries.length > 1 && setSelectedCountry(countryCode)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                          availableCountries.length > 1 ? 'transform hover:scale-105 active:scale-95' : ''
+                        } shadow-lg hover:shadow-xl ${
                           selectedCountry === countryCode
                             ? 'bg-white text-orange-600 shadow-white/25'
-                            : 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50'
+                            : availableCountries.length > 1 
+                              ? 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50 cursor-pointer'
+                              : 'bg-white/10 text-white border border-white/30 cursor-default'
                         }`}
                       >
                         {countryNameByCode(countryCode)}
@@ -295,7 +305,10 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                     ))}
                   </div>
                   <p className="text-xs text-white/70 mt-2 text-center lg:text-left">
-                    Click to see content tailored for your region
+                    {availableCountries.length > 1 
+                      ? 'Click to see content tailored for your region'
+                      : 'This podcast is available in this region'
+                    }
                   </p>
                 </div>
               )}
