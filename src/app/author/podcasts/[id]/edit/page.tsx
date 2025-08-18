@@ -20,6 +20,8 @@ interface Podcast {
   author_id: string
   status: 'draft' | 'pending' | 'approved' | 'rejected'
   auto_publish_episodes: boolean
+  translations?: Array<{ language_code: string; title: string; description: string }>
+  license_countries?: string[]
   user_profiles?: {
     full_name: string
     email: string
@@ -56,7 +58,9 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
             user_profiles!inner(
               full_name,
               email
-            )
+            ),
+            podcast_translations:podcast_translations(language_code,title,description),
+            license_countries:podcast_license_countries(country_code)
           `)
           .eq('id', id)
           .eq('author_id', user.id) // Only allow authors to edit their own podcasts
@@ -67,7 +71,15 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
           return
         }
 
-        setPodcast(podcastData)
+        setPodcast({
+          ...podcastData,
+          translations: (podcastData as any).podcast_translations?.map((t: any) => ({
+            language_code: t.language_code,
+            title: t.title,
+            description: t.description,
+          })) || [],
+          license_countries: (podcastData as any).license_countries?.map((c: any) => c.country_code) || [],
+        })
 
         // Fetch episodes
         const { data: episodesData } = await supabase
@@ -115,11 +127,45 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
       const { error: updateError } = await supabase
         .from('podcasts')
         .update({
-          ...formData,
+          title: formData.title as string,
+          description: formData.description as string,
+          category: formData.category as string,
+          language: formData.language as string,
+          country: formData.country as string,
+          status: formData.status as 'draft' | 'pending' | 'approved' | 'rejected',
+          rss_url: formData.rss_url as string | null,
+          auto_publish_episodes: formData.auto_publish_episodes as boolean,
           cover_image_url: coverImageUrl,
           updated_at: new Date().toISOString()
         })
         .eq('id', podcastId)
+      // Upsert license countries
+      const licenseCountries = (formData as any).license_countries as string[] | undefined
+      if (licenseCountries) {
+        // Clear then insert current selection
+        await supabase.from('podcast_license_countries').delete().eq('podcast_id', podcastId)
+        if (licenseCountries.length > 0) {
+          await supabase.from('podcast_license_countries').insert(
+            licenseCountries.map(code => ({ podcast_id: podcastId, country_code: code }))
+          )
+        }
+      }
+
+      // Upsert translations
+      const translations = (formData as any).translations as Array<{ language_code: string; title: string; description: string }> | undefined
+      if (translations) {
+        for (const t of translations) {
+          if (!t.language_code || !t.title || !t.description) continue
+          await supabase.from('podcast_translations').upsert({
+            podcast_id: podcastId,
+            language_code: t.language_code,
+            title: t.title,
+            description: t.description,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: 'podcast_id,language_code' } as any)
+        }
+      }
+
 
       if (updateError) throw updateError
 
@@ -136,13 +182,23 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
           user_profiles!inner(
             full_name,
             email
-          )
+          ),
+          podcast_translations:podcast_translations(language_code,title,description),
+          license_countries:podcast_license_countries(country_code)
         `)
         .eq('id', podcastId)
         .single()
 
       if (updatedPodcast) {
-        setPodcast(updatedPodcast)
+        setPodcast({
+          ...updatedPodcast,
+          translations: (updatedPodcast as any).podcast_translations?.map((t: any) => ({
+            language_code: t.language_code,
+            title: t.title,
+            description: t.description,
+          })) || [],
+          license_countries: (updatedPodcast as any).license_countries?.map((c: any) => c.country_code) || [],
+        })
       }
 
     } catch (error: unknown) {

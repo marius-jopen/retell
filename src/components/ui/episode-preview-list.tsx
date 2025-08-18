@@ -20,6 +20,7 @@ export interface EpisodePreviewListProps extends HTMLAttributes<HTMLDivElement> 
   title: string
   episodes: Episode[]
   maxHeight?: string
+  autoHeight?: boolean
   emptyStateMessage?: string
   emptyStateIcon?: string
   getEpisodeHref?: (episode: Episode) => string
@@ -37,6 +38,7 @@ const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
     title,
     episodes,
     maxHeight = '400px',
+    autoHeight = false,
     emptyStateMessage = "No episodes yet",
     emptyStateIcon = "🎙️",
     getEpisodeHref,
@@ -50,7 +52,7 @@ const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
     const isEmpty = !episodes || episodes.length === 0
 
     return (
-      <Card ref={ref} className={cn('flex flex-col h-full w-full', className)} {...props}>
+      <Card ref={ref} className={cn('flex flex-col w-full', className)} {...props}>
         <CardHeader className="p-4 border-b border-gray-100 flex-shrink-0">
           <CardTitle className="text-lg font-semibold text-gray-900">{title}</CardTitle>
           <p className="text-sm text-gray-500 mt-1">
@@ -61,7 +63,7 @@ const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
           </p>
         </CardHeader>
         
-        <CardContent className="p-0 flex-1 flex flex-col min-h-0">
+        <CardContent className={cn('p-0 flex flex-col', autoHeight ? '' : 'flex-1 min-h-0')}>
           {isEmpty ? (
             <div className="text-center py-8 px-4 flex-1 flex flex-col justify-center">
               <div className="text-3xl mb-3">{emptyStateIcon}</div>
@@ -69,8 +71,8 @@ const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
             </div>
           ) : (
             <div 
-              className="overflow-y-auto flex-1"
-              style={{ maxHeight }}
+              className={cn(autoHeight ? '' : 'overflow-y-auto flex-1')}
+              style={autoHeight ? undefined : { maxHeight }}
             >
               <div className="w-full space-y-0">
                 {episodes

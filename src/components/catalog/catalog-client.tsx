@@ -5,6 +5,7 @@ import { PodcastCard } from '@/components/ui/podcast-card'
 import { FilterBar } from '@/components/ui/filter-bar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { COUNTRIES } from '@/lib/countries'
 
 interface Episode {
   id: string
@@ -32,6 +33,7 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedLanguage, setSelectedLanguage] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState('')
 
   // Extract unique categories and languages
   const categories = useMemo(() => {
@@ -44,6 +46,8 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
     return uniqueLanguages.sort()
   }, [podcasts])
 
+  const countries = COUNTRIES
+
   // Filter podcasts based on search and filters
   const filteredPodcasts = useMemo(() => {
     return podcasts.filter(podcast => {
@@ -54,17 +58,18 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
 
       const matchesCategory = !selectedCategory || podcast.category === selectedCategory
       const matchesLanguage = !selectedLanguage || podcast.language === selectedLanguage
+      const matchesCountry = !selectedCountry || podcast.country === selectedCountry
 
-      return matchesSearch && matchesCategory && matchesLanguage
+      return matchesSearch && matchesCategory && matchesLanguage && matchesCountry
     })
-  }, [podcasts, searchQuery, selectedCategory, selectedLanguage])
+  }, [podcasts, searchQuery, selectedCategory, selectedLanguage, selectedCountry])
 
   if (podcasts.length === 0) {
     return (
       <div className="text-center py-12">
         <div className="mb-6">
           <svg className="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 616 0v6a3 3 0 01-3 3z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 016 0v6a3 3 0 01-3 3z" />
           </svg>
         </div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">No podcasts yet</h3>
@@ -86,11 +91,14 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
         onSearchChange={setSearchQuery}
         onCategoryChange={setSelectedCategory}
         onLanguageChange={setSelectedLanguage}
+        onCountryChange={setSelectedCountry}
         searchValue={searchQuery}
         categoryValue={selectedCategory}
         languageValue={selectedLanguage}
+        countryValue={selectedCountry}
         categories={categories}
         languages={languages}
+        countries={countries}
         resultCount={filteredPodcasts.length}
       />
 
@@ -110,6 +118,7 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
               setSearchQuery('')
               setSelectedCategory('')
               setSelectedLanguage('')
+              setSelectedCountry('')
             }}
             variant="outline"
             size="sm"

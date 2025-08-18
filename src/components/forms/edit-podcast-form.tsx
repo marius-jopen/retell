@@ -35,6 +35,14 @@ export default function EditPodcastForm({
     auto_publish_episodes: podcast?.auto_publish_episodes || false
   })
 
+  // translations (title/description) for other languages; start with EN if different
+  const [translations, setTranslations] = useState<Array<{ language_code: string; title: string; description: string }>>(
+    podcast?.translations || []
+  )
+
+  // license countries (multi-select)
+  const [licenseCountries, setLicenseCountries] = useState<string[]>(podcast?.license_countries || [])
+
   const [coverImage, setCoverImage] = useState<File | null>(null)
 
   const categories = [
@@ -85,7 +93,7 @@ export default function EditPodcastForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await onSubmit(formData, coverImage)
+    await onSubmit({ ...formData, translations, license_countries: licenseCountries }, coverImage)
   }
 
   const handleInputChange = (field: string, value: any) => {
@@ -239,6 +247,85 @@ export default function EditPodcastForm({
             {workflowState?.manual_overrides?.country && (
               <span className="ml-2 text-xs text-purple-600">(Manual Override)</span>
             )}
+          </div>
+
+          {/* License Countries (Multi-select chips) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">License Countries</label>
+            <div className="flex flex-wrap gap-2">
+              {['US','CA','GB','AU','DE','FR','ES','IT','NL','JP','KR','BR','MX','AR','IN','CN','RU'].map(code => (
+                <button
+                  type="button"
+                  key={code}
+                  onClick={() => setLicenseCountries(prev => prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code])}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                    licenseCountries.includes(code)
+                      ? 'bg-red-600 text-white border-red-600'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  {code}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">Select the countries where licensing is allowed. These will be visible and filterable in the catalog.</p>
+          </div>
+
+          {/* Translations */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">Translations (Title & Description)</label>
+              <button
+                type="button"
+                onClick={() => setTranslations(prev => [...prev, { language_code: 'en', title: '', description: '' }])}
+                className="text-xs text-red-600 hover:text-red-700"
+              >
+                + Add translation
+              </button>
+            </div>
+            <div className="space-y-4">
+              {translations.map((t, idx) => (
+                <div key={idx} className="border border-gray-200 rounded-lg p-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+                    <select
+                      value={t.language_code}
+                      onChange={(e) => {
+                        const code = e.target.value
+                        setTranslations(prev => prev.map((x, i) => i === idx ? { ...x, language_code: code } : x))
+                      }}
+                      className="text-sm border-gray-300 rounded-md px-2 py-1"
+                    >
+                      {languages.map(l => (
+                        <option key={l.code} value={l.code}>{l.name}</option>
+                      ))}
+                    </select>
+                    <input
+                      placeholder="Translated title"
+                      value={t.title}
+                      onChange={(e) => setTranslations(prev => prev.map((x, i) => i === idx ? { ...x, title: e.target.value } : x))}
+                      className="text-sm border-gray-300 rounded-md px-3 py-2 md:col-span-2"
+                    />
+                  </div>
+                  <textarea
+                    placeholder="Translated description"
+                    rows={3}
+                    value={t.description}
+                    onChange={(e) => setTranslations(prev => prev.map((x, i) => i === idx ? { ...x, description: e.target.value } : x))}
+                    className="w-full text-sm border-gray-300 rounded-md px-3 py-2"
+                  />
+                  <div className="text-right mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setTranslations(prev => prev.filter((_, i) => i !== idx))}
+                      className="text-xs text-gray-500 hover:text-gray-700"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">Add optional translations. If not provided, the original language content will be shown.</p>
           </div>
 
           {/* Cover Image */}

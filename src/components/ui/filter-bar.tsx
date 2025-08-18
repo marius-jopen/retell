@@ -7,11 +7,14 @@ interface FilterBarProps {
   onSearchChange: (search: string) => void
   onCategoryChange: (category: string) => void
   onLanguageChange: (language: string) => void
+  onCountryChange?: (country: string) => void
   searchValue: string
   categoryValue: string
   languageValue: string
+  countryValue?: string
   categories: string[]
   languages: string[]
+  countries?: { code: string; name: string }[]
   resultCount: number
 }
 
@@ -19,16 +22,19 @@ export function FilterBar({
   onSearchChange,
   onCategoryChange,
   onLanguageChange,
+  onCountryChange,
   searchValue,
   categoryValue,
   languageValue,
+  countryValue = '',
   categories,
   languages,
+  countries = [],
   resultCount
 }: FilterBarProps) {
   const [showFilters, setShowFilters] = useState(false)
 
-  const hasActiveFilters = categoryValue || languageValue
+  const hasActiveFilters = categoryValue || languageValue || countryValue
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
@@ -68,6 +74,7 @@ export function FilterBar({
             onClick={() => {
               onCategoryChange('')
               onLanguageChange('')
+              if (onCountryChange) onCountryChange('')
             }}
             className="text-xs text-red-600 hover:text-red-700 font-medium transition-colors"
           >
@@ -78,7 +85,7 @@ export function FilterBar({
 
       {/* Filters */}
       {showFilters && (
-        <div className="grid grid-cols-2 gap-3 pt-3 mt-3 border-t border-gray-100">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-3 mt-3 border-t border-gray-100">
           <Select
             value={categoryValue}
             onChange={(e) => onCategoryChange(e.target.value)}
@@ -94,6 +101,16 @@ export function FilterBar({
             className="text-xs"
             options={languages.map(lang => ({ value: lang, label: lang.toUpperCase() }))}
           />
+
+          {countries.length > 0 && (
+            <Select
+              value={countryValue}
+              onChange={(e) => onCountryChange && onCountryChange(e.target.value)}
+              placeholder="Country"
+              className="text-xs"
+              options={countries.map(c => ({ value: c.code, label: c.name }))}
+            />
+          )}
         </div>
       )}
     </div>

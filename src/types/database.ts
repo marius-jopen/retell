@@ -80,6 +80,52 @@ export interface Database {
           updated_at?: string
         }
       }
+      podcast_license_countries: {
+        Row: {
+          podcast_id: string
+          country_code: string
+          created_at: string
+        }
+        Insert: {
+          podcast_id: string
+          country_code: string
+          created_at?: string
+        }
+        Update: {
+          podcast_id?: string
+          country_code?: string
+          created_at?: string
+        }
+      }
+      podcast_translations: {
+        Row: {
+          id: string
+          podcast_id: string
+          language_code: string
+          title: string
+          description: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          podcast_id: string
+          language_code: string
+          title: string
+          description: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          podcast_id?: string
+          language_code?: string
+          title?: string
+          description?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
       episodes: {
         Row: {
           id: string

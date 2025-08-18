@@ -269,7 +269,23 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
         {/* Right Column - Episodes (Scrollable) */}
         <div className="lg:w-1/3 flex flex-col space-y-4 min-h-0">
           {/* Episode Actions */}
-          <div className="space-y-2 flex-shrink-0">
+         
+
+            {/* Episodes List */}
+          <div className="flex-1 min-h-0">
+            
+            <EpisodePreviewList
+              title={`Episodes (${episodes.length})`}
+              episodes={episodes.slice(0, 5)}
+              autoHeight
+              emptyStateMessage="No episodes yet"
+              emptyStateIcon="🎙️"
+              showActions={true}
+              getEpisodeHref={(episode) => `/admin/episodes/${episode.id}/edit`}
+              className="w-full overflow-hidden"
+            />
+            
+            <div className="space-y-2 flex-shrink-0 mt-3">
             <Link href={`/author/podcasts/${podcastId}/episodes`} className="block">
                   <Button
                 variant="outline" 
@@ -281,20 +297,9 @@ export default function AdminEditPodcastPage({ params }: { params: Promise<{ id:
                   </Button>
                 </Link>
             </div>
-
-            {/* Episodes List */}
-          <div className="flex-1 min-h-0">
-            <EpisodePreviewList
-              title={`Episodes (${episodes.length})`}
-              episodes={episodes}
-              maxHeight="100%"
-              emptyStateMessage="No episodes yet"
-              emptyStateIcon="🎙️"
-              showActions={true}
-              getEpisodeHref={(episode) => `/admin/episodes/${episode.id}/edit`}
-              className="h-full w-full"
-            />
           </div>
+
+          
         </div>
       </div>
     </div>
