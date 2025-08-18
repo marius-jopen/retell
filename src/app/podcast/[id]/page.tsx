@@ -92,7 +92,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
           .select('country_code, title, description, cover_image_url')
           .eq('podcast_id', id)
         
-        console.log('Country translations fetch:', { countryTrans, countryError, user: !!currentUser })
+
 
         // Process country translations
         const translationsMap: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
@@ -139,7 +139,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
           .select('language_code, title, description')
           .eq('podcast_id', id)
         
-        console.log('Language translations fetch:', { languageTrans, languageError, user: !!currentUser })
+
 
         // Process language translations
         const languageTranslationsMap: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
@@ -377,11 +377,11 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                 </div>
               )}
 
-              {/* Language Selector */}
-              {availableLanguages.length > 0 && (
+              {/* Language Selector - Only show if multiple languages */}
+              {availableLanguages.length > 1 && (
                 <div className="mb-6">
                   <h3 className="text-sm font-semibold text-white/90 mb-3 uppercase tracking-wide">
-                    {availableLanguages.length > 1 ? 'Available Languages' : 'Available Language'}
+                    Available Languages
                   </h3>
                   <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                     {availableLanguages.map((languageCode) => (
@@ -404,22 +404,14 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                 </div>
               )}
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                {user?.user_metadata?.role === 'client' && (
+              {/* Action Buttons - Only for logged-in clients */}
+              {user?.user_metadata?.role === 'client' && (
+                <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                   <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 py-3 rounded-full">
                     Request License
                   </Button>
-                )}
-                {!user && (
-                  <Link href="/auth/signup?role=client">
-                    <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 py-3 rounded-full">
-                      Sign Up to License
-                    </Button>
-                  </Link>
-                )}
-
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
