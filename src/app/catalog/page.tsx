@@ -23,7 +23,7 @@ export default async function CatalogPage() {
   return (
     <div className="min-h-screen bg-orange-50">
       {/* Hero Section */}
-      <div className="bg-gradient-warm text-white">
+      <div className="bg-brand text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-2">
@@ -78,7 +78,7 @@ export default async function CatalogPage() {
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-48 bg-gradient-warm flex items-center justify-center group-hover:opacity-90 transition-all duration-300">
+                      <div className="w-full h-48 bg-brand flex items-center justify-center group-hover:opacity-90 transition-all duration-300">
                         <span className="text-white text-3xl font-bold">
                           {podcast.title.substring(0, 2).toUpperCase()}
                         </span>

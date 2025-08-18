@@ -3,24 +3,43 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  /* Warm color palette */
-  --warm-50: #fef7ed;
-  --warm-100: #fef0dd;
-  --warm-200: #fcddb5;
-  --warm-300: #f9bc7c;
-  --warm-400: #f59e0b;
-  --warm-500: #d97706;
-  --warm-600: #c2410c;
-  --warm-700: #9a3412;
-  --warm-800: #7c2d12;
-  --warm-900: #57190a;
+
+  /* Brand palette */
+  --brand-orange-50: #fff0ea;
+  --brand-orange-100: #ffd9cc;
+  --brand-orange-200: #ffb399;
+  --brand-orange-300: #ff8c66;
+  --brand-orange-400: #f56a41;
+  --brand-orange-500: #e84a23; /* RETELL Orange - primary brand red */
+  --brand-orange-600: #d13f1f; /* hover */
+  --brand-orange-700: #b8361b; /* active */
+  --brand-orange-800: #9e2c16;
+  --brand-orange-900: #7f2412;
+
+  --brand-black: #000000;  /* SCHWARZ */
+  --brand-gray: #dbd8d6;   /* GRAU */
+  --brand-creme: #f7f1ea;  /* CREME */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Use Inter everywhere */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
+
+  /* Expose brand colors as tokens for utility classes if used */
+  --color-brand: var(--brand-orange-500);
+  --color-brand-50: var(--brand-orange-50);
+  --color-brand-100: var(--brand-orange-100);
+  --color-brand-200: var(--brand-orange-200);
+  --color-brand-300: var(--brand-orange-300);
+  --color-brand-400: var(--brand-orange-400);
+  --color-brand-500: var(--brand-orange-500);
+  --color-brand-600: var(--brand-orange-600);
+  --color-brand-700: var(--brand-orange-700);
+  --color-brand-800: var(--brand-orange-800);
+  --color-brand-900: var(--brand-orange-900);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,7 +52,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 /* Modern rounded design utilities */
@@ -51,19 +70,76 @@ body {
 
 
 
-/* Warm color classes to replace cold colors */
-.bg-cold-50 { background-color: var(--warm-50); }
-.bg-cold-100 { background-color: var(--warm-100); }
-.bg-cold-200 { background-color: var(--warm-200); }
-.bg-cold-500 { background-color: var(--warm-500); }
-.bg-cold-600 { background-color: var(--warm-600); }
+/* Brand utility helpers */
+.bg-brand { background-color: var(--brand-orange-500); }
+.bg-brand-50 { background-color: var(--brand-orange-50); }
+.bg-brand-100 { background-color: var(--brand-orange-100); }
+.bg-brand-200 { background-color: var(--brand-orange-200); }
+.bg-brand-300 { background-color: var(--brand-orange-300); }
+.bg-brand-400 { background-color: var(--brand-orange-400); }
+.bg-brand-500 { background-color: var(--brand-orange-500); }
+.bg-brand-600 { background-color: var(--brand-orange-600); }
+.bg-brand-700 { background-color: var(--brand-orange-700); }
+.bg-brand-800 { background-color: var(--brand-orange-800); }
+.bg-brand-900 { background-color: var(--brand-orange-900); }
+.text-brand { color: var(--brand-orange-600); }
+.border-brand-200 { border-color: var(--brand-orange-200); }
+.border-brand-300 { border-color: var(--brand-orange-300); }
 
-.text-cold-600 { color: var(--warm-600); }
-.text-cold-700 { color: var(--warm-700); }
-.text-cold-800 { color: var(--warm-800); }
+/* Map existing red Tailwind classes to the brand orange to affect the whole app without touching components */
+.bg-red-50 { background-color: var(--brand-orange-50) !important; }
+.bg-red-100 { background-color: var(--brand-orange-100) !important; }
+.bg-red-200 { background-color: var(--brand-orange-200) !important; }
+.bg-red-300 { background-color: var(--brand-orange-300) !important; }
+.bg-red-400 { background-color: var(--brand-orange-400) !important; }
+.bg-red-500 { background-color: var(--brand-orange-500) !important; }
+.bg-red-600 { background-color: var(--brand-orange-600) !important; }
+.bg-red-700 { background-color: var(--brand-orange-700) !important; }
+.bg-red-800 { background-color: var(--brand-orange-800) !important; }
+.text-red-50 { color: var(--brand-orange-50) !important; }
+.text-red-100 { color: var(--brand-orange-100) !important; }
+.text-red-200 { color: var(--brand-orange-200) !important; }
+.text-red-300 { color: var(--brand-orange-300) !important; }
+.text-red-400 { color: var(--brand-orange-400) !important; }
+.text-red-500 { color: var(--brand-orange-500) !important; }
+.text-red-600 { color: var(--brand-orange-600) !important; }
+.text-red-700 { color: var(--brand-orange-700) !important; }
+.text-red-800 { color: var(--brand-orange-800) !important; }
+.text-red-900 { color: var(--brand-orange-900) !important; }
+.border-red-200 { border-color: var(--brand-orange-200) !important; }
+.border-red-300 { border-color: var(--brand-orange-300) !important; }
+.border-red-400 { border-color: var(--brand-orange-400) !important; }
+.border-red-500 { border-color: var(--brand-orange-500) !important; }
+.border-red-600 { border-color: var(--brand-orange-600) !important; }
+.border-red-700 { border-color: var(--brand-orange-700) !important; }
+.border-red-800 { border-color: var(--brand-orange-800) !important; }
+/* Pseudo-state variants */
+.hover\:bg-red-50:hover { background-color: var(--brand-orange-50) !important; }
+.hover\:bg-red-100:hover { background-color: var(--brand-orange-100) !important; }
+.hover\:bg-red-200:hover { background-color: var(--brand-orange-200) !important; }
+.hover\:bg-red-600:hover { background-color: var(--brand-orange-600) !important; }
+.hover\:bg-red-700:hover { background-color: var(--brand-orange-700) !important; }
+.active\:bg-red-800:active { background-color: var(--brand-orange-800) !important; }
+.hover\:text-red-700:hover { color: var(--brand-orange-700) !important; }
+.active\:text-red-800:active { color: var(--brand-orange-800) !important; }
 
-.border-cold-200 { border-color: var(--warm-200); }
-.border-cold-300 { border-color: var(--warm-300); }
+/* Disable gradients globally – enforce solid colors only */
+[class*="bg-gradient-to-"] { background-image: none !important; background-color: var(--brand-orange-500) !important; }
+.from-red-400 { --tw-gradient-from: var(--brand-orange-400) !important; }
+.from-red-500 { --tw-gradient-from: var(--brand-orange-500) !important; }
+.to-red-600 { --tw-gradient-to: var(--brand-orange-600) !important; }
+.to-red-700 { --tw-gradient-to: var(--brand-orange-700) !important; }
+.via-red-500 { --tw-gradient-via: var(--brand-orange-500) !important; }
+.via-red-600 { --tw-gradient-via: var(--brand-orange-600) !important; }
+
+/* Ring color mapping */
+.ring-red-500 { --tw-ring-color: var(--brand-orange-500) !important; }
+.focus\:ring-red-500:focus { --tw-ring-color: var(--brand-orange-500) !important; }
+
+/* group-hover gradient helpers */
+.group:hover .group-hover\:from-red-500 { --tw-gradient-from: var(--brand-orange-500) !important; }
+.group:hover .group-hover\:via-red-600 { --tw-gradient-via: var(--brand-orange-600) !important; }
+.group:hover .group-hover\:to-red-700 { --tw-gradient-to: var(--brand-orange-700) !important; }
 
 /* Force input fields to always have black text - Override Tailwind */
 input,
@@ -260,15 +336,7 @@ p[class*="text-gray-"] {
   flex: 1;
 }
 
-/* Modern gradient backgrounds using warm colors */
-.bg-gradient-warm {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #c2410c 100%);
-}
-
-.bg-gradient-warm-light {
-  background: linear-gradient(135deg, #fef7ed 0%, #fef0dd 50%, #fcddb5 100%);
-}
-
-.bg-gradient-warm-dark {
-  background: linear-gradient(135deg, #d97706 0%, #c2410c 50%, #9a3412 100%);
-}
+/* Replace custom gradient helpers with solid colors */
+.bg-gradient-warm { background: var(--brand-orange-500) !important; }
+.bg-gradient-warm-light { background: var(--brand-orange-50) !important; }
+.bg-gradient-warm-dark { background: var(--brand-orange-500) !important; }

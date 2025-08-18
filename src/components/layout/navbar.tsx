@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { UserRole } from '@/lib/auth'
@@ -60,9 +61,17 @@ export default function Navbar({ user }: NavbarProps) {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center group">
-              <span className="text-xl font-bold text-orange-500 group-hover:text-orange-600 transition-colors duration-200">
-                🎙️ RETELL
-              </span>
+              <span className="sr-only">RETELL</span>
+              <div className="bg-red-600 rounded-md px-2 py-1 flex items-center shadow-sm">
+                <Image
+                  src="/logo.avif"
+                  alt="RETELL logo"
+                  width={28}
+                  height={28}
+                  className="h-7 w-7"
+                  priority
+                />
+              </div>
             </Link>
           </div>
 

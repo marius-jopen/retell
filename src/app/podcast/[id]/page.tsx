@@ -89,7 +89,7 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
   return (
     <div className="min-h-screen bg-orange-50">
       {/* Hero Section - Smaller */}
-      <div className="bg-gradient-warm text-white">
+      <div className="bg-brand text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             {/* Cover Image - Smaller */}
@@ -102,7 +102,7 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
                     className="w-64 h-64 object-cover rounded-modern-xl shadow-modern-lg"
                   />
                 ) : (
-                  <div className="w-64 h-64 bg-gradient-to-br from-orange-300 via-orange-400 to-orange-500 rounded-modern-xl flex items-center justify-center shadow-modern-lg">
+                  <div className="w-64 h-64 bg-brand rounded-modern-xl flex items-center justify-center shadow-modern-lg">
                     <span className="text-white text-4xl font-bold">
                       {podcast.title.substring(0, 2).toUpperCase()}
                     </span>

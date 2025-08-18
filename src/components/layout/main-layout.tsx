@@ -18,7 +18,9 @@ export default async function MainLayout({ children }: MainLayoutProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-lg font-semibold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent mb-4">RETELL</h3>
+              <div className="mb-4 inline-flex items-center">
+                <img src="/logo-text.avif" alt="RETELL" className="h-6 w-auto" />
+              </div>
               <p className="text-gray-600 leading-relaxed">
                 The modern platform for podcast licensing and distribution.
               </p>

@@ -6,16 +6,14 @@ export default function HomePage() {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-warm text-white overflow-hidden">
-        <div className="absolute inset-0 bg-orange-600/20 backdrop-blur-sm"></div>
+      <section className="relative bg-brand text-white overflow-hidden">
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
           <div className="text-center animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
-              <span className="block text-orange-100">Welcome to</span>
-              <span className="block animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
-                🎙️ RETELL ✨
-              </span>
-            </h1>
+            <h1 className="sr-only">RETELL</h1>
+            <div className="mx-auto w-fit mb-12 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
+              <img src="/logo-text.avif" alt="RETELL" className="h-24 md:h-24 w-auto" />
+            </div>
             <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed text-red-50">
               Connect podcast creators with content buyers. Discover high-quality podcast content ready for licensing, or showcase your own productions to reach new audiences.
             </p>
@@ -36,7 +34,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-gradient-warm-light">
+      <section className="py-24 bg-red-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -199,8 +197,8 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-warm-dark text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-orange-600/30 backdrop-blur-sm"></div>
+      <section className="py-24 bg-brand text-white relative overflow-hidden">
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
             <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">

@@ -10,7 +10,7 @@ const cardVariants = cva(
         default: 'border-gray-200 shadow-sm',
         outlined: 'border-gray-300 shadow-none',
         elevated: 'border-gray-100 shadow-lg',
-        gradient: 'border-0 bg-gradient-to-br from-gray-50 to-white shadow-md',
+        gradient: 'border-0 bg-white shadow-md',
       },
       size: {
         default: 'rounded-2xl',

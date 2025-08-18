@@ -39,7 +39,7 @@ const PodcastCard = forwardRef<HTMLDivElement, PodcastCardProps>(
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-red-400 via-red-500 to-red-600 transition-all duration-300 group-hover:from-red-500 group-hover:via-red-600 group-hover:to-red-700">
+            <div className="flex h-full w-full items-center justify-center bg-red-600 transition-all duration-300">
               <span className="text-3xl font-bold text-white">
                 {podcast.title.substring(0, 2).toUpperCase()}
               </span>
@@ -123,7 +123,7 @@ const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
         {...props}
       >
         <CardHeader>
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-red-100 to-red-200 text-3xl shadow-lg transition-transform duration-300 group-hover:scale-110">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-3xl shadow-lg transition-transform duration-300 group-hover:scale-110">
             {icon}
           </div>
           <CardTitle className="text-xl">{title}</CardTitle>
@@ -179,7 +179,7 @@ const PricingCard = forwardRef<HTMLDivElement, PricingCardProps>(
       >
         {highlighted && (
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-            <span className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
+            <span className="bg-red-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
               🔥 Most Popular
             </span>
           </div>

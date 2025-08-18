@@ -67,7 +67,7 @@ export default function EpisodesList({
                     className="w-16 h-16 rounded-2xl object-cover shadow-sm"
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-sm">
+                  <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center shadow-sm">
                     <span className="text-white font-bold text-lg">
                       {podcast.title.substring(0, 2).toUpperCase()}
                     </span>
