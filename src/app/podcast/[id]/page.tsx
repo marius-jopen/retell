@@ -148,6 +148,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
           })
         }
 
+
         setCountryTranslations(translationsMap)
         setLanguageTranslations(languageTranslationsMap)
         setAvailableCountries(countries)
@@ -341,15 +342,11 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                     {availableCountries.map((countryCode) => (
                       <button
                         key={countryCode}
-                        onClick={() => availableCountries.length > 1 && setSelectedCountry(countryCode)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          availableCountries.length > 1 ? 'transform hover:scale-105 active:scale-95' : ''
-                        } shadow-lg hover:shadow-xl ${
+                        onClick={() => setSelectedCountry(countryCode)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl cursor-pointer ${
                           selectedCountry === countryCode
                             ? 'bg-white text-orange-600 shadow-white/25'
-                            : availableCountries.length > 1 
-                              ? 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50 cursor-pointer'
-                              : 'bg-white/10 text-white border border-white/30 cursor-default'
+                            : 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50'
                         }`}
                       >
                         {countryNameByCode(countryCode)}
@@ -357,10 +354,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                     ))}
                   </div>
                   <p className="text-xs text-white/70 mt-2 text-center lg:text-left">
-                    {availableCountries.length > 1 
-                      ? 'Click to see content tailored for your region'
-                      : 'This podcast is available in this region'
-                    }
+                    Click to see content tailored for your region
                   </p>
                 </div>
               )}
@@ -375,15 +369,11 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                     {availableLanguages.map((languageCode) => (
                       <button
                         key={languageCode}
-                        onClick={() => availableLanguages.length > 1 && setSelectedLanguage(languageCode)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          availableLanguages.length > 1 ? 'transform hover:scale-105 active:scale-95' : ''
-                        } shadow-lg hover:shadow-xl ${
+                        onClick={() => setSelectedLanguage(languageCode)}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl cursor-pointer ${
                           selectedLanguage === languageCode
                             ? 'bg-white text-orange-600 shadow-white/25'
-                            : availableLanguages.length > 1 
-                              ? 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50 cursor-pointer'
-                              : 'bg-white/10 text-white border border-white/30 cursor-default'
+                            : 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50'
                         }`}
                       >
                         {getLanguageName(languageCode)}
@@ -391,10 +381,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                     ))}
                   </div>
                   <p className="text-xs text-white/70 mt-2 text-center lg:text-left">
-                    {availableLanguages.length > 1 
-                      ? 'Click to see content in different languages'
-                      : 'This podcast is available in this language'
-                    }
+                    Click to see content in different languages
                   </p>
                 </div>
               )}
