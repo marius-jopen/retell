@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Card } from './card'
+import { countryNameByCode } from '@/lib/countries'
 
 interface Episode {
   id: string
@@ -17,6 +18,8 @@ interface Podcast {
   country: string
   cover_image_url: string | null
   episodes?: Episode[]
+  license_countries?: string[]
+  translations?: Array<{ language_code: string; title: string; description: string }>
 }
 
 interface PodcastCardProps {
@@ -24,6 +27,40 @@ interface PodcastCardProps {
 }
 
 export function PodcastCard({ podcast }: PodcastCardProps) {
+  // Get all countries for this podcast
+  const getAllCountries = () => {
+    const countrySet = new Set<string>()
+    
+    // Add default country
+    if (podcast.country) {
+      countrySet.add(podcast.country)
+    }
+    
+    // Add license countries
+    if (podcast.license_countries) {
+      podcast.license_countries.forEach(code => {
+        if (code && code.trim()) {
+          countrySet.add(code)
+        }
+      })
+    }
+    
+    // Add translation countries
+    if (podcast.translations) {
+      podcast.translations.forEach(t => {
+        if (t.language_code && t.language_code.trim()) {
+          countrySet.add(t.language_code)
+        }
+      })
+    }
+    
+    return Array.from(countrySet)
+      .filter(code => code && countryNameByCode(code) !== 'Unknown')
+      .sort((a, b) => countryNameByCode(a).localeCompare(countryNameByCode(b)))
+  }
+
+  const countries = getAllCountries()
+
   return (
     <Link href={`/podcast/${podcast.id}`} className="group h-full">
       <Card className="h-full flex flex-col hover:shadow-lg transition-all duration-200 overflow-hidden border-gray-100 group-hover:border-red-200 group-hover:shadow-red-100/50">
@@ -35,7 +72,7 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
               className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-40 bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex items-center justify-center group-hover:from-red-500 group-hover:via-red-600 group-hover:to-red-700 transition-all duration-300">
+            <div className="w-full h-40 bg-brand flex items-center justify-center group-hover:brightness-110 transition-all duration-300">
               <span className="text-white text-2xl font-bold">
                 {podcast.title.substring(0, 2).toUpperCase()}
               </span>
@@ -66,17 +103,31 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
             {podcast.description}
           </p>
           
-          <div className="flex items-center justify-between text-xs text-gray-500 mt-auto">
-            <span className="flex items-center">
-              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {podcast.country}
-            </span>
-            <span className="text-red-500 font-medium text-xs">
-              Explore →
-            </span>
+          {/* Available Countries */}
+          <div className="mt-auto">
+            <div className="text-xs text-gray-500 mb-2">Available in:</div>
+            <div className="flex flex-wrap gap-1 mb-1">
+              {countries.slice(0, 3).map((countryCode) => (
+                <span
+                  key={countryCode}
+                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200"
+                  title={countryNameByCode(countryCode)}
+                >
+                  🌍 {countryNameByCode(countryCode)}
+                </span>
+              ))}
+              {countries.length > 3 && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                  +{countries.length - 3} more
+                </span>
+              )}
+            </div>
+            
+            {/* <div className="flex items-center justify-end">
+              <span className="text-red-500 font-medium text-xs">
+                Explore →
+              </span>
+            </div> */}
           </div>
         </div>
       </Card>
