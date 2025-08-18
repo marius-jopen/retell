@@ -86,13 +86,29 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
         </div>
         
         <div className="p-4 flex flex-col flex-grow">
-          <div className="flex items-center justify-between mb-2">
-            <span className="bg-red-50 text-red-700 text-xs font-medium px-2 py-1 rounded-md capitalize">
-              {podcast.category}
-            </span>
-            <span className="text-xs text-gray-400 uppercase tracking-wide">
-              {podcast.language}
-            </span>
+          {/* Category, Language and Country Info - All in one line */}
+          <div className="flex items-center justify-between gap-4 mb-3 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <span>📂</span>
+                <span className="capitalize">{podcast.category}</span>
+              </div>
+        
+            </div>
+            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1">
+                <span>🗣️</span>
+                <span>{podcast.language === 'en' ? 'English' :
+                      podcast.language === 'de' ? 'German' :
+                      podcast.language === 'fr' ? 'French' :
+                      podcast.language === 'es' ? 'Spanish' :
+                      podcast.language === 'it' ? 'Italian' :
+                      podcast.language === 'nl' ? 'Dutch' :
+                      podcast.language === 'pt' ? 'Portuguese' :
+                      podcast.language === 'pl' ? 'Polish' :
+                      podcast.language || 'English'}</span>
+              </div>
+            </div>
           </div>
           
           <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2 leading-snug">
@@ -103,31 +119,27 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
             {podcast.description}
           </p>
           
-          {/* Available Countries */}
-          <div className="mt-auto">
-            <div className="text-xs text-gray-500 mb-2">Available in:</div>
-            <div className="flex flex-wrap gap-1 mb-1">
+          {/* Available Countries - Clean Design */}
+          <div className="mt-auto pt-3 border-t border-gray-100">
+            <div className="text-xs text-gray-500 mb-2">
+              Available in {countries.length} {countries.length === 1 ? 'country' : 'countries'}
+            </div>
+            <div className="flex flex-wrap gap-1.5">
               {countries.slice(0, 3).map((countryCode) => (
                 <span
                   key={countryCode}
-                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200"
+                  className="px-2.5 py-1 text-xs bg-gray-50 text-gray-600 rounded-full border border-gray-200"
                   title={countryNameByCode(countryCode)}
                 >
-                  🌍 {countryNameByCode(countryCode)}
+                  {countryNameByCode(countryCode)}
                 </span>
               ))}
               {countries.length > 3 && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                <span className="px-2.5 py-1 text-xs bg-gray-50 text-gray-500 rounded-full border border-gray-200">
                   +{countries.length - 3} more
                 </span>
               )}
             </div>
-            
-            {/* <div className="flex items-center justify-end">
-              <span className="text-red-500 font-medium text-xs">
-                Explore →
-              </span>
-            </div> */}
           </div>
         </div>
       </Card>

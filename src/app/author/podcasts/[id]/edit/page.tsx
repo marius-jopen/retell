@@ -53,6 +53,7 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
   const [generalCategory, setGeneralCategory] = useState('')
   const [generalRss, setGeneralRss] = useState('')
   const [generalCountry, setGeneralCountry] = useState('DE')
+  const [generalLanguage, setGeneralLanguage] = useState('en')
 
   useEffect(() => {
     const fetchPodcast = async () => {
@@ -103,6 +104,7 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
         setGeneralCategory(podcastData?.category || '')
         setGeneralRss(podcastData?.rss_url || '')
         setGeneralCountry(defaultCountry)
+        setGeneralLanguage((podcastData as any)?.language || 'en')
         
         // Initialize selectedCountry to the default country
         setSelectedCountry(defaultCountry)
@@ -356,13 +358,14 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
                   
                   try {
                     // Save general info (status, category, RSS, default country)
-                    let podcastUpdateData: any = { 
-                      status: generalStatus, 
-                      category: generalCategory, 
-                      rss_url: generalRss, 
-                      country: generalCountry,
-                      updated_at: new Date().toISOString() 
-                    }
+                              let podcastUpdateData: any = { 
+            status: generalStatus, 
+            category: generalCategory, 
+            language: generalLanguage,
+            rss_url: generalRss, 
+            country: generalCountry,
+            updated_at: new Date().toISOString() 
+          }
                     
                     // If default country is selected, also update the base title/description
                     if (selectedCountry === (generalCountry || 'DE')) {
@@ -449,6 +452,27 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
                   {['Business','Technology','Entertainment','Education','News','Health','Sports','Music','Comedy','True Crime','Science','History','Politics','Arts','Other'].map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
+                </Select>
+                <Select label="Language" id="language_author" value={generalLanguage} onChange={(e) => setGeneralLanguage(e.target.value)}>
+                  <option value="en">English</option>
+                  <option value="de">German</option>
+                  <option value="fr">French</option>
+                  <option value="es">Spanish</option>
+                  <option value="it">Italian</option>
+                  <option value="nl">Dutch</option>
+                  <option value="pt">Portuguese</option>
+                  <option value="pl">Polish</option>
+                  <option value="sv">Swedish</option>
+                  <option value="da">Danish</option>
+                  <option value="no">Norwegian</option>
+                  <option value="fi">Finnish</option>
+                  <option value="ru">Russian</option>
+                  <option value="zh">Chinese</option>
+                  <option value="ja">Japanese</option>
+                  <option value="ko">Korean</option>
+                  <option value="ar">Arabic</option>
+                  <option value="hi">Hindi</option>
+                  <option value="other">Other</option>
                 </Select>
                 <Input label="RSS Feed URL (Optional)" id="rss_author" type="url" value={generalRss} onChange={(e) => setGeneralRss(e.target.value)} placeholder="https://.../rss" />
                 <Select label="Default Country" id="country_author" value={generalCountry} onChange={(e) => setGeneralCountry(e.target.value)}>
