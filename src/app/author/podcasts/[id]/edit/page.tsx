@@ -457,8 +457,8 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
       const completeTranslations = { ...countryTranslations }
       // Save current form values to the ACTUALLY selected country, not the form's country field
       completeTranslations[currentCountry] = {
-        title: formData.title,
-        description: formData.description,
+        title: formData.title as string,
+        description: formData.description as string,
         cover_image_url: localCoverDataUrl
       }
       
@@ -646,7 +646,7 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
                       // Then continue with regular podcast update
                       // Fallback to the original logic if form data not available
                       // Fallback to the original logic if form data not available
-                      let podcastUpdateData: any = { 
+                      const podcastUpdateData: any = { 
                         status: generalStatus, 
                         category: generalCategory, 
                         language: generalLanguage,
