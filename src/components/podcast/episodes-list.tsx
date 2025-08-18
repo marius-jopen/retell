@@ -18,7 +18,7 @@ interface Episode {
 }
 
 interface User {
-  profile: {
+  user_metadata?: {
     role: string
   }
 }
@@ -141,7 +141,7 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
                           </svg>
                         </button>
                       )}
-                      {user?.profile.role === 'client' && (
+                      {user?.user_metadata?.role === 'client' && (
                         <button className="px-3 py-1 text-xs bg-red-50 text-red-600 border border-red-200 rounded-full hover:bg-red-100 transition-colors duration-150">
                           Script
                         </button>

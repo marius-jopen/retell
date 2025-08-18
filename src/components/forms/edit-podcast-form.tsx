@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input, Select, TextArea, FileInput } from '@/components/ui'
@@ -20,6 +20,8 @@ interface EditPodcastFormProps {
   onCountryTitleChange?: (value: string) => void
   onCountryDescriptionChange?: (value: string) => void
   onCountryCoverFileChange?: (file: File) => void
+  // Callback to expose form data to parent
+  onFormDataChange?: (formData: any, coverImage: File | null, hosts: any[]) => void
 }
 
 export default function EditPodcastForm({
@@ -36,6 +38,7 @@ export default function EditPodcastForm({
   onCountryTitleChange,
   onCountryDescriptionChange,
   onCountryCoverFileChange,
+  onFormDataChange,
 }: EditPodcastFormProps) {
   const [formData, setFormData] = useState({
     title: podcast?.title || '',
@@ -58,10 +61,19 @@ export default function EditPodcastForm({
 
   const [coverImage, setCoverImage] = useState<File | null>(null)
 
-  // Host management state
-  const [hosts, setHosts] = useState<Array<{ id: string; name: string; language: string; image?: File | string }>>([
-    { id: '1', name: '', language: 'en' }
-  ])
+  // Host management state - Initialize from podcast data or default
+  const [hosts, setHosts] = useState<Array<{ id: string; name: string; language: string; image?: File | string; imagePreviewUrl?: string }>>(() => {
+    if (podcast?.hosts && podcast.hosts.length > 0) {
+      return podcast.hosts.map((host: any, index: number) => ({
+        id: host.id || `host_${index}`,
+        name: host.name || '',
+        language: host.language || 'en',
+        image: host.image_url || '',
+        imagePreviewUrl: host.image_url || undefined
+      }))
+    }
+    return [{ id: '1', name: '', language: 'en' }]
+  })
 
   const categories = [
     'Business', 'Technology', 'Entertainment', 'Education', 'News',
@@ -112,6 +124,19 @@ export default function EditPodcastForm({
   const handleInputChange = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value })
   }
+
+  // Notify parent component when form data changes
+  useEffect(() => {
+    if (onFormDataChange) {
+      const effectiveTitle = countryTitle ?? formData.title
+      const effectiveDescription = countryDescription ?? formData.description
+      onFormDataChange(
+        { ...formData, title: effectiveTitle, description: effectiveDescription, translations, license_countries: licenseCountries },
+        coverImage,
+        hosts
+      )
+    }
+  }, [formData, translations, licenseCountries, coverImage, hosts, countryTitle, countryDescription, onFormDataChange])
 
   return (
     <>
@@ -260,16 +285,46 @@ export default function EditPodcastForm({
                     label="Host Image"
                     id={`host_${host.id}_image`}
                     accept="image/*"
-                    helperText="Upload host photo"
-                    onChange={(e) => {
+                    helperText="Upload host photo (max 5MB)"
+                    onChange={async (e) => {
                       const file = (e.target as HTMLInputElement).files?.[0]
                       if (file) {
-                        setHosts(hosts.map(h => 
-                          h.id === host.id ? { ...h, image: file } : h
-                        ))
+                        if (!file.type.startsWith('image/')) {
+                          alert('Please select an image file')
+                          return
+                        }
+                        if (file.size > 5 * 1024 * 1024) {
+                          alert('Image size must be less than 5MB')
+                          return
+                        }
+                        
+                        // Create preview URL immediately
+                        const reader = new FileReader()
+                        reader.onload = () => {
+                          setHosts(hosts.map(h => 
+                            h.id === host.id ? { 
+                              ...h, 
+                              image: file, 
+                              imagePreviewUrl: reader.result as string 
+                            } : h
+                          ))
+                        }
+                        reader.readAsDataURL(file)
                       }
                     }}
                   />
+                  
+                  {/* Host Image Preview */}
+                  {(host.imagePreviewUrl || (typeof host.image === 'string' && host.image)) && (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-500 mb-1">Current host image</div>
+                      <img
+                        src={host.imagePreviewUrl || (typeof host.image === 'string' ? host.image : '')}
+                        alt={`${host.name} profile`}
+                        className="w-16 h-16 object-cover rounded-full border border-gray-200"
+                      />
+                    </div>
+                  )}
 
                   <Input
                     label="Host Name*"
@@ -324,6 +379,12 @@ export default function EditPodcastForm({
           {/* Removed license countries and translations per request */}
 
 
+            {/* Error Message */}
+            {error && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
           </form>
         </CardContent>
       </Card>

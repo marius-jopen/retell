@@ -78,6 +78,7 @@ export interface Database {
           status: 'draft' | 'pending' | 'approved' | 'rejected'
           rss_url: string | null
           auto_publish_episodes: boolean
+          hosts: Array<{ id: string; name: string; language: string; image_url?: string }> | null
           created_at: string
           updated_at: string
         }
@@ -93,6 +94,7 @@ export interface Database {
           status?: 'draft' | 'pending' | 'approved' | 'rejected'
           rss_url?: string | null
           auto_publish_episodes?: boolean
+          hosts?: Array<{ id: string; name: string; language: string; image_url?: string }> | null
           created_at?: string
           updated_at?: string
         }
@@ -108,6 +110,7 @@ export interface Database {
           status?: 'draft' | 'pending' | 'approved' | 'rejected'
           rss_url?: string | null
           auto_publish_episodes?: boolean
+          hosts?: Array<{ id: string; name: string; language: string; image_url?: string }> | null
           created_at?: string
           updated_at?: string
         }

@@ -125,7 +125,7 @@ interface ToastContainerProps {
 
 function ToastContainer({ toasts, removeToast }: ToastContainerProps) {
   return (
-    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 space-y-3 max-w-md w-full px-4">
+    <div className="fixed bottom-4 left-4 z-50 space-y-2 max-w-sm">
       {toasts.map((toast, index) => (
         <ToastItem 
           key={toast.id} 
@@ -156,13 +156,13 @@ function ToastItem({ toast, onRemove, index }: ToastItemProps) {
   const getToastStyles = (type: Toast['type']) => {
     switch (type) {
       case 'success':
-        return 'bg-gradient-to-r from-red-400 via-red-500 to-red-600 text-white border-red-300'
+        return 'bg-green-500 text-white border-green-400'
       case 'error':
-        return 'bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white border-red-400'
+        return 'bg-red-500 text-white border-red-400'
       case 'info':
-        return 'bg-gradient-to-r from-red-400 via-red-500 to-red-600 text-white border-red-300'
+        return 'bg-white text-gray-800 border-gray-300'
       default:
-        return 'bg-gradient-to-r from-red-400 via-red-500 to-red-600 text-white border-red-300'
+        return 'bg-white text-gray-800 border-gray-300'
     }
   }
 
@@ -170,19 +170,19 @@ function ToastItem({ toast, onRemove, index }: ToastItemProps) {
     switch (type) {
       case 'success':
         return (
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         )
       case 'error':
         return (
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         )
       case 'info':
         return (
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         )
@@ -191,31 +191,16 @@ function ToastItem({ toast, onRemove, index }: ToastItemProps) {
     }
   }
 
-  const getBackgroundStyle = (type: Toast['type']) => {
-    switch (type) {
-      case 'success':
-        return 'linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95))'
-      case 'error':
-        return 'linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(185, 28, 28, 0.95))'
-      case 'info':
-        return 'linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95))'
-      default:
-        return 'linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95))'
-    }
-  }
-
   return (
     <div 
       className={`
-        w-full shadow-2xl rounded-2xl border-2 p-4 
+        w-full shadow-lg rounded-lg border p-3 
         ${getToastStyles(toast.type)} 
-        animate-in slide-in-from-bottom-full duration-500 
-        hover:scale-105 transition-all
-        backdrop-blur-sm
+        animate-in slide-in-from-left duration-300 
+        transition-all
       `}
       style={{
-        animationDelay: `${index * 100}ms`,
-        background: getBackgroundStyle(toast.type)
+        animationDelay: `${index * 50}ms`
       }}
     >
       <div className="flex items-start space-x-3">
@@ -223,28 +208,26 @@ function ToastItem({ toast, onRemove, index }: ToastItemProps) {
           {getIcon(toast.type)}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-white leading-relaxed pr-2">
+          <p className="text-sm font-medium leading-relaxed pr-2">
             {toast.message}
           </p>
         </div>
         <div className="flex-shrink-0">
           <button
             onClick={onRemove}
-            className="inline-flex rounded-full p-1 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+            className={`inline-flex rounded-full p-1 transition-all focus:outline-none focus:ring-2 ${
+              toast.type === 'info' 
+                ? 'hover:bg-gray-200 focus:ring-gray-300 text-gray-500' 
+                : 'hover:bg-white/20 focus:ring-white/50 text-white'
+            }`}
           >
             <span className="sr-only">Close</span>
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
       </div>
-      
-      {/* Toast slice decoration - now red themed */}
-      <div className="absolute -top-1 -left-1 w-2 h-2 bg-white/30 rounded-full"></div>
-      <div className="absolute -top-1 -right-1 w-2 h-2 bg-white/30 rounded-full"></div>
-      <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white/30 rounded-full"></div>
-      <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white/30 rounded-full"></div>
     </div>
   )
 } 

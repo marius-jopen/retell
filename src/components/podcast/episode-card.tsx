@@ -16,7 +16,7 @@ interface Episode {
 }
 
 interface User {
-  profile: {
+  user_metadata?: {
     role: string
   }
 }
@@ -67,7 +67,7 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
                 Play
               </Button>
             )}
-            {user?.profile.role === 'client' && (
+            {user?.user_metadata?.role === 'client' && (
               <Button variant="outline" size="sm" className="text-red-600 border-red-300 hover:bg-red-50 rounded-lg">
                 Script
               </Button>
@@ -116,7 +116,7 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
                 ▶ Play Episode
               </Button>
             )}
-            {user?.profile.role === 'client' && (
+            {user?.user_metadata?.role === 'client' && (
               <Button variant="outline" size="lg" className="text-red-600 border-red-300 hover:bg-red-50 rounded-xl px-6">
                 📄 Script
               </Button>
@@ -154,7 +154,7 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
                     {Math.floor(episode.duration / 60)}:{String(episode.duration % 60).padStart(2, '0')}
                   </span>
                 )}
-                {user?.profile.role === 'client' && (
+                {user?.user_metadata?.role === 'client' && (
                   <Button variant="outline" size="sm" className="text-red-600 border-red-300 hover:bg-red-50 text-xs h-6 px-2">
                     Script
                   </Button>
