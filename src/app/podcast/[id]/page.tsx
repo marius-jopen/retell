@@ -194,12 +194,14 @@ export default async function PodcastDetailPage({ params }: PodcastDetailPagePro
         </div>
       </div>
 
-      {/* Main Content - 2 Column Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <PodcastSidebar podcast={podcast} />
-          <EpisodesList episodes={episodes} user={user} />
-        </div>
+      {/* About Section - Full Width & Prominent */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <PodcastSidebar podcast={podcast} />
+      </div>
+
+      {/* Episodes Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <EpisodesList episodes={episodes} user={user} />
       </div>
     </div>
   )

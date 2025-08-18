@@ -151,7 +151,7 @@ export default function EditPodcastForm({
               <TextArea
                 label="Description*"
                 id="description"
-                rows={6}
+                rows={20}
                 value={countryDescription ?? formData.description}
                 onChange={(e) => {
                   if (onCountryDescriptionChange) onCountryDescriptionChange(e.target.value)
