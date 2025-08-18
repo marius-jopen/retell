@@ -37,6 +37,7 @@ CREATE POLICY "Admins can view all profiles" ON user_profiles FOR SELECT USING (
 CREATE POLICY "Admins can update user roles" ON user_profiles FOR UPDATE USING (is_admin());
 
 -- Create a simple bypass policy for service role (used by admin client)
+DROP POLICY IF EXISTS "Service role bypass" ON user_profiles;
 CREATE POLICY "Service role bypass" ON user_profiles FOR ALL USING (auth.role() = 'service_role');
 
 SELECT 'RLS policies fixed successfully!' AS status;
