@@ -345,9 +345,9 @@ export default function AuthorEditPodcastPage({ params }: { params: Promise<{ id
               </p>
             </div>
             <div className="flex gap-3">
-              <Link href="/author/podcasts">
-                <Button variant="outline">← Back to Podcasts</Button>
-              </Link>
+            <Link href="/author/podcasts">
+              <Button variant="outline">← Back to Podcasts</Button>
+            </Link>
               <Button 
                 variant="default"
                 className="bg-red-600 hover:bg-red-700 text-white"

@@ -273,15 +273,15 @@ button[class*="outline"].text-red-600 {
 
 /* Specific overrides for button variants */
 button[class*="outline"] {
-  color: #111827 !important; /* gray-900 */
+  /* color: #111827 !important; */
 }
 
 button[class*="ghost"] {
-  color: #111827 !important; /* gray-900 */
+  /* color: #111827 !important; */
 }
 
 button[class*="secondary"] {
-  color: #111827 !important; /* gray-900 */
+  /* color: #111827 !important; */
 }
 
 /* Fix pagination and other navigation buttons */
