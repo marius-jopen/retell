@@ -69,7 +69,7 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
             <img
               src={podcast.cover_image_url}
               alt={podcast.title}
-              className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-50 object-cover transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-40 bg-brand flex items-center justify-center group-hover:brightness-110 transition-all duration-300">
