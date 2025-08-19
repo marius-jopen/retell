@@ -58,6 +58,24 @@ export default function EditPodcastForm({
 
   const [coverImage, setCoverImage] = useState<File | null>(null)
 
+  // License agreement state
+  const [licenseData, setLicenseData] = useState({
+    format: podcast?.license_format || '',
+    copyright: podcast?.license_copyright || '',
+    territory: podcast?.license_territory || '',
+    excludedCountries: podcast?.license_excluded_countries?.join(', ') || '',
+    totalListeners: podcast?.license_total_listeners || '',
+    listenersPerEpisode: podcast?.license_listeners_per_episode || '',
+    genderMale: podcast?.license_demographics?.gender?.male || '',
+    genderFemale: podcast?.license_demographics?.gender?.female || '',
+    genderDiverse: podcast?.license_demographics?.gender?.diverse || '',
+    age18_27: podcast?.license_demographics?.age?.age_18_27 || '',
+    age27_34: podcast?.license_demographics?.age?.age_27_34 || '',
+    age35_45: podcast?.license_demographics?.age?.age_35_45 || '',
+    age45plus: podcast?.license_demographics?.age?.age_45_plus || '',
+    rightsOwnership: podcast?.license_rights_ownership || ''
+  })
+
   // Host management moved to HostsManager component
 
   const categories = [
@@ -144,12 +162,43 @@ export default function EditPodcastForm({
     if (onFormDataChange) {
       const effectiveTitle = countryTitle ?? formData.title
       const effectiveDescription = countryDescription ?? formData.description
+      
+      // Prepare license demographics
+      const demographics = {
+        gender: {
+          male: licenseData.genderMale ? parseInt(licenseData.genderMale) : null,
+          female: licenseData.genderFemale ? parseInt(licenseData.genderFemale) : null,
+          diverse: licenseData.genderDiverse ? parseInt(licenseData.genderDiverse) : null
+        },
+        age: {
+          age_18_27: licenseData.age18_27 ? parseInt(licenseData.age18_27) : null,
+          age_27_34: licenseData.age27_34 ? parseInt(licenseData.age27_34) : null,
+          age_35_45: licenseData.age35_45 ? parseInt(licenseData.age35_45) : null,
+          age_45_plus: licenseData.age45plus ? parseInt(licenseData.age45plus) : null
+        }
+      }
+      
       onFormDataChange(
-        { ...formData, title: effectiveTitle, description: effectiveDescription, translations, license_countries: licenseCountries },
+        { 
+          ...formData, 
+          title: effectiveTitle, 
+          description: effectiveDescription, 
+          translations, 
+          license_countries: licenseCountries,
+          // License agreement data
+          license_format: licenseData.format || null,
+          license_copyright: licenseData.copyright || null,
+          license_territory: licenseData.territory || null,
+          license_excluded_countries: licenseData.excludedCountries ? licenseData.excludedCountries.split(',').map((s: string) => s.trim()).filter(Boolean) : null,
+          license_total_listeners: licenseData.totalListeners ? parseInt(licenseData.totalListeners) : null,
+          license_listeners_per_episode: licenseData.listenersPerEpisode ? parseInt(licenseData.listenersPerEpisode) : null,
+          license_demographics: demographics,
+          license_rights_ownership: licenseData.rightsOwnership || null
+        },
         coverImage
       )
     }
-  }, [formData, translations, licenseCountries, coverImage, countryTitle, countryDescription, onFormDataChange])
+  }, [formData, translations, licenseCountries, coverImage, countryTitle, countryDescription, licenseData, onFormDataChange])
 
   return (
     <>
@@ -289,14 +338,28 @@ export default function EditPodcastForm({
             </h3>
             <div className="space-y-3">
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="format" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="format" 
+                  value="always_on"
+                  checked={licenseData.format === 'always_on'}
+                  onChange={(e) => setLicenseData({...licenseData, format: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <div>
                   <span className="text-sm font-medium text-gray-900">Always on</span>
                   <p className="text-xs text-gray-600">This podcast is produced continuously without breaks</p>
                 </div>
               </label>
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="format" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="format" 
+                  value="series"
+                  checked={licenseData.format === 'series'}
+                  onChange={(e) => setLicenseData({...licenseData, format: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <div>
                   <span className="text-sm font-medium text-gray-900">Series</span>
                   <p className="text-xs text-gray-600">This podcast is produced in seasonal series</p>
@@ -312,14 +375,28 @@ export default function EditPodcastForm({
             </h3>
             <div className="space-y-3">
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="copyright" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="copyright" 
+                  value="lifetime"
+                  checked={licenseData.copyright === 'lifetime'}
+                  onChange={(e) => setLicenseData({...licenseData, copyright: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <div>
                   <span className="text-sm font-medium text-gray-900">Lifetime of copyright</span>
                   <p className="text-xs text-gray-600">Copyright lasts for the lifetime of the creator plus 70 years</p>
                 </div>
               </label>
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="copyright" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="copyright" 
+                  value="5_years"
+                  checked={licenseData.copyright === '5_years'}
+                  onChange={(e) => setLicenseData({...licenseData, copyright: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <div>
                   <span className="text-sm font-medium text-gray-900">5 years of copyright</span>
                   <p className="text-xs text-gray-600">Copyright lasts for a specific number of years</p>
@@ -335,19 +412,35 @@ export default function EditPodcastForm({
             </h3>
             <div className="space-y-3">
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="territory" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="territory" 
+                  value="worldwide"
+                  checked={licenseData.territory === 'worldwide'}
+                  onChange={(e) => setLicenseData({...licenseData, territory: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <div>
                   <span className="text-sm font-medium text-gray-900">All Countries</span>
                   <p className="text-xs text-gray-600">License applies worldwide</p>
                 </div>
               </label>
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="territory" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="territory" 
+                  value="except_countries"
+                  checked={licenseData.territory === 'except_countries'}
+                  onChange={(e) => setLicenseData({...licenseData, territory: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <div>
                   <span className="text-sm font-medium text-gray-900">All countries except:</span>
                   <Input
                     id="excluded_countries"
                     placeholder="Enter excluded countries (comma-separated)"
+                    value={licenseData.excludedCountries}
+                    onChange={(e) => setLicenseData({...licenseData, excludedCountries: e.target.value})}
                     className="mt-2"
                   />
                   <p className="text-xs text-gray-600 mt-1">These countries will be marked differently on the frontend map</p>
@@ -368,6 +461,8 @@ export default function EditPodcastForm({
                   id="total_listeners"
                   type="number"
                   placeholder="150000"
+                  value={licenseData.totalListeners}
+                  onChange={(e) => setLicenseData({...licenseData, totalListeners: e.target.value})}
                   helperText="Total listeners across all episodes"
                 />
               </div>
@@ -377,6 +472,8 @@ export default function EditPodcastForm({
                   id="listeners_per_episode"
                   type="number"
                   placeholder="5000"
+                  value={licenseData.listenersPerEpisode}
+                  onChange={(e) => setLicenseData({...licenseData, listenersPerEpisode: e.target.value})}
                   helperText="Average listeners per episode"
                 />
               </div>
@@ -385,19 +482,68 @@ export default function EditPodcastForm({
             <div className="mt-6">
               <h4 className="text-sm font-medium text-gray-900 mb-3">Gender Distribution</h4>
               <div className="grid grid-cols-3 gap-4">
-                <Input label="Male %" id="male_percent" type="number" placeholder="45" />
-                <Input label="Female %" id="female_percent" type="number" placeholder="52" />
-                <Input label="Diverse %" id="diverse_percent" type="number" placeholder="3" />
+                <Input 
+                  label="Male %" 
+                  id="male_percent" 
+                  type="number" 
+                  placeholder="45" 
+                  value={licenseData.genderMale}
+                  onChange={(e) => setLicenseData({...licenseData, genderMale: e.target.value})}
+                />
+                <Input 
+                  label="Female %" 
+                  id="female_percent" 
+                  type="number" 
+                  placeholder="52" 
+                  value={licenseData.genderFemale}
+                  onChange={(e) => setLicenseData({...licenseData, genderFemale: e.target.value})}
+                />
+                <Input 
+                  label="Diverse %" 
+                  id="diverse_percent" 
+                  type="number" 
+                  placeholder="3" 
+                  value={licenseData.genderDiverse}
+                  onChange={(e) => setLicenseData({...licenseData, genderDiverse: e.target.value})}
+                />
               </div>
             </div>
 
             <div className="mt-6">
               <h4 className="text-sm font-medium text-gray-900 mb-3">Age Distribution</h4>
               <div className="grid grid-cols-2 gap-4">
-                <Input label="18-27 years %" id="age_18_27" type="number" placeholder="25" />
-                <Input label="27-34 years %" id="age_27_34" type="number" placeholder="35" />
-                <Input label="35-45 years %" id="age_35_45" type="number" placeholder="25" />
-                <Input label="45+ years %" id="age_45_plus" type="number" placeholder="15" />
+                <Input 
+                  label="18-27 years %" 
+                  id="age_18_27" 
+                  type="number" 
+                  placeholder="25" 
+                  value={licenseData.age18_27}
+                  onChange={(e) => setLicenseData({...licenseData, age18_27: e.target.value})}
+                />
+                <Input 
+                  label="27-34 years %" 
+                  id="age_27_34" 
+                  type="number" 
+                  placeholder="35" 
+                  value={licenseData.age27_34}
+                  onChange={(e) => setLicenseData({...licenseData, age27_34: e.target.value})}
+                />
+                <Input 
+                  label="35-45 years %" 
+                  id="age_35_45" 
+                  type="number" 
+                  placeholder="25" 
+                  value={licenseData.age35_45}
+                  onChange={(e) => setLicenseData({...licenseData, age35_45: e.target.value})}
+                />
+                <Input 
+                  label="45+ years %" 
+                  id="age_45_plus" 
+                  type="number" 
+                  placeholder="15" 
+                  value={licenseData.age45plus}
+                  onChange={(e) => setLicenseData({...licenseData, age45plus: e.target.value})}
+                />
               </div>
             </div>
           </div>
@@ -410,19 +556,47 @@ export default function EditPodcastForm({
             <p className="text-xs text-gray-600 mb-4">This information is only visible in the admin area</p>
             <div className="space-y-3">
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="rights" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="rights" 
+                  value="full_owner"
+                  checked={licenseData.rightsOwnership === 'full_owner'}
+                  onChange={(e) => setLicenseData({...licenseData, rightsOwnership: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <span className="text-sm text-gray-900">I am the owner of all rights</span>
               </label>
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="rights" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="rights" 
+                  value="granted_rights"
+                  checked={licenseData.rightsOwnership === 'granted_rights'}
+                  onChange={(e) => setLicenseData({...licenseData, rightsOwnership: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <span className="text-sm text-gray-900">I have had all other rights granted to me (in addition to my own rights) and I am authorized to transfer these further</span>
               </label>
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="rights" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="rights" 
+                  value="partial_rights"
+                  checked={licenseData.rightsOwnership === 'partial_rights'}
+                  onChange={(e) => setLicenseData({...licenseData, rightsOwnership: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <span className="text-sm text-gray-900">I only own part of the rights to the podcast</span>
               </label>
               <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="rights" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                <input 
+                  type="radio" 
+                  name="rights" 
+                  value="no_transfer"
+                  checked={licenseData.rightsOwnership === 'no_transfer'}
+                  onChange={(e) => setLicenseData({...licenseData, rightsOwnership: e.target.value})}
+                  className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" 
+                />
                 <span className="text-sm text-gray-900">Other persons hold rights that have not been transferred to me</span>
               </label>
             </div>

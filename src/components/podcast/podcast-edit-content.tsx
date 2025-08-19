@@ -462,6 +462,15 @@ function PodcastEditContent({
         auto_publish_episodes: formData.auto_publish_episodes as boolean,
         cover_image_url: coverImageUrl,
         hosts: processedHosts,
+        // License agreement fields
+        license_format: formData.license_format as string | null,
+        license_copyright: formData.license_copyright as string | null,
+        license_territory: formData.license_territory as string | null,
+        license_excluded_countries: formData.license_excluded_countries as string[] | null,
+        license_total_listeners: formData.license_total_listeners as number | null,
+        license_listeners_per_episode: formData.license_listeners_per_episode as number | null,
+        license_demographics: formData.license_demographics as any | null,
+        license_rights_ownership: formData.license_rights_ownership as string | null,
         updated_at: new Date().toISOString()
       }
       

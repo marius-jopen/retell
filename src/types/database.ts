@@ -79,6 +79,14 @@ export interface Database {
           rss_url: string | null
           auto_publish_episodes: boolean
           hosts: Array<{ id: string; name: string; language: string; image_url?: string }> | null
+          license_format: 'always_on' | 'series' | null
+          license_copyright: 'lifetime' | '5_years' | null
+          license_territory: 'worldwide' | 'except_countries' | null
+          license_excluded_countries: string[] | null
+          license_total_listeners: number | null
+          license_listeners_per_episode: number | null
+          license_demographics: any | null
+          license_rights_ownership: 'full_owner' | 'granted_rights' | 'partial_rights' | 'no_transfer' | null
           created_at: string
           updated_at: string
         }
@@ -95,6 +103,14 @@ export interface Database {
           rss_url?: string | null
           auto_publish_episodes?: boolean
           hosts?: Array<{ id: string; name: string; language: string; image_url?: string }> | null
+          license_format?: 'always_on' | 'series' | null
+          license_copyright?: 'lifetime' | '5_years' | null
+          license_territory?: 'worldwide' | 'except_countries' | null
+          license_excluded_countries?: string[] | null
+          license_total_listeners?: number | null
+          license_listeners_per_episode?: number | null
+          license_demographics?: any | null
+          license_rights_ownership?: 'full_owner' | 'granted_rights' | 'partial_rights' | 'no_transfer' | null
           created_at?: string
           updated_at?: string
         }
@@ -111,6 +127,14 @@ export interface Database {
           rss_url?: string | null
           auto_publish_episodes?: boolean
           hosts?: Array<{ id: string; name: string; language: string; image_url?: string }> | null
+          license_format?: 'always_on' | 'series' | null
+          license_copyright?: 'lifetime' | '5_years' | null
+          license_territory?: 'worldwide' | 'except_countries' | null
+          license_excluded_countries?: string[] | null
+          license_total_listeners?: number | null
+          license_listeners_per_episode?: number | null
+          license_demographics?: any | null
+          license_rights_ownership?: 'full_owner' | 'granted_rights' | 'partial_rights' | 'no_transfer' | null
           created_at?: string
           updated_at?: string
         }
