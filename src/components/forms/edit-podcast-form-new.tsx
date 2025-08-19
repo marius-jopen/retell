@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input, TextArea, FileInput } from '@/components/ui'
+import { Input, Select, TextArea, FileInput } from '@/components/ui'
 
 interface EditPodcastFormProps {
   podcast: any
