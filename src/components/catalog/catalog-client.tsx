@@ -24,7 +24,6 @@ interface Podcast {
   cover_image_url: string | null
   episodes?: Episode[]
   license_countries?: string[]
-  translations?: Array<{ language_code: string; title: string; description: string }>
 }
 
 interface CatalogClientProps {
@@ -36,13 +35,18 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('')
 
+  console.log('CatalogClient - Received podcasts:', podcasts?.length || 0)
+  if (podcasts && podcasts.length > 0) {
+    console.log('CatalogClient - First podcast:', podcasts[0])
+  }
+
   // Extract unique categories from podcasts
   const categories = useMemo(() => {
     const uniqueCategories = [...new Set(podcasts.map(p => p.category).filter(Boolean))]
     return uniqueCategories.sort()
   }, [podcasts])
 
-  // Extract unique countries from podcasts (default country + license countries + translation countries)
+  // Extract unique countries from podcasts (default country + license countries)
   const countries = useMemo(() => {
     const countrySet = new Set<string>()
     
@@ -56,15 +60,6 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
         podcast.license_countries.forEach(code => {
           if (code && code.trim()) {
             countrySet.add(code)
-          }
-        })
-      }
-      
-      // Add translation countries
-      if (podcast.translations) {
-        podcast.translations.forEach(t => {
-          if (t.language_code && t.language_code.trim()) {
-            countrySet.add(t.language_code)
           }
         })
       }
@@ -89,8 +84,7 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
       
       const matchesCountry = !selectedCountry || 
         podcast.country === selectedCountry ||
-        (podcast.license_countries && podcast.license_countries.includes(selectedCountry)) ||
-        (podcast.translations && podcast.translations.some(t => t.language_code === selectedCountry))
+        (podcast.license_countries && podcast.license_countries.includes(selectedCountry))
 
       return matchesSearch && matchesCategory && matchesCountry
     })

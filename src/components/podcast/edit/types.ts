@@ -7,11 +7,7 @@ export interface Host {
   image_url?: string // For database storage
 }
 
-export interface CountryTranslation {
-  title: string
-  description: string
-  cover_image_url: string | null
-}
+
 
 export interface Podcast {
   id: string
@@ -25,7 +21,7 @@ export interface Podcast {
   author_id: string
   status: 'draft' | 'pending' | 'approved' | 'rejected'
   auto_publish_episodes: boolean
-  translations?: Array<{ language_code: string; title: string; description: string }>
+
   license_countries?: string[]
   user_profiles?: {
     full_name: string

@@ -11,8 +11,7 @@ import { COUNTRIES, countryNameByCode } from '@/lib/countries'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import HostsManager from '@/components/podcast/edit/HostsManager'
-import CountrySelector from '@/components/podcast/edit/CountrySelector'
-import type { Host, Podcast as PodcastType, CountryTranslation } from '@/components/podcast/edit/types'
+import type { Host, Podcast as PodcastType } from '@/components/podcast/edit/types'
 
 // Using imported Podcast type from types.ts
 
@@ -38,15 +37,7 @@ function PodcastEditContent({
   const supabase = createBrowserSupabaseClient()
   const { addToast } = useToast()
 
-  // Country-specific editing state
-  const [selectedCountry, setSelectedCountry] = useState<string>('DE')
-  const [countryTranslations, setCountryTranslations] = useState<Record<string, CountryTranslation>>({})
-  const [localTitle, setLocalTitle] = useState('')
-  const [localDescription, setLocalDescription] = useState('')
-  const [localCoverDataUrl, setLocalCoverDataUrl] = useState<string | null>(null)
-  
-  // Store country cover Files separately to avoid serialization issues
-  const countryCoverFilesRef = useRef<Map<string, File>>(new Map())
+
 
   // General info for right column
   const [generalStatus, setGeneralStatus] = useState<'draft' | 'pending' | 'approved' | 'rejected' | ''>('')
@@ -69,78 +60,7 @@ function PodcastEditContent({
     setCurrentCoverImage(coverImage)
   }, [])
 
-  // Country management handlers
-  const handleCountryChange = useCallback((country: string) => {
-    // Save current content before switching
-    const currentCountry = selectedCountry
-    const defaultCountry = generalCountry || 'DE'
-    
-    if (currentCountry !== defaultCountry) {
-      setCountryTranslations((prev) => ({
-        ...prev,
-        [currentCountry]: {
-          title: localTitle,
-          description: localDescription,
-          cover_image_url: localCoverDataUrl
-        }
-      }))
-    }
-    
-    // Switch to selected country
-    setSelectedCountry(country)
-    const translation = countryTranslations[country]
-    setLocalTitle(translation?.title || (podcast?.title ?? ''))
-    setLocalDescription(translation?.description || (podcast?.description ?? ''))
-    setLocalCoverDataUrl(translation?.cover_image_url || (podcast?.cover_image_url ?? null))
-  }, [selectedCountry, generalCountry, localTitle, localDescription, localCoverDataUrl, countryTranslations, podcast])
 
-  const handleAddCountry = useCallback((newCountry: string) => {
-    // Save current content and add new country
-    const currentCountry = selectedCountry
-    setCountryTranslations((prev) => ({
-      ...prev,
-      [currentCountry]: {
-        title: localTitle,
-        description: localDescription,
-        cover_image_url: localCoverDataUrl
-      },
-      [newCountry]: {
-        title: localTitle,
-        description: localDescription,
-        cover_image_url: localCoverDataUrl
-      }
-    }))
-    
-    setSelectedCountry(newCountry)
-  }, [selectedCountry, localTitle, localDescription, localCoverDataUrl])
-
-  const handleRemoveCountry = useCallback(async (country: string) => {
-    if (!podcastId) return
-    
-    // Delete from database
-    await supabase
-      .from('podcast_country_translations')
-      .delete()
-      .eq('podcast_id', podcastId)
-      .eq('country_code', country)
-
-    // Remove from local state
-    setCountryTranslations((prev) => {
-      const copy = { ...prev }
-      delete copy[country]
-      return copy
-    })
-
-    // If deleting the selected country, switch back to default country
-    if (country === selectedCountry) {
-      const defaultCountry = generalCountry || 'DE'
-      setSelectedCountry(defaultCountry)
-      const defaultTranslation = countryTranslations[defaultCountry]
-      setLocalTitle(defaultTranslation?.title || (podcast?.title ?? ''))
-      setLocalDescription(defaultTranslation?.description || (podcast?.description ?? ''))
-      setLocalCoverDataUrl(defaultTranslation?.cover_image_url || (podcast?.cover_image_url ?? null))
-    }
-  }, [podcastId, supabase, selectedCountry, generalCountry, countryTranslations, podcast])
 
   useEffect(() => {
     const fetchPodcast = async () => {
@@ -172,7 +92,6 @@ function PodcastEditContent({
               full_name,
               email
             ),
-            podcast_translations:podcast_translations(language_code,title,description),
             license_countries:podcast_license_countries(country_code)
           `)
           .eq('id', podcastId)
@@ -182,13 +101,9 @@ function PodcastEditContent({
           query = query.eq('author_id', user.id)
         }
 
-        // Execute podcast data and country translations queries in parallel
-        const [podcastResult, countryTransResult, episodesResult] = await Promise.all([
+        // Execute podcast data and episodes queries in parallel
+        const [podcastResult, episodesResult] = await Promise.all([
           query.single(),
-          supabase
-            .from('podcast_country_translations')
-            .select('country_code,title,description,cover_image_url')
-            .eq('podcast_id', podcastId),
           supabase
             .from('episodes')
             .select('*')
@@ -205,11 +120,6 @@ function PodcastEditContent({
         // Set podcast data
         setPodcast({
           ...podcastData,
-          translations: (podcastData as any).podcast_translations?.map((t: any) => ({
-            language_code: t.language_code,
-            title: t.title,
-            description: t.description,
-          })) || [],
           license_countries: (podcastData as any).license_countries?.map((c: any) => c.country_code) || [],
         })
 
@@ -219,12 +129,6 @@ function PodcastEditContent({
         setGeneralRss(podcastData?.rss_url || '')
         setGeneralCountry(defaultCountry)
         setGeneralLanguage((podcastData as any)?.language || 'en')
-        setSelectedCountry(defaultCountry)
-        
-        // Initialize form fields with podcast data
-        setLocalTitle(podcastData?.title || '')
-        setLocalDescription(podcastData?.description || '')
-        setLocalCoverDataUrl(podcastData?.cover_image_url || null)
 
         // Initialize hosts from podcast data
         if (podcastData?.hosts && Array.isArray(podcastData.hosts)) {
@@ -241,52 +145,13 @@ function PodcastEditContent({
           setCurrentHosts([])
         }
 
-        // Process country translations
-        const { data: countryTrans } = countryTransResult
-        const map: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
-        ;(countryTrans || []).forEach((row: any) => {
-          const code = row.country_code
-          if (code && 
-              code.length === 2 && 
-              code !== defaultCountry && 
-              countryNameByCode(code) !== 'Unknown') {
-            map[code] = {
-              title: row.title,
-              description: row.description,
-              cover_image_url: row.cover_image_url || null,
-            }
-          }
-        })
-        setCountryTranslations(map)
+
 
         // Set episodes
         const { data: episodesData } = episodesResult
         setEpisodes(episodesData || [])
 
-        // Clean up invalid translations in background (non-blocking)
-        if (countryTrans && countryTrans.length > 0) {
-          const invalidCodes = countryTrans
-            .map((row: any) => row.country_code)
-            .filter((code: string) => 
-              !code || 
-              code.length !== 2 || 
-              code === defaultCountry || 
-              countryNameByCode(code) === 'Unknown'
-            )
-          
-          if (invalidCodes.length > 0) {
-            // Clean up in background without blocking UI
-            Promise.all(
-              invalidCodes.map(code => 
-                supabase
-                  .from('podcast_country_translations')
-                  .delete()
-                  .eq('podcast_id', podcastId)
-                  .eq('country_code', code)
-              )
-            ).catch(err => console.warn('Failed to clean up invalid translations:', err))
-          }
-        }
+
 
       } catch (err) {
         console.error('Error in fetchPodcast:', err)
@@ -297,71 +162,7 @@ function PodcastEditContent({
     fetchPodcast()
   }, [podcastId, supabase, user, profile, isAdmin])
 
-  // Separate function to save country translations
-  const saveCountryTranslationsDirectly = async () => {
-    const currentCountry = selectedCountry
-    const defaultCountry = generalCountry || 'DE'
-    
-    // Create complete translations including current form values
-    const completeTranslations = { ...countryTranslations }
-    completeTranslations[currentCountry] = {
-      title: localTitle,
-      description: localDescription,
-      cover_image_url: localCoverDataUrl
-    }
 
-    // Ensure default country is also included with base podcast data if not already present
-    if (!completeTranslations[defaultCountry]) {
-      completeTranslations[defaultCountry] = {
-        title: podcast?.title || '',
-        description: podcast?.description || '',
-        cover_image_url: podcast?.cover_image_url || null
-      }
-    }
-
-    // Save all country translations
-    for (const [countryCode, translation] of Object.entries(completeTranslations)) {
-      let coverImageUrl = translation.cover_image_url
-      
-      // Check if there's a new cover image file to upload for this country
-      const coverFile = countryCoverFilesRef.current.get(countryCode)
-      if (coverFile) {
-        const fileExt = coverFile.name.split('.').pop()
-        const fileName = `country-cover-${podcastId}-${countryCode}-${Date.now()}.${fileExt}`
-        
-        const { error: uploadError } = await supabase.storage
-          .from('podcast-covers')
-          .upload(fileName, coverFile)
-
-        if (uploadError) {
-          addToast({ type: 'error', message: `Failed to upload cover for ${countryCode}: ${uploadError.message}` })
-        } else {
-          const { data: urlData } = supabase.storage
-            .from('podcast-covers')
-            .getPublicUrl(fileName)
-          coverImageUrl = urlData.publicUrl
-        }
-      }
-      
-      // Save/update country translation
-      const translationData = {
-        podcast_id: podcastId,
-        country_code: countryCode,
-        title: translation.title || '',
-        description: translation.description || '',
-        cover_image_url: coverImageUrl,
-        updated_at: new Date().toISOString(),
-      }
-      
-      const { error: countryError } = await supabase
-        .from('podcast_country_translations')
-        .upsert(translationData, { onConflict: 'podcast_id,country_code' } as any)
-      
-      if (countryError) {
-        addToast({ type: 'error', message: `Failed to save ${countryCode} translation: ${countryError.message}` })
-      }
-    }
-  }
 
   const handleSubmit = async (formData: Record<string, unknown>, coverImage: File | null) => {
     setLoading(true)
@@ -447,13 +248,10 @@ function PodcastEditContent({
         }
       }
 
-      // Update podcast
-      const defaultCountryForUpdate = generalCountry || 'DE'
-      const isEditingDefaultCountry = selectedCountry === defaultCountryForUpdate
-      
-      console.log(`🔍 HANDLESUBMIT - Is editing default country ${defaultCountryForUpdate}? ${isEditingDefaultCountry}`)
-      
+      // Update podcast with normal fields
       const podcastUpdate: any = {
+        title: formData.title as string,
+        description: formData.description as string,
         category: formData.category as string,
         language: formData.language as string,
         country: formData.country as string,
@@ -474,15 +272,6 @@ function PodcastEditContent({
         updated_at: new Date().toISOString()
       }
       
-      // Only update base title/description if editing the default country
-      if (isEditingDefaultCountry) {
-        podcastUpdate.title = formData.title as string
-        podcastUpdate.description = formData.description as string
-        console.log('🔍 HANDLESUBMIT - Updating base podcast title/description (editing default country)')
-      } else {
-        console.log('🔍 HANDLESUBMIT - NOT updating base podcast title/description (editing non-default country)')
-      }
-      
       const { error: updateError } = await supabase
         .from('podcasts')
         .update(podcastUpdate)
@@ -499,134 +288,15 @@ function PodcastEditContent({
         }
       }
 
-      // Upsert translations
-      const translations = (formData as any).translations as Array<{ language_code: string; title: string; description: string }> | undefined
-      if (translations) {
-        for (const t of translations) {
-          if (!t.language_code || !t.title || !t.description) continue
-          await supabase.from('podcast_translations').upsert({
-            podcast_id: podcastId,
-            language_code: t.language_code,
-            title: t.title,
-            description: t.description,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: 'podcast_id,language_code' } as any)
-        }
-      }
-
-
       if (updateError) throw updateError
-
-      // Save country translations after main podcast update
-      console.log('🔍 HANDLESUBMIT - Starting country translations save...')
-      const currentCountry = selectedCountry
-      const defaultCountry = generalCountry || 'DE'
-      
-      // Create complete translations including current form values
-      const completeTranslations = { ...countryTranslations }
-      // Save current form values to the ACTUALLY selected country, not the form's country field
-      completeTranslations[currentCountry] = {
-        title: formData.title as string,
-        description: formData.description as string,
-        cover_image_url: localCoverDataUrl
-      }
-      
-      console.log(`🔍 HANDLESUBMIT - Saving form data to ACTIVE country ${currentCountry} instead of form country ${formData.country}`)
-
-      console.log('🔍 HANDLESUBMIT - Complete Translations:', completeTranslations)
-      console.log('🔍 HANDLESUBMIT - Current Country:', currentCountry)
-      console.log('🔍 HANDLESUBMIT - Countries to save:', Object.keys(completeTranslations))
-
-      // Ensure default country is also included with base podcast data if not already present
-      if (!completeTranslations[defaultCountry]) {
-        completeTranslations[defaultCountry] = {
-          title: podcast?.title || '',
-          description: podcast?.description || '',
-          cover_image_url: podcast?.cover_image_url || null
-        }
-        console.log(`🔍 HANDLESUBMIT - Added missing default country ${defaultCountry}:`, completeTranslations[defaultCountry])
-      }
-
-      // Save all country translations
-      for (const [countryCode, translation] of Object.entries(completeTranslations)) {
-        let coverImageUrl = translation.cover_image_url
-        
-        // Check if there's a new cover image file to upload for this country
-        const coverFile = countryCoverFilesRef.current.get(countryCode)
-        if (coverFile) {
-          const fileExt = coverFile.name.split('.').pop()
-          const fileName = `country-cover-${podcastId}-${countryCode}-${Date.now()}.${fileExt}`
-          
-          const { error: uploadError } = await supabase.storage
-            .from('podcast-covers')
-            .upload(fileName, coverFile)
-
-          if (uploadError) {
-            console.error(`❌ HANDLESUBMIT - Upload error for ${countryCode}:`, uploadError)
-            addToast({ type: 'error', message: `Failed to upload cover for ${countryCode}: ${uploadError.message}` })
-          } else {
-            const { data: urlData } = supabase.storage
-              .from('podcast-covers')
-              .getPublicUrl(fileName)
-            coverImageUrl = urlData.publicUrl
-          }
-        }
-        
-        // Save/update country translation
-        const translationData = {
-          podcast_id: podcastId,
-          country_code: countryCode,
-          title: translation.title || '',
-          description: translation.description || '',
-          cover_image_url: coverImageUrl,
-          updated_at: new Date().toISOString(),
-        }
-        
-        console.log(`🔍 HANDLESUBMIT - Saving ${countryCode} translation:`, translationData)
-        
-        const { data: upsertResult, error: countryError } = await supabase
-          .from('podcast_country_translations')
-          .upsert(translationData, { onConflict: 'podcast_id,country_code' } as any)
-        
-        if (countryError) {
-          console.error(`❌ HANDLESUBMIT - Save error for ${countryCode}:`, countryError)
-          addToast({ type: 'error', message: `Failed to save ${countryCode} translation: ${countryError.message}` })
-        } else {
-          console.log(`✅ HANDLESUBMIT - ${countryCode} translation saved:`, upsertResult)
-        }
-      }
 
       addToast({
         type: 'success',
-        message: 'Podcast and country translations updated successfully'
+        message: 'Podcast updated successfully!'
       })
 
-      // Refresh podcast data
-      const { data: updatedPodcast } = await supabase
-        .from('podcasts')
-        .select(`
-          *,
-          user_profiles!inner(
-            full_name,
-            email
-          ),
-          podcast_translations:podcast_translations(language_code,title,description),
-          license_countries:podcast_license_countries(country_code)
-        `)
-        .eq('id', podcastId)
-        .single()
-
-      if (updatedPodcast) {
-        setPodcast({
-          ...updatedPodcast,
-          translations: (updatedPodcast as any).podcast_translations?.map((t: any) => ({
-            language_code: t.language_code,
-            title: t.title,
-            description: t.description,
-          })) || [],
-          license_countries: (updatedPodcast as any).license_countries?.map((c: any) => c.country_code) || [],
-        })
-      }
+      // Refresh data
+      window.location.reload()
 
     } catch (error: unknown) {
       console.error('Error updating podcast:', error)
@@ -750,21 +420,11 @@ function PodcastEditContent({
                       // Define default country once at the top
                       const defaultCountry = generalCountry || 'DE'
                       
-                      // Use the comprehensive handleSubmit function with all form data
-                      console.log('🚀 SAVE - Checking currentFormData:', currentFormData)
-                      console.log('🚀 SAVE - currentCoverImage:', currentCoverImage)
-                      
+                      // Use the handleSubmit function with form data
                       if (currentFormData) {
-                        console.log('🚀 SAVE - Using handleSubmit with currentFormData')
                         await handleSubmit(currentFormData, currentCoverImage)
                       } else {
-                        console.log('🚀 SAVE - Using fallback logic (no currentFormData)')
-                        // First save country translations using the fallback logic
-                        await saveCountryTranslationsDirectly()
-                        
-                        // Then continue with regular podcast update
-                        // Fallback to the original logic if form data not available
-                        // Fallback to the original logic if form data not available
+                        // Fallback: update general info only
                         const podcastUpdateData: any = { 
                           status: generalStatus, 
                           category: generalCategory, 
@@ -774,96 +434,14 @@ function PodcastEditContent({
                           updated_at: new Date().toISOString() 
                         }
                         
-                        // If default country is selected, also update the base title/description
-                        if (selectedCountry === defaultCountry) {
-                          podcastUpdateData.title = localTitle
-                          podcastUpdateData.description = localDescription
-                        }
-                        
                         const { error: generalError } = await supabase
                           .from('podcasts')
                           .update(podcastUpdateData)
                           .eq('id', podcastId)
                         
                         if (generalError) throw generalError
-
-                        // Prepare current form values to include in save
-                        const currentCountry = selectedCountry
                         
-                        // Create a complete translations object including current form values
-                        const completeTranslations = { ...countryTranslations }
-                        // ALWAYS save current country data (including default country)
-                        completeTranslations[currentCountry] = {
-                          title: localTitle,
-                          description: localDescription,
-                          cover_image_url: localCoverDataUrl
-                        }
-
-                        console.log('🔍 SAVE DEBUG - Current Country:', currentCountry)
-                        console.log('🔍 SAVE DEBUG - Default Country:', defaultCountry)
-                        console.log('🔍 SAVE DEBUG - Original countryTranslations:', countryTranslations)
-                        console.log('🔍 SAVE DEBUG - Complete Translations:', completeTranslations)
-                        console.log('🔍 SAVE DEBUG - Local Form Values:', { title: localTitle, description: localDescription, cover: localCoverDataUrl })
-                        console.log('🔍 SAVE DEBUG - Podcast ID:', podcastId)
-                        console.log('🔍 SAVE DEBUG - Number of countries to save:', Object.keys(completeTranslations).length)
-                        console.log('🔍 SAVE DEBUG - Countries list:', Object.keys(completeTranslations))
-
-                        // Save all country translations with cover image uploads
-                        for (const [countryCode, translation] of Object.entries(completeTranslations)) {
-                          // Save ALL countries including default country as translations
-                          
-                          let coverImageUrl = translation.cover_image_url
-                          
-                          // Check if there's a new cover image file to upload for this country
-                          const coverFile = countryCoverFilesRef.current.get(countryCode)
-                          if (coverFile) {
-                            const fileExt = coverFile.name.split('.').pop()
-                            const fileName = `country-cover-${podcastId}-${countryCode}-${Date.now()}.${fileExt}`
-                            
-                            const { error: uploadError } = await supabase.storage
-                              .from('podcast-covers')
-                              .upload(fileName, coverFile)
-
-                            if (uploadError) {
-                              addToast({ type: 'error', message: `Failed to upload cover for ${countryNameByCode(countryCode)}: ${uploadError.message}` })
-                            } else {
-                              const { data: urlData } = supabase.storage
-                                .from('podcast-covers')
-                                .getPublicUrl(fileName)
-                              coverImageUrl = urlData.publicUrl
-                            }
-                          }
-                          
-                          // Save/update country translation
-                          const translationData = {
-                            podcast_id: podcastId,
-                            country_code: countryCode,
-                            title: translation.title || '',
-                            description: translation.description || '',
-                            cover_image_url: coverImageUrl,
-                            updated_at: new Date().toISOString(),
-                          }
-                          
-                          console.log(`🔍 SAVE DEBUG - Saving ${countryCode} translation:`, translationData)
-                          
-                          const { data: upsertResult, error: countryError } = await supabase
-                            .from('podcast_country_translations')
-                            .upsert(translationData, { onConflict: 'podcast_id,country_code' } as any)
-                          
-                          if (countryError) {
-                            console.error(`❌ SAVE ERROR - ${countryCode}:`, countryError)
-                            addToast({ type: 'error', message: `Failed to save ${countryNameByCode(countryCode)} translation: ${countryError.message}` })
-                          } else {
-                            console.log(`✅ SAVE SUCCESS - ${countryCode} translation saved:`, upsertResult)
-                          }
-                        }
-                        
-                        // Clear uploaded file references
-                        countryCoverFilesRef.current.clear()
-                        
-                        addToast({ type: 'success', message: 'All changes saved successfully!' })
-                        
-                        // Refresh data
+                        addToast({ type: 'success', message: 'General info updated successfully!' })
                         window.location.reload()
                       }
                       
@@ -886,36 +464,11 @@ function PodcastEditContent({
         <div className="flex flex-col lg:flex-row gap-8 min-h-0">
           {/* Left Column - Country selector + Podcast Form (Sticky) */}
           <div className="lg:w-2/3 lg:sticky lg:top-8 lg:self-start space-y-4">
-            {/* Country-specific content */}
-            <CountrySelector
-              selectedCountry={selectedCountry}
-              countryTranslations={countryTranslations}
-              generalCountry={generalCountry}
-              isAdmin={isAdmin}
-              onCountryChange={handleCountryChange}
-              onAddCountry={handleAddCountry}
-              onRemoveCountry={handleRemoveCountry}
-            />
-
             <EditPodcastForm
               podcast={podcast}
               onSubmit={isAdmin ? handleSubmit : async () => {}} // Admin uses form submit, author uses header button
               loading={isAdmin ? loading : false} // Admin shows loading in form, author in header
               isAdmin={isAdmin}
-              countryTitle={localTitle}
-              countryDescription={localDescription}
-              countryCoverPreviewUrl={localCoverDataUrl}
-              onCountryTitleChange={(v) => setLocalTitle(v)}
-              onCountryDescriptionChange={(v) => setLocalDescription(v)}
-              onCountryCoverFileChange={(file) => {
-                // Store File object for upload
-                countryCoverFilesRef.current.set(selectedCountry, file)
-                
-                // Create preview URL for UI
-                const reader = new FileReader()
-                reader.onload = () => setLocalCoverDataUrl(reader.result as string)
-                reader.readAsDataURL(file)
-              }}
               onFormDataChange={handleFormDataChange}
             />
           </div>

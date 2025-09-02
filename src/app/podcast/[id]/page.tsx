@@ -88,10 +88,9 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
 
         // Get country translations
         console.log('Fetching country translations for podcast:', id, 'User logged in:', !!user)
-        const { data: countryTrans, error: countryError } = await supabase
-          .from('podcast_country_translations')
-          .select('country_code, title, description, cover_image_url')
-          .eq('podcast_id', id)
+        // Translation tables removed - using main podcast fields
+        const countryTrans: any[] = []
+        const countryError: any = null
         
         console.log('Country translations result:', { 
           data: countryTrans, 
@@ -132,10 +131,9 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
 
         // Get language translations
         console.log('Fetching language translations for podcast:', id)
-        const { data: languageTrans, error: languageError } = await supabase
-          .from('podcast_translations')
-          .select('language_code, title, description')
-          .eq('podcast_id', id)
+        // Translation tables removed - using main podcast fields
+        const languageTrans: any[] = []
+        const languageError: any = null
         
         console.log('Language translations result:', { 
           data: languageTrans, 

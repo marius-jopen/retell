@@ -12,13 +12,6 @@ interface EditPodcastFormProps {
   loading?: boolean
   error?: string
   isCreating?: boolean
-  // Optional external control for country-specific fields
-  countryTitle?: string
-  countryDescription?: string
-  countryCoverPreviewUrl?: string | null
-  onCountryTitleChange?: (value: string) => void
-  onCountryDescriptionChange?: (value: string) => void
-  onCountryCoverFileChange?: (file: File) => void
   // Callback to expose form data to parent (hosts moved to HostsManager)
   onFormDataChange?: (formData: any, coverImage: File | null) => void
 }
@@ -31,12 +24,6 @@ export default function EditPodcastForm({
   loading = false,
   error,
   isCreating = false,
-  countryTitle,
-  countryDescription,
-  countryCoverPreviewUrl,
-  onCountryTitleChange,
-  onCountryDescriptionChange,
-  onCountryCoverFileChange,
   onFormDataChange,
 }: EditPodcastFormProps) {
   const [formData, setFormData] = useState({
@@ -50,8 +37,7 @@ export default function EditPodcastForm({
     auto_publish_episodes: podcast?.auto_publish_episodes ?? false,
   })
 
-  // translation management
-  const [translations, setTranslations] = useState<Array<{ language_code: string; title: string; description: string }>>(podcast?.translations || [])
+
 
   // license countries (multi-select)
   const [licenseCountries, setLicenseCountries] = useState<string[]>(podcast?.license_countries || [])
@@ -160,8 +146,8 @@ export default function EditPodcastForm({
   // Notify parent component when form data changes (hosts moved to HostsManager)
   useEffect(() => {
     if (onFormDataChange) {
-      const effectiveTitle = countryTitle ?? formData.title
-      const effectiveDescription = countryDescription ?? formData.description
+      const effectiveTitle = formData.title
+      const effectiveDescription = formData.description
       
       // Prepare license demographics
       const demographics = {
@@ -183,7 +169,6 @@ export default function EditPodcastForm({
           ...formData, 
           title: effectiveTitle, 
           description: effectiveDescription, 
-          translations, 
           license_countries: licenseCountries,
           // License agreement data
           license_format: licenseData.format || null,
@@ -198,7 +183,7 @@ export default function EditPodcastForm({
         coverImage
       )
     }
-  }, [formData, translations, licenseCountries, coverImage, countryTitle, countryDescription, licenseData, onFormDataChange])
+  }, [formData, licenseCountries, coverImage, licenseData, onFormDataChange])
 
   return (
     <>
@@ -219,18 +204,15 @@ export default function EditPodcastForm({
           <form onSubmit={handleSubmit} className="space-y-10">
             {/* General Info moved to column 2 (admin panel) */}
 
-            {/* Country-specific Podcast Details */}
+            {/* Podcast Details */}
             <div className="space-y-8">
               {/* Basic Details */}
               <div className="space-y-6">
                 <Input
                   label="Podcast Title*"
                   id="title"
-                  value={countryTitle ?? formData.title}
-                  onChange={(e) => {
-                    if (onCountryTitleChange) onCountryTitleChange(e.target.value)
-                    else handleInputChange('title', e.target.value)
-                  }}
+                  value={formData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
                   required
                   placeholder="Enter podcast title"
                 />
@@ -238,11 +220,8 @@ export default function EditPodcastForm({
                 <TextArea
                   label="Description*"
                   id="description"
-                  value={countryDescription ?? formData.description}
-                  onChange={(e) => {
-                    if (onCountryDescriptionChange) onCountryDescriptionChange(e.target.value)
-                    else handleInputChange('description', e.target.value)
-                  }}
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
                   required
                   placeholder="Describe your podcast"
                 />
@@ -255,21 +234,17 @@ export default function EditPodcastForm({
                   onChange={(e) => {
                     const file = (e.target as HTMLInputElement).files?.[0]
                     if (file) {
-                      if (onCountryCoverFileChange) {
-                        onCountryCoverFileChange(file)
-                      } else {
-                        setCoverImage(file)
-                      }
+                      setCoverImage(file)
                     }
                   }}
                 />
 
                 {/* Cover Image Preview */}
-                {(countryCoverPreviewUrl || (podcast?.cover_image_url)) && (
+                {podcast?.cover_image_url && (
                   <div className="mt-2">
                     <div className="text-xs text-gray-500 mb-1">Current cover</div>
                     <img
-                      src={countryCoverPreviewUrl || podcast?.cover_image_url}
+                      src={podcast.cover_image_url}
                       alt="Cover preview"
                       className="w-32 h-32 object-cover rounded-lg shadow-sm border border-gray-200"
                     />
