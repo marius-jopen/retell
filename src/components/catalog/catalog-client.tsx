@@ -35,10 +35,7 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('')
 
-  console.log('CatalogClient - Received podcasts:', podcasts?.length || 0)
-  if (podcasts && podcasts.length > 0) {
-    console.log('CatalogClient - First podcast:', podcasts[0])
-  }
+
 
   // Extract unique categories from podcasts
   const categories = useMemo(() => {

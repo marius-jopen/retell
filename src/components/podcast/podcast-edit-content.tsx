@@ -54,6 +54,10 @@ function PodcastEditContent({
   // Store host files separately to avoid serialization issues
   const hostFilesRef = useRef<Map<string, File>>(new Map())
 
+  // Country exclusion list
+  const [excludedCountries, setExcludedCountries] = useState<string[]>([])
+  const [selectedCountryToExclude, setSelectedCountryToExclude] = useState<string>('')
+
   // Callback to handle form data changes (hosts managed separately by HostsManager)
   const handleFormDataChange = useCallback((formData: any, coverImage: File | null) => {
     setCurrentFormData(formData)
@@ -129,6 +133,22 @@ function PodcastEditContent({
         setGeneralRss(podcastData?.rss_url || '')
         setGeneralCountry(defaultCountry)
         setGeneralLanguage((podcastData as any)?.language || 'en')
+        
+        // Initialize excluded countries from podcast data
+        const excludedCountriesData = podcastData?.license_excluded_countries || []
+        console.log('Excluded countries data:', excludedCountriesData)
+        
+        // Filter out invalid country codes
+        const validExcludedCountries = excludedCountriesData.filter((code: string) => {
+          const name = countryNameByCode(code)
+          if (name === 'Unknown') {
+            console.warn(`Removing invalid country code: ${code}`)
+            return false
+          }
+          return true
+        })
+        
+        setExcludedCountries(validExcludedCountries)
 
         // Initialize hosts from podcast data
         if (podcastData?.hosts && Array.isArray(podcastData.hosts)) {
@@ -264,7 +284,7 @@ function PodcastEditContent({
         license_format: formData.license_format as string | null,
         license_copyright: formData.license_copyright as string | null,
         license_territory: formData.license_territory as string | null,
-        license_excluded_countries: formData.license_excluded_countries as string[] | null,
+        license_excluded_countries: excludedCountries.length > 0 ? excludedCountries : null,
         license_total_listeners: formData.license_total_listeners as number | null,
         license_listeners_per_episode: formData.license_listeners_per_episode as number | null,
         license_demographics: formData.license_demographics as any | null,
@@ -440,7 +460,7 @@ function PodcastEditContent({
                           .eq('id', podcastId)
                         
                         if (generalError) throw generalError
-                        
+
                         addToast({ type: 'success', message: 'General info updated successfully!' })
                         window.location.reload()
                       }
@@ -464,6 +484,81 @@ function PodcastEditContent({
         <div className="flex flex-col lg:flex-row gap-8 min-h-0">
           {/* Left Column - Country selector + Podcast Form (Sticky) */}
           <div className="lg:w-2/3 lg:sticky lg:top-8 lg:self-start space-y-4">
+            {/* Country Exclusion List */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="text-sm font-medium text-gray-900 mb-3">Countries where podcast is not available</div>
+              <div className="space-y-3">
+                {/* Selected countries as tags */}
+                {excludedCountries.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {excludedCountries.map((countryCode) => {
+                      const countryName = countryNameByCode(countryCode)
+                      console.log(`Country code: ${countryCode}, Name: ${countryName}`)
+                      
+                      // Skip invalid country codes
+                      if (countryName === 'Unknown') {
+                        console.warn(`Invalid country code found: ${countryCode}`)
+                        return null
+                      }
+                      
+                      return (
+                      <div
+                        key={countryCode}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 border border-red-200 text-red-800"
+                      >
+                        <span>{countryName}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setExcludedCountries(prev => prev.filter(code => code !== countryCode))
+                          }}
+                          className="ml-1 rounded-full p-0.5 hover:bg-red-200 transition-colors"
+                          aria-label={`Remove ${countryNameByCode(countryCode)}`}
+                        >
+                          ×
+                        </button>
+                      </div>
+                      )
+                    })}
+                  </div>
+                )}
+                
+                {/* Country selection dropdown */}
+                <select
+                  value={selectedCountryToExclude}
+                  onChange={(e) => {
+                    const selectedValue = e.target.value
+                    console.log('Selected country:', selectedValue)
+                    if (selectedValue && !excludedCountries.includes(selectedValue)) {
+                      console.log('Adding country to excluded list:', selectedValue)
+                      setExcludedCountries(prev => {
+                        const newList = [...prev, selectedValue]
+                        console.log('New excluded countries list:', newList)
+                        return newList
+                      })
+                    }
+                    setSelectedCountryToExclude('') // Reset dropdown
+                  }}
+                  className="w-full bg-white border-2 border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 cursor-pointer"
+                >
+                  <option value="">Select country to exclude...</option>
+                  {COUNTRIES
+                    .filter(country => !excludedCountries.includes(country.code))
+                    .map(country => (
+                      <option key={country.code} value={country.code}>
+                        {countryNameByCode(country.code)}
+                      </option>
+                    ))}
+                </select>
+                
+                {excludedCountries.length > 0 && (
+                  <p className="text-xs text-gray-500">
+                    This podcast will not be available in the selected countries.
+                  </p>
+                )}
+              </div>
+            </div>
+
             <EditPodcastForm
               podcast={podcast}
               onSubmit={isAdmin ? handleSubmit : async () => {}} // Admin uses form submit, author uses header button
@@ -491,6 +586,18 @@ function PodcastEditContent({
                   ))}
                 </Select>
                 {!isAdmin && (
+                  <Select label="Default Country" id="country_author" value={generalCountry} onChange={(e) => setGeneralCountry(e.target.value)}>
+                    {[
+                      // Germany first
+                      { code: 'DE', name: countryNameByCode('DE') },
+                      // Then all other countries alphabetically
+                      ...COUNTRIES.filter(c => c.code !== 'DE').map(c => ({ code: c.code, name: countryNameByCode(c.code) })).sort((a, b) => a.name.localeCompare(b.name))
+                    ].map((country) => (
+                      <option key={country.code} value={country.code}>{country.name}</option>
+                    ))}
+                  </Select>
+                )}
+                {!isAdmin && (
                   <Select label="Language" id="language_author" value={generalLanguage} onChange={(e) => setGeneralLanguage(e.target.value)}>
                     <option value="en">English</option>
                     <option value="de">German</option>
@@ -514,18 +621,7 @@ function PodcastEditContent({
                   </Select>
                 )}
                 <Input label="RSS Feed URL (Optional)" id={`rss_${isAdmin ? 'admin' : 'author'}`} type="url" value={generalRss} onChange={(e) => setGeneralRss(e.target.value)} placeholder="https://.../rss" />
-                {!isAdmin && (
-                  <Select label="Default Country" id="country_author" value={generalCountry} onChange={(e) => setGeneralCountry(e.target.value)}>
-                    {[
-                      // Germany first
-                      { code: 'DE', name: countryNameByCode('DE') },
-                      // Then all other countries alphabetically
-                      ...COUNTRIES.filter(c => c.code !== 'DE').map(c => ({ code: c.code, name: countryNameByCode(c.code) })).sort((a, b) => a.name.localeCompare(b.name))
-                    ].map((country) => (
-                      <option key={country.code} value={country.code}>{country.name}</option>
-                    ))}
-                  </Select>
-                )}
+                
                 {isAdmin && (
                   <div className="text-right">
                     <Button

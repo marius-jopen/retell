@@ -13,11 +13,7 @@ export default async function CatalogPage() {
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
 
-  console.log('Catalog - Podcasts fetched:', podcasts?.length || 0)
-  console.log('Catalog - Error:', error)
-  if (podcasts && podcasts.length > 0) {
-    console.log('Catalog - First podcast:', podcasts[0])
-  }
+
 
   return (
     <div className="min-h-screen bg-orange-50">
