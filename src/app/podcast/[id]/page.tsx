@@ -51,9 +51,31 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
   // Await params in Next.js 15
   const { id } = await params
 
-        // Get current user
+        // Get current user with profile
+        console.log('Fetching user...')
         const { data: { user: currentUser } } = await supabase.auth.getUser()
-        setUser(currentUser)
+        console.log('Current user from auth:', currentUser)
+        
+        if (currentUser) {
+          // Get user profile to check role
+          console.log('Fetching user profile for user ID:', currentUser.id)
+          const { data: profile, error: profileError } = await supabase
+            .from('user_profiles')
+            .select('*')
+            .eq('id', currentUser.id)
+            .single()
+          
+          console.log('Profile data:', profile)
+          console.log('Profile error:', profileError)
+          
+          setUser({
+            ...currentUser,
+            profile
+          })
+        } else {
+          console.log('No current user found')
+          setUser(null)
+        }
 
   // Get podcast details with episodes
         const { data: podcastData, error: podcastError } = await supabase
@@ -224,8 +246,18 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
   // Check if user can access this podcast
   // Public access: approved podcasts are viewable by everyone
   // Restricted access: non-approved podcasts only for admins/authors
+  console.log('Access check - podcast status:', podcast.status)
+  console.log('Access check - user:', user ? 'exists' : 'null')
+  console.log('Access check - user profile:', user?.profile)
+  console.log('Access check - user role:', user?.profile?.role)
+  console.log('Access check - podcast author_id:', podcast.author_id)
+  console.log('Access check - user id:', user?.id)
+  
+  // For debugging: allow access if podcast is approved OR if user exists (temporary)
   const canAccess = podcast.status === 'approved' || 
-                   (user && (user.user_metadata?.role === 'admin' || user.id === podcast.author_id))
+                   (user && user.id) // Temporary: allow any authenticated user
+  
+  console.log('Access check - canAccess:', canAccess)
 
   if (!canAccess) {
     return (

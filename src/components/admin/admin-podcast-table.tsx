@@ -97,25 +97,7 @@ export default function AdminPodcastTable({ podcasts }: AdminPodcastTableProps) 
         </div>
       ),
     },
-    {
-      key: 'category',
-      title: 'Category',
-      render: (_, podcast) => (
-        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-          {podcast.category}
-        </span>
-      ),
-    },
-    {
-      key: 'episodes',
-      title: 'Episodes',
-      render: (_, podcast) => (
-        <span className="text-sm text-gray-600">
-          {podcast.episodes.length} episodes
-        </span>
-      ),
-      align: 'center'
-    },
+
     {
       key: 'status',
       title: 'Status',
@@ -140,14 +122,14 @@ export default function AdminPodcastTable({ podcasts }: AdminPodcastTableProps) 
       key: 'actions',
       title: 'Actions',
       render: (_, podcast) => (
-        <div className="flex space-x-1">
+        <div className="flex flex-wrap gap-1">
           <Link href={`/podcast/${podcast.id}`}>
-            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
+            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7 min-w-0">
               View
             </Button>
           </Link>
           <Link href={`/admin/podcasts/${podcast.id}/edit`}>
-            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
+            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7 min-w-0">
               Edit
             </Button>
           </Link>

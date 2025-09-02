@@ -185,6 +185,17 @@ function PodcastEditContent({
 
 
   const handleSubmit = async (formData: Record<string, unknown>, coverImage: File | null) => {
+    console.log('🚀 PodcastEditContent handleSubmit called with:', {
+      formData,
+      coverImage: coverImage?.name,
+      scriptFiles: {
+        scriptFile: formData.scriptFile,
+        scriptEnglishFile: formData.scriptEnglishFile,
+        scriptAudioTracksFile: formData.scriptAudioTracksFile,
+        scriptMusicFile: formData.scriptMusicFile
+      }
+    })
+    
     setLoading(true)
 
     try {
@@ -201,11 +212,112 @@ function PodcastEditContent({
 
         if (uploadError) throw uploadError
 
-        const { data: urlData } = supabase.storage
+          const { data: urlData } = supabase.storage
+            .from('podcast-covers')
+            .getPublicUrl(fileName)
+
+          coverImageUrl = urlData.publicUrl
+      }
+
+      // Upload script files if provided
+      console.log('🚀 UPLOAD - Checking for script files:', {
+        scriptFile: formData.scriptFile,
+        scriptEnglishFile: formData.scriptEnglishFile,
+        scriptAudioTracksFile: formData.scriptAudioTracksFile,
+        scriptMusicFile: formData.scriptMusicFile
+      })
+      
+      let scriptUrl = podcast?.script_url
+      let scriptEnglishUrl = podcast?.script_english_url
+      let scriptAudioTracksUrl = podcast?.script_audio_tracks_url
+      let scriptMusicUrl = podcast?.script_music_url
+
+      // Upload script file
+      if (formData.scriptFile) {
+        const scriptFile = formData.scriptFile as File
+        const fileExt = scriptFile.name.split('.').pop()
+        const fileName = `podcast-script-${podcastId}-${Date.now()}.${fileExt}`
+        
+        const { error: scriptUploadError } = await supabase.storage
+          .from('podcast-covers')
+          .upload(fileName, scriptFile)
+
+        if (scriptUploadError) {
+          console.error('Script upload error:', scriptUploadError)
+          addToast({ type: 'error', message: `Failed to upload script: ${scriptUploadError.message}` })
+        } else {
+          const { data: scriptUrlData } = supabase.storage
+            .from('podcast-covers')
+            .getPublicUrl(fileName)
+          scriptUrl = scriptUrlData.publicUrl
+          console.log('Script uploaded successfully:', scriptUrl)
+        }
+      }
+
+      // Upload script English file
+      if (formData.scriptEnglishFile) {
+        const scriptEnglishFile = formData.scriptEnglishFile as File
+        const fileExt = scriptEnglishFile.name.split('.').pop()
+        const fileName = `podcast-script-english-${podcastId}-${Date.now()}.${fileExt}`
+        
+        const { error: scriptEnglishUploadError } = await supabase.storage
+          .from('podcast-covers')
+          .upload(fileName, scriptEnglishFile)
+
+        if (scriptEnglishUploadError) {
+          console.error('Script English upload error:', scriptEnglishUploadError)
+          addToast({ type: 'error', message: `Failed to upload script English: ${scriptEnglishUploadError.message}` })
+        } else {
+          const { data: scriptEnglishUrlData } = supabase.storage
+          .from('podcast-covers')
+            .getPublicUrl(fileName)
+          scriptEnglishUrl = scriptEnglishUrlData.publicUrl
+          console.log('Script English uploaded successfully:', scriptEnglishUrl)
+        }
+      }
+
+      // Upload script audio tracks file
+      if (formData.scriptAudioTracksFile) {
+        const scriptAudioTracksFile = formData.scriptAudioTracksFile as File
+        const fileExt = scriptAudioTracksFile.name.split('.').pop()
+        const fileName = `podcast-script-audio-tracks-${podcastId}-${Date.now()}.${fileExt}`
+        
+                const { error: scriptAudioTracksUploadError } = await supabase.storage
+          .from('podcast-covers')
+          .upload(fileName, scriptAudioTracksFile)
+
+        if (scriptAudioTracksUploadError) {
+          console.error('Script Audio Tracks upload error:', scriptAudioTracksUploadError)
+          addToast({ type: 'error', message: `Failed to upload script audio tracks: ${scriptAudioTracksUploadError.message}` })
+        } else {
+                    const { data: scriptAudioTracksUrlData } = supabase.storage
           .from('podcast-covers')
           .getPublicUrl(fileName)
+          scriptAudioTracksUrl = scriptAudioTracksUrlData.publicUrl
+          console.log('Script Audio Tracks uploaded successfully:', scriptAudioTracksUrl)
+        }
+      }
 
-        coverImageUrl = urlData.publicUrl
+      // Upload script music file
+      if (formData.scriptMusicFile) {
+        const scriptMusicFile = formData.scriptMusicFile as File
+        const fileExt = scriptMusicFile.name.split('.').pop()
+        const fileName = `podcast-script-music-${podcastId}-${Date.now()}.${fileExt}`
+        
+        const { error: scriptMusicUploadError } = await supabase.storage
+          .from('podcast-covers')
+          .upload(fileName, scriptMusicFile)
+
+        if (scriptMusicUploadError) {
+          console.error('Script Music upload error:', scriptMusicUploadError)
+          addToast({ type: 'error', message: `Failed to upload script music: ${scriptMusicUploadError.message}` })
+        } else {
+          const { data: scriptMusicUrlData } = supabase.storage
+            .from('podcast-covers')
+            .getPublicUrl(fileName)
+          scriptMusicUrl = scriptMusicUrlData.publicUrl
+          console.log('Script Music uploaded successfully:', scriptMusicUrl)
+        }
       }
 
       // Process hosts and upload host images
@@ -289,6 +401,11 @@ function PodcastEditContent({
         license_listeners_per_episode: formData.license_listeners_per_episode as number | null,
         license_demographics: formData.license_demographics as any | null,
         license_rights_ownership: formData.license_rights_ownership as string | null,
+        // Script URLs
+        script_url: scriptUrl,
+        script_english_url: scriptEnglishUrl,
+        script_audio_tracks_url: scriptAudioTracksUrl,
+        script_music_url: scriptMusicUrl,
         updated_at: new Date().toISOString()
       }
       
@@ -419,12 +536,14 @@ function PodcastEditContent({
                   ← Back to Podcasts
                 </Button>
               </Link>
-              {!isAdmin && (
                 <Button 
+                  type="button"
                   variant="default"
                   className="bg-red-600 hover:bg-red-700 text-white"
                   disabled={loading}
-                  onClick={async () => {
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
                     console.log('🚀 SAVE BUTTON CLICKED!')
                     console.log('🚀 SAVE - Podcast ID:', podcastId)
                     console.log('🚀 SAVE - Loading state:', loading)
@@ -440,11 +559,18 @@ function PodcastEditContent({
                       // Define default country once at the top
                       const defaultCountry = generalCountry || 'DE'
                       
-                      // Use the handleSubmit function with form data
+                    // Use the handleSubmit function with form data
                       if (currentFormData) {
+                        console.log('🚀 SAVE - Form data:', currentFormData)
+                        console.log('🚀 SAVE - Script files in form data:', {
+                          scriptFile: currentFormData.scriptFile,
+                          scriptEnglishFile: currentFormData.scriptEnglishFile,
+                          scriptAudioTracksFile: currentFormData.scriptAudioTracksFile,
+                          scriptMusicFile: currentFormData.scriptMusicFile
+                        })
                         await handleSubmit(currentFormData, currentCoverImage)
                       } else {
-                        // Fallback: update general info only
+                      // Fallback: update general info only
                         const podcastUpdateData: any = { 
                           status: generalStatus, 
                           category: generalCategory, 
@@ -461,7 +587,7 @@ function PodcastEditContent({
                         
                         if (generalError) throw generalError
 
-                        addToast({ type: 'success', message: 'General info updated successfully!' })
+                      addToast({ type: 'success', message: 'General info updated successfully!' })
                         window.location.reload()
                       }
                       
@@ -476,7 +602,6 @@ function PodcastEditContent({
                 >
                   {loading ? 'Saving...' : 'Save All Changes'}
                 </Button>
-              )}
             </div>
           </div>
         </div>
@@ -574,12 +699,14 @@ function PodcastEditContent({
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
               <div className="text-sm font-medium text-gray-900 mb-3">General Info</div>
               <div className="grid grid-cols-1 gap-3">
+                {isAdmin && (
                 <Select label="Status" id={`status_${isAdmin ? 'admin' : 'author'}`} value={generalStatus} onChange={(e) => setGeneralStatus(e.target.value as any)}>
                   <option value="draft">Draft</option>
                   <option value="pending">Pending</option>
                   <option value="approved">Approved</option>
                   <option value="rejected">Rejected</option>
                 </Select>
+                )}
                 <Select label="Category" id={`category_${isAdmin ? 'admin' : 'author'}`} value={generalCategory} onChange={(e) => setGeneralCategory(e.target.value)}>
                   {['Business','Technology','Entertainment','Education','News','Health','Sports','Music','Comedy','True Crime','Science','History','Politics','Arts','Other'].map((c) => (
                     <option key={c} value={c}>{c}</option>

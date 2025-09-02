@@ -56,6 +56,10 @@ export interface Database {
           license_listeners_per_episode: number | null
           license_demographics: any | null
           license_rights_ownership: 'full_owner' | 'granted_rights' | 'partial_rights' | 'no_transfer' | null
+          script_url: string | null
+          script_english_url: string | null
+          script_audio_tracks_url: string | null
+          script_music_url: string | null
           created_at: string
           updated_at: string
         }
@@ -80,6 +84,10 @@ export interface Database {
           license_listeners_per_episode?: number | null
           license_demographics?: any | null
           license_rights_ownership?: 'full_owner' | 'granted_rights' | 'partial_rights' | 'no_transfer' | null
+          script_url?: string | null
+          script_english_url?: string | null
+          script_audio_tracks_url?: string | null
+          script_music_url?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -104,6 +112,10 @@ export interface Database {
           license_listeners_per_episode?: number | null
           license_demographics?: any | null
           license_rights_ownership?: 'full_owner' | 'granted_rights' | 'partial_rights' | 'no_transfer' | null
+          script_url?: string | null
+          script_english_url?: string | null
+          script_audio_tracks_url?: string | null
+          script_music_url?: string | null
           created_at?: string
           updated_at?: string
         }

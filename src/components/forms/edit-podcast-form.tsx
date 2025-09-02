@@ -43,6 +43,12 @@ export default function EditPodcastForm({
   const [licenseCountries, setLicenseCountries] = useState<string[]>(podcast?.license_countries || [])
 
   const [coverImage, setCoverImage] = useState<File | null>(null)
+  
+  // Script file uploads
+  const [scriptFile, setScriptFile] = useState<File | null>(null)
+  const [scriptEnglishFile, setScriptEnglishFile] = useState<File | null>(null)
+  const [scriptAudioTracksFile, setScriptAudioTracksFile] = useState<File | null>(null)
+  const [scriptMusicFile, setScriptMusicFile] = useState<File | null>(null)
 
   // License agreement state
   const [licenseData, setLicenseData] = useState({
@@ -136,7 +142,35 @@ export default function EditPodcastForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (loading) return
-    onSubmit(formData, coverImage)
+    
+    // Include script files in the form data
+    const formDataWithScripts = {
+      ...formData,
+      scriptFile,
+      scriptEnglishFile,
+      scriptAudioTracksFile,
+      scriptMusicFile
+    }
+    
+    console.log('📋 Form handleSubmit called with:', {
+      formData: formDataWithScripts,
+      coverImage: coverImage?.name,
+      scriptFiles: {
+        scriptFile: scriptFile?.name,
+        scriptEnglishFile: scriptEnglishFile?.name,
+        scriptAudioTracksFile: scriptAudioTracksFile?.name,
+        scriptMusicFile: scriptMusicFile?.name
+      }
+    })
+    
+    console.log('📋 About to call onSubmit with script files:', {
+      scriptFile: scriptFile,
+      scriptEnglishFile: scriptEnglishFile,
+      scriptAudioTracksFile: scriptAudioTracksFile,
+      scriptMusicFile: scriptMusicFile
+    })
+    
+    onSubmit(formDataWithScripts, coverImage)
   }
 
   const handleInputChange = (field: string, value: any) => {
@@ -145,6 +179,13 @@ export default function EditPodcastForm({
 
   // Notify parent component when form data changes (hosts moved to HostsManager)
   useEffect(() => {
+    console.log('📋 Form data useEffect triggered:', {
+      scriptFile: scriptFile?.name,
+      scriptEnglishFile: scriptEnglishFile?.name,
+      scriptAudioTracksFile: scriptAudioTracksFile?.name,
+      scriptMusicFile: scriptMusicFile?.name
+    })
+    
     if (onFormDataChange) {
       const effectiveTitle = formData.title
       const effectiveDescription = formData.description
@@ -178,12 +219,17 @@ export default function EditPodcastForm({
           license_total_listeners: licenseData.totalListeners ? parseInt(licenseData.totalListeners) : null,
           license_listeners_per_episode: licenseData.listenersPerEpisode ? parseInt(licenseData.listenersPerEpisode) : null,
           license_demographics: demographics,
-          license_rights_ownership: licenseData.rightsOwnership || null
+          license_rights_ownership: licenseData.rightsOwnership || null,
+          // Script files
+          scriptFile,
+          scriptEnglishFile,
+          scriptAudioTracksFile,
+          scriptMusicFile
         },
         coverImage
       )
     }
-  }, [formData, licenseCountries, coverImage, licenseData, onFormDataChange])
+  }, [formData, licenseCountries, coverImage, licenseData, scriptFile, scriptEnglishFile, scriptAudioTracksFile, scriptMusicFile, onFormDataChange])
 
   return (
     <>
@@ -234,7 +280,7 @@ export default function EditPodcastForm({
                   onChange={(e) => {
                     const file = (e.target as HTMLInputElement).files?.[0]
                     if (file) {
-                      setCoverImage(file)
+                        setCoverImage(file)
                     }
                   }}
                 />
@@ -252,32 +298,169 @@ export default function EditPodcastForm({
                 )}
               </div>
 
-              {/* File Uploads */}
+              {/* Script Uploads */}
               <div className="space-y-6">
-                <h3 className="text-base font-semibold text-gray-900 border-b border-gray-200 pb-2">File Uploads</h3>
+                <h3 className="text-base font-semibold text-gray-900 border-b border-gray-200 pb-2">Script Uploads</h3>
                 
-                <FileInput
-                  label="Script"
-                  id="script"
-                  accept=".pdf,.doc,.docx,.txt"
-                  helperText="Upload script file (PDF, DOC, DOCX, TXT)"
-                />
+                {/* Script File */}
+                <div className="space-y-2">
+                  <FileInput
+                    label="Script"
+                    id="script"
+                    accept=".pdf,.doc,.docx,.txt"
+                    helperText="Upload main script file (PDF, DOC, DOCX, TXT)"
+                    onChange={(e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0]
+                      console.log('📁 Script file selected:', file)
+                      if (file) {
+                        setScriptFile(file)
+                        console.log('📁 Script file state set:', file.name)
+                      }
+                    }}
+                  />
+                  
+                  {/* Script File Preview */}
+                  {(scriptFile || podcast?.script_url) && (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-500 mb-1">Current script</div>
+                      <div className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex-shrink-0">
+                          <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-green-800">
+                            {scriptFile ? scriptFile.name : 'Script File'}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {scriptFile ? 'Ready to upload' : 'Previously uploaded'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
-                <FileInput
-                  label="Audio Tracks"
-                  id="audio_tracks"
-                  accept="audio/*"
-                  multiple
-                  helperText="Upload audio tracks (MP3, WAV, etc.)"
-                />
+                {/* Script English File */}
+                <div className="space-y-2">
+                  <FileInput
+                    label="Script English"
+                    id="script_english"
+                    accept=".pdf,.doc,.docx,.txt"
+                    helperText="Upload English version of script (PDF, DOC, DOCX, TXT)"
+                    onChange={(e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0]
+                      console.log('📁 Script English file selected:', file)
+                      if (file) {
+                        setScriptEnglishFile(file)
+                        console.log('📁 Script English file state set:', file.name)
+                      }
+                    }}
+                  />
+                  
+                  {/* Script English File Preview */}
+                  {(scriptEnglishFile || podcast?.script_english_url) && (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-500 mb-1">Current script English</div>
+                      <div className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex-shrink-0">
+                          <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-green-800">
+                            {scriptEnglishFile ? scriptEnglishFile.name : 'Script English File'}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {scriptEnglishFile ? 'Ready to upload' : 'Previously uploaded'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
-                <FileInput
-                  label="Music"
-                  id="music"
-                  accept="audio/*"
-                  multiple
-                  helperText="Upload music files (MP3, WAV, etc.)"
-                />
+                {/* Script Audio Tracks File */}
+                <div className="space-y-2">
+                  <FileInput
+                    label="Script Audio Tracks"
+                    id="script_audio_tracks"
+                    accept="audio/*"
+                    helperText="Upload script audio tracks (MP3, WAV, etc.)"
+                    onChange={(e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0]
+                      console.log('📁 Script Audio Tracks file selected:', file)
+                      if (file) {
+                        setScriptAudioTracksFile(file)
+                        console.log('📁 Script Audio Tracks file state set:', file.name)
+                      }
+                    }}
+                  />
+                  
+                  {/* Script Audio Tracks File Preview */}
+                  {(scriptAudioTracksFile || podcast?.script_audio_tracks_url) && (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-500 mb-1">Current script audio tracks</div>
+                      <div className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex-shrink-0">
+                          <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.814L4.383 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.383l4-3.814a1 1 0 011-.11zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-green-800">
+                            {scriptAudioTracksFile ? scriptAudioTracksFile.name : 'Script Audio Tracks File'}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {scriptAudioTracksFile ? 'Ready to upload' : 'Previously uploaded'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Script Music File */}
+                <div className="space-y-2">
+                  <FileInput
+                    label="Script Music"
+                    id="script_music"
+                    accept="audio/*"
+                    helperText="Upload script music files (MP3, WAV, etc.)"
+                    onChange={(e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0]
+                      console.log('📁 Script Music file selected:', file)
+                      if (file) {
+                        setScriptMusicFile(file)
+                        console.log('📁 Script Music file state set:', file.name)
+                      }
+                    }}
+                  />
+                  
+                  {/* Script Music File Preview */}
+                  {(scriptMusicFile || podcast?.script_music_url) && (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-500 mb-1">Current script music</div>
+                      <div className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex-shrink-0">
+                          <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.814L4.383 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.383l4-3.814a1 1 0 011-.11zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-green-800">
+                            {scriptMusicFile ? scriptMusicFile.name : 'Script Music File'}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {scriptMusicFile ? 'Ready to upload' : 'Previously uploaded'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Hosts section moved to right column (HostsManager component) in podcast-edit-content.tsx */}
