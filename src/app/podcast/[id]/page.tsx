@@ -365,32 +365,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                 {currentTranslation?.description || podcast.description}
               </p>
 
-              {/* Country Selector - More Prominent */}
-              {availableCountries.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-white/90 mb-3 uppercase tracking-wide">
-                    {availableCountries.length > 1 ? 'Available in Multiple Countries' : 'Available Country'}
-                  </h3>
-                  <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
-                    {availableCountries.map((countryCode) => (
-                      <button
-                        key={countryCode}
-                        onClick={() => setSelectedCountry(countryCode)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl cursor-pointer ${
-                          selectedCountry === countryCode
-                            ? 'bg-white text-orange-600 shadow-white/25'
-                            : 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50'
-                        }`}
-                      >
-                        {countryNameByCode(countryCode)}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-white/70 mt-2 text-center lg:text-left">
-                    Click to see content tailored for your region
-                  </p>
-                </div>
-              )}
+
 
               {/* Language Selector - Only show if multiple languages */}
               {availableLanguages.length > 1 && (
@@ -418,6 +393,31 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                   </p>
                     </div>
                   )}
+
+              {/* Excluded Countries Warning - Prominent */}
+              {podcast.license_excluded_countries && podcast.license_excluded_countries.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-white/90 mb-3 uppercase tracking-wide">
+                    {podcast.license_excluded_countries.length === 1 
+                      ? 'Not Available in This Country'
+                      : 'Not Available in These Countries'
+                    }
+                  </h3>
+                  <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                    {podcast.license_excluded_countries.map((countryCode) => (
+                      <div
+                        key={countryCode}
+                        className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-red-600 border border-white/30 shadow-lg"
+                      >
+                        {countryNameByCode(countryCode)}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-white/70 mt-2 text-center lg:text-left">
+                    This content is restricted in the selected regions
+                  </p>
+                </div>
+              )}
 
               {/* Action Buttons - Only for logged-in clients */}
               {user?.user_metadata?.role === 'client' && (
@@ -484,11 +484,26 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
                     )}
                     
                     {podcast.license_excluded_countries && podcast.license_excluded_countries.length > 0 && (
-                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                        <span className="text-sm font-medium text-amber-800">Excluded Territories:</span>
-                        <span className="text-sm text-amber-700 ml-2">
-                          {podcast.license_excluded_countries.join(', ')}
-                        </span>
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div className="flex items-center mb-2">
+                          <span className="text-lg mr-2">🚫</span>
+                          <span className="text-sm font-medium text-red-800">
+                            {podcast.license_excluded_countries.length === 1 
+                              ? 'Not Available in This Country:'
+                              : 'Not Available in These Countries:'
+                            }
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {podcast.license_excluded_countries.map((countryCode) => (
+                            <span
+                              key={countryCode}
+                              className="px-3 py-1 text-sm bg-red-100 text-red-800 rounded-full border border-red-300"
+                            >
+                              {countryNameByCode(countryCode)}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>

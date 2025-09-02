@@ -24,6 +24,7 @@ interface Podcast {
   cover_image_url: string | null
   episodes?: Episode[]
   license_countries?: string[]
+  license_excluded_countries?: string[]
 }
 
 interface CatalogClientProps {

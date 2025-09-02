@@ -19,6 +19,7 @@ interface Podcast {
   cover_image_url: string | null
   episodes?: Episode[]
   license_countries?: string[]
+  license_excluded_countries?: string[]
   translations?: Array<{ language_code: string; title: string; description: string }>
 }
 
@@ -119,28 +120,32 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
             {podcast.description}
           </p>
           
-          {/* Available Countries - Clean Design */}
-          <div className="mt-auto pt-3 border-t border-gray-100">
-            <div className="text-xs text-gray-500 mb-2">
-              Available in {countries.length} {countries.length === 1 ? 'country' : 'countries'}
+          {/* Excluded Countries Information */}
+          {podcast.license_excluded_countries && podcast.license_excluded_countries.length > 0 && (
+            <div className="mt-auto pt-3 border-t border-gray-100">
+              <div className="text-xs text-red-600 mb-2 font-medium">
+                {podcast.license_excluded_countries.length === 1 
+                  ? `Not available in ${countryNameByCode(podcast.license_excluded_countries[0])}`
+                  : `Not available in ${podcast.license_excluded_countries.length} countries`
+                }
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {podcast.license_excluded_countries.slice(0, 3).map((countryCode) => (
+                  <span
+                    key={countryCode}
+                    className="px-2.5 py-1 text-xs bg-red-50 text-red-700 rounded-full border border-red-200"
+                  >
+                    {countryNameByCode(countryCode)}
+                  </span>
+                ))}
+                {podcast.license_excluded_countries.length > 3 && (
+                  <span className="px-2.5 py-1 text-xs bg-red-50 text-red-600 rounded-full border border-red-200">
+                    +{podcast.license_excluded_countries.length - 3} more
+                  </span>
+                )}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {countries.slice(0, 3).map((countryCode) => (
-                <span
-                  key={countryCode}
-                  className="px-2.5 py-1 text-xs bg-gray-50 text-gray-600 rounded-full border border-gray-200"
-                  title={countryNameByCode(countryCode)}
-                >
-                  {countryNameByCode(countryCode)}
-                </span>
-              ))}
-              {countries.length > 3 && (
-                <span className="px-2.5 py-1 text-xs bg-gray-50 text-gray-500 rounded-full border border-gray-200">
-                  +{countries.length - 3} more
-                </span>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </Card>
     </Link>
