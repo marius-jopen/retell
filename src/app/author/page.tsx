@@ -84,7 +84,7 @@ export default async function AuthorDashboard() {
         {/* Quick Actions */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link href="/author/upload">
               <div className="bg-white border border-orange-200 rounded-modern-lg p-6 text-center hover:bg-orange-50 hover:border-orange-300 transition-all duration-300 shadow-modern hover:shadow-modern-lg card-hover">
                 <div className="text-3xl mb-3">🎤</div>
@@ -103,12 +103,7 @@ export default async function AuthorDashboard() {
                 <div className="text-sm font-medium text-gray-900">Browse Catalog</div>
               </div>
             </Link>
-            <Link href="/author/analytics">
-              <div className="bg-white border border-orange-200 rounded-modern-lg p-6 text-center hover:bg-orange-50 hover:border-orange-300 transition-all duration-300 shadow-modern hover:shadow-modern-lg card-hover">
-                <div className="text-3xl mb-3">📊</div>
-                <div className="text-sm font-medium text-gray-900">Analytics</div>
-              </div>
-            </Link>
+
           </div>
         </div>
 

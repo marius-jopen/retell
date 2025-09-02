@@ -104,7 +104,7 @@ export default async function AdminDashboard() {
       {/* Quick Actions */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <ActionCard
             title="Manage Podcasts"
             icon="🎙️"
@@ -119,12 +119,7 @@ export default async function AdminDashboard() {
             description="User management and permissions"
           />
 
-          <ActionCard
-            title="View Analytics"
-            icon="📈"
-            href="/admin/analytics"
-            description="System analytics and insights"
-          />
+
         </div>
       </div>
 

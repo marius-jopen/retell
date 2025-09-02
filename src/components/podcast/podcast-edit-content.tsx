@@ -585,20 +585,17 @@ function PodcastEditContent({
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </Select>
-                {!isAdmin && (
-                  <Select label="Default Country" id="country_author" value={generalCountry} onChange={(e) => setGeneralCountry(e.target.value)}>
-                    {[
-                      // Germany first
-                      { code: 'DE', name: countryNameByCode('DE') },
-                      // Then all other countries alphabetically
-                      ...COUNTRIES.filter(c => c.code !== 'DE').map(c => ({ code: c.code, name: countryNameByCode(c.code) })).sort((a, b) => a.name.localeCompare(b.name))
-                    ].map((country) => (
-                      <option key={country.code} value={country.code}>{country.name}</option>
-                    ))}
-                  </Select>
-                )}
-                {!isAdmin && (
-                  <Select label="Language" id="language_author" value={generalLanguage} onChange={(e) => setGeneralLanguage(e.target.value)}>
+                <Select label="Default Country" id={`country_${isAdmin ? 'admin' : 'author'}`} value={generalCountry} onChange={(e) => setGeneralCountry(e.target.value)}>
+                  {[
+                    // Germany first
+                    { code: 'DE', name: countryNameByCode('DE') },
+                    // Then all other countries alphabetically
+                    ...COUNTRIES.filter(c => c.code !== 'DE').map(c => ({ code: c.code, name: countryNameByCode(c.code) })).sort((a, b) => a.name.localeCompare(b.name))
+                  ].map((country) => (
+                    <option key={country.code} value={country.code}>{country.name}</option>
+                  ))}
+                </Select>
+                <Select label="Language" id={`language_${isAdmin ? 'admin' : 'author'}`} value={generalLanguage} onChange={(e) => setGeneralLanguage(e.target.value)}>
                     <option value="en">English</option>
                     <option value="de">German</option>
                     <option value="fr">French</option>
@@ -619,7 +616,6 @@ function PodcastEditContent({
                     <option value="hi">Hindi</option>
                     <option value="other">Other</option>
                   </Select>
-                )}
                 <Input label="RSS Feed URL (Optional)" id={`rss_${isAdmin ? 'admin' : 'author'}`} type="url" value={generalRss} onChange={(e) => setGeneralRss(e.target.value)} placeholder="https://.../rss" />
                 
                 {isAdmin && (
