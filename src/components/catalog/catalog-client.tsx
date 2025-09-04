@@ -10,8 +10,9 @@ import { countryNameByCode } from '@/lib/countries'
 interface Episode {
   id: string
   title: string
-  duration?: number
-  episode_number?: number
+  description: string
+  episode_number: number
+  season_number?: number
 }
 
 interface Podcast {
@@ -73,10 +74,23 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
   // Filter podcasts based on search and filters
   const filteredPodcasts = useMemo(() => {
     return podcasts.filter(podcast => {
-      const matchesSearch = !searchQuery || 
-        podcast.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        podcast.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        podcast.category.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesSearch = !searchQuery || (() => {
+        const query = searchQuery.toLowerCase()
+        
+        // Search in podcast fields
+        const podcastMatches = 
+          podcast.title.toLowerCase().includes(query) ||
+          podcast.description.toLowerCase().includes(query) ||
+          podcast.category.toLowerCase().includes(query)
+        
+        // Search in episode fields
+        const episodeMatches = podcast.episodes?.some(episode => 
+          episode.title.toLowerCase().includes(query) ||
+          episode.description.toLowerCase().includes(query)
+        ) || false
+        
+        return podcastMatches || episodeMatches
+      })()
 
       const matchesCategory = !selectedCategory || podcast.category === selectedCategory
       

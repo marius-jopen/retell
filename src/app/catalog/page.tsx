@@ -6,10 +6,19 @@ import { CatalogClient } from '@/components/catalog/catalog-client'
 export default async function CatalogPage() {
   const supabase = await createServerSupabaseClient()
 
-  // Get approved podcasts with all related data
+  // Get approved podcasts with episodes data for enhanced search
   const { data: podcasts, error } = await supabase
     .from('podcasts')
-    .select('*')
+    .select(`
+      *,
+      episodes (
+        id,
+        title,
+        description,
+        episode_number,
+        season_number
+      )
+    `)
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
 
