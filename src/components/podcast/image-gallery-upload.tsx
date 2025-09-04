@@ -4,7 +4,6 @@ import React, { useState, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
-import Image from 'next/image'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
 
 interface ImageGalleryUploadProps {

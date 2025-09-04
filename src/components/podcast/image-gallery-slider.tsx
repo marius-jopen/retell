@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -24,11 +23,7 @@ export function ImageGallerySlider({ images, className = '' }: ImageGallerySlide
     setCurrentIndex(0)
   }, [images])
 
-  if (!images || images.length === 0) {
-    return null
-  }
-
-  const sortedImages = [...images].sort((a, b) => a.sort_order - b.sort_order)
+  const sortedImages = images ? [...images].sort((a, b) => a.sort_order - b.sort_order) : []
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => 
@@ -77,7 +72,12 @@ export function ImageGallerySlider({ images, className = '' }: ImageGallerySlide
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'unset'
     }
-  }, [isFullscreen])
+  }, [isFullscreen, goToPrevious, goToNext])
+
+  // Early return after all hooks
+  if (!images || images.length === 0) {
+    return null
+  }
 
   return (
     <>

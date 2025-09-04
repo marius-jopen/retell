@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
 async function getFeaturedPodcasts() {
   const supabase = await createServerSupabaseClient()

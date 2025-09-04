@@ -7,6 +7,12 @@ export interface Host {
   image_url?: string // For database storage
 }
 
+export interface CountryTranslation {
+  title: string
+  description: string
+  cover_image_url?: string
+}
+
 
 
 export interface Podcast {
@@ -21,6 +27,10 @@ export interface Podcast {
   author_id: string
   status: 'draft' | 'pending' | 'approved' | 'rejected'
   auto_publish_episodes: boolean
+  script_url?: string | null
+  script_english_url?: string | null
+  script_audio_tracks_url?: string | null
+  script_music_url?: string | null
 
   license_countries?: string[]
   user_profiles?: {
