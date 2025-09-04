@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { Button } from '@/components/ui/button'
-import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -21,6 +21,8 @@ interface PDFViewerProps {
   title?: string
   onLoadSuccess?: (numPages: number) => void
   onLoadError?: (error: Error) => void
+  onDelete?: () => void
+  showDeleteButton?: boolean
 }
 
 export default function PDFViewer({ 
@@ -28,7 +30,9 @@ export default function PDFViewer({
   className = '', 
   title = 'PDF Document',
   onLoadSuccess,
-  onLoadError 
+  onLoadError,
+  onDelete,
+  showDeleteButton = true
 }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState<number>(1)
@@ -118,6 +122,18 @@ export default function PDFViewer({
           >
             Reset
           </Button>
+          {/* Delete button */}
+          {showDeleteButton && onDelete && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onDelete}
+              className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+              title="Delete file"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
 

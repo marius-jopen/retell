@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
-import { PlayIcon, PauseIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline'
+import { PlayIcon, PauseIcon, SpeakerWaveIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 interface AudioPlayerProps {
   src: string | File | null
@@ -10,6 +10,8 @@ interface AudioPlayerProps {
   title?: string
   onLoadSuccess?: () => void
   onLoadError?: (error: Error) => void
+  onDelete?: () => void
+  showDeleteButton?: boolean
 }
 
 export default function AudioPlayer({ 
@@ -17,7 +19,9 @@ export default function AudioPlayer({
   className = '', 
   title = 'Audio File',
   onLoadSuccess,
-  onLoadError 
+  onLoadError,
+  onDelete,
+  showDeleteButton = true
 }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -151,6 +155,18 @@ export default function AudioPlayer({
           <span className="text-sm text-gray-600 w-8">
             {Math.round(volume * 100)}%
           </span>
+          {/* Delete button */}
+          {showDeleteButton && onDelete && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onDelete}
+              className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+              title="Delete file"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
 

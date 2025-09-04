@@ -49,6 +49,19 @@ export default function EditPodcastForm({
   const [scriptEnglishFile, setScriptEnglishFile] = useState<File | null>(null)
   const [scriptAudioTracksFile, setScriptAudioTracksFile] = useState<File | null>(null)
   const [scriptMusicFile, setScriptMusicFile] = useState<File | null>(null)
+  
+  // Track deleted files to hide them from UI
+  const [deletedFiles, setDeletedFiles] = useState<{
+    script: boolean
+    scriptEnglish: boolean
+    scriptAudioTracks: boolean
+    scriptMusic: boolean
+  }>({
+    script: false,
+    scriptEnglish: false,
+    scriptAudioTracks: false,
+    scriptMusic: false
+  })
 
   // License agreement state
   const [licenseData, setLicenseData] = useState({
@@ -175,6 +188,31 @@ export default function EditPodcastForm({
 
   const handleInputChange = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value })
+  }
+
+  // Delete handlers for script files
+  const handleDeleteScriptFile = () => {
+    setScriptFile(null)
+    setDeletedFiles(prev => ({ ...prev, script: true }))
+    console.log('🗑️ Script file deleted')
+  }
+
+  const handleDeleteScriptEnglishFile = () => {
+    setScriptEnglishFile(null)
+    setDeletedFiles(prev => ({ ...prev, scriptEnglish: true }))
+    console.log('🗑️ Script English file deleted')
+  }
+
+  const handleDeleteScriptAudioTracksFile = () => {
+    setScriptAudioTracksFile(null)
+    setDeletedFiles(prev => ({ ...prev, scriptAudioTracks: true }))
+    console.log('🗑️ Script Audio Tracks file deleted')
+  }
+
+  const handleDeleteScriptMusicFile = () => {
+    setScriptMusicFile(null)
+    setDeletedFiles(prev => ({ ...prev, scriptMusic: true }))
+    console.log('🗑️ Script Music file deleted')
   }
 
   // Notify parent component when form data changes (hosts moved to HostsManager)
@@ -314,19 +352,30 @@ export default function EditPodcastForm({
                       console.log('📁 Script file selected:', file)
                       if (file) {
                         setScriptFile(file)
+                        setDeletedFiles(prev => ({ ...prev, script: false }))
                         console.log('📁 Script file state set:', file.name)
                       }
                     }}
                   />
                   
                   {/* Script File Preview */}
-                  {(scriptFile || podcast?.script_url) && (
+                  {(scriptFile || (podcast?.script_url && !deletedFiles.script)) && (
                     <div className="mt-4">
                       <PDFViewer
                         file={scriptFile || podcast?.script_url}
                         title="Script File"
                         className="w-full"
+                        onDelete={handleDeleteScriptFile}
+                        showDeleteButton={true}
                       />
+                    </div>
+                  )}
+                  
+                  {/* Show placeholder when no file or file was deleted */}
+                  {!scriptFile && (!podcast?.script_url || deletedFiles.script) && (
+                    <div className="mt-4 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                      <p className="text-gray-500 mb-2">No script file uploaded</p>
+                      <p className="text-xs text-gray-400">Upload a PDF file to see the viewer with delete functionality</p>
                     </div>
                   )}
                 </div>
@@ -343,19 +392,30 @@ export default function EditPodcastForm({
                       console.log('📁 Script English file selected:', file)
                       if (file) {
                         setScriptEnglishFile(file)
+                        setDeletedFiles(prev => ({ ...prev, scriptEnglish: false }))
                         console.log('📁 Script English file state set:', file.name)
                       }
                     }}
                   />
                   
                   {/* Script English File Preview */}
-                  {(scriptEnglishFile || podcast?.script_english_url) && (
+                  {(scriptEnglishFile || (podcast?.script_english_url && !deletedFiles.scriptEnglish)) && (
                     <div className="mt-4">
                       <PDFViewer
                         file={scriptEnglishFile || podcast?.script_english_url}
                         title="Script English File"
                         className="w-full"
+                        onDelete={handleDeleteScriptEnglishFile}
+                        showDeleteButton={true}
                       />
+                    </div>
+                  )}
+                  
+                  {/* Show placeholder when no file or file was deleted */}
+                  {!scriptEnglishFile && (!podcast?.script_english_url || deletedFiles.scriptEnglish) && (
+                    <div className="mt-4 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                      <p className="text-gray-500 mb-2">No script English file uploaded</p>
+                      <p className="text-xs text-gray-400">Upload a PDF file to see the viewer with delete functionality</p>
                     </div>
                   )}
                 </div>
@@ -372,19 +432,30 @@ export default function EditPodcastForm({
                       console.log('📁 Script Audio Tracks file selected:', file)
                       if (file) {
                         setScriptAudioTracksFile(file)
+                        setDeletedFiles(prev => ({ ...prev, scriptAudioTracks: false }))
                         console.log('📁 Script Audio Tracks file state set:', file.name)
                       }
                     }}
                   />
                   
                   {/* Script Audio Tracks File Preview */}
-                  {(scriptAudioTracksFile || podcast?.script_audio_tracks_url) && (
+                  {(scriptAudioTracksFile || (podcast?.script_audio_tracks_url && !deletedFiles.scriptAudioTracks)) && (
                     <div className="mt-4">
                       <AudioPlayer
                         src={scriptAudioTracksFile || podcast?.script_audio_tracks_url}
                         title="Script Audio Tracks"
                         className="w-full"
+                        onDelete={handleDeleteScriptAudioTracksFile}
+                        showDeleteButton={true}
                       />
+                    </div>
+                  )}
+                  
+                  {/* Show placeholder when no file or file was deleted */}
+                  {!scriptAudioTracksFile && (!podcast?.script_audio_tracks_url || deletedFiles.scriptAudioTracks) && (
+                    <div className="mt-4 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                      <p className="text-gray-500 mb-2">No script audio tracks uploaded</p>
+                      <p className="text-xs text-gray-400">Upload an audio file to see the player with delete functionality</p>
                     </div>
                   )}
                 </div>
@@ -401,19 +472,30 @@ export default function EditPodcastForm({
                       console.log('📁 Script Music file selected:', file)
                       if (file) {
                         setScriptMusicFile(file)
+                        setDeletedFiles(prev => ({ ...prev, scriptMusic: false }))
                         console.log('📁 Script Music file state set:', file.name)
                       }
                     }}
                   />
                   
                   {/* Script Music File Preview */}
-                  {(scriptMusicFile || podcast?.script_music_url) && (
+                  {(scriptMusicFile || (podcast?.script_music_url && !deletedFiles.scriptMusic)) && (
                     <div className="mt-4">
                       <AudioPlayer
                         src={scriptMusicFile || podcast?.script_music_url}
                         title="Script Music"
                         className="w-full"
+                        onDelete={handleDeleteScriptMusicFile}
+                        showDeleteButton={true}
                       />
+                    </div>
+                  )}
+                  
+                  {/* Show placeholder when no file or file was deleted */}
+                  {!scriptMusicFile && (!podcast?.script_music_url || deletedFiles.scriptMusic) && (
+                    <div className="mt-4 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+                      <p className="text-gray-500 mb-2">No script music uploaded</p>
+                      <p className="text-xs text-gray-400">Upload an audio file to see the player with delete functionality</p>
                     </div>
                   )}
                 </div>
