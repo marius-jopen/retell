@@ -288,6 +288,27 @@ export default function EditPodcastForm({
 
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-10">
+            {/* Submit Button - Moved to top of form for better visibility */}
+            <div className="flex justify-end pb-6 border-b border-gray-200">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                  loading
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-red-500 hover:bg-red-600 text-white'
+                }`}
+              >
+                {loading ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>{isCreating ? 'Creating...' : 'Saving...'}</span>
+                  </div>
+                ) : (
+                  isCreating ? 'Create Podcast' : 'Save Changes'
+                )}
+              </button>
+            </div>
             {/* General Info moved to column 2 (admin panel) */}
 
             {/* Podcast Details */}

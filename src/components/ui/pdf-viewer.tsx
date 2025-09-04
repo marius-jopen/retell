@@ -1,9 +1,12 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, TrashIcon } from '@heroicons/react/24/outline'
+
+// Import polyfills
+import '@/lib/polyfills'
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -39,6 +42,12 @@ export default function PDFViewer({
   const [scale, setScale] = useState<number>(1.0)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [isClient, setIsClient] = useState<boolean>(false)
+
+  // Ensure this only runs on the client side
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     setNumPages(numPages)
@@ -72,6 +81,18 @@ export default function PDFViewer({
   const resetZoom = useCallback(() => {
     setScale(1.0)
   }, [])
+
+  // Show loading state during hydration
+  if (!isClient) {
+    return (
+      <div className={`border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${className}`}>
+        <div className="text-gray-500">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-2"></div>
+          <p className="mt-2 text-sm">Loading PDF viewer...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!file) {
     return (
