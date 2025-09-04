@@ -1,22 +1,16 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import dynamic from 'next/dynamic'
 
 // Import polyfills
 import '@/lib/polyfills'
 
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString()
-
-// Import required stylesheets
-import 'react-pdf/dist/Page/AnnotationLayer.css'
-import 'react-pdf/dist/Page/TextLayer.css'
+// Dynamically import react-pdf components to avoid SSR issues
+const Document = dynamic(() => import('react-pdf').then(mod => mod.Document), { ssr: false })
+const Page = dynamic(() => import('react-pdf').then(mod => mod.Page), { ssr: false })
 
 interface PDFViewerProps {
   file: string | File | ArrayBuffer | Uint8Array | null
@@ -43,10 +37,24 @@ export default function PDFViewer({
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   const [isClient, setIsClient] = useState<boolean>(false)
+  const [pdfjs, setPdfjs] = useState<any>(null)
 
-  // Ensure this only runs on the client side
+  // Ensure this only runs on the client side and configure PDF.js
   useEffect(() => {
     setIsClient(true)
+    
+    // Dynamically import and configure PDF.js
+    import('react-pdf').then(({ pdfjs }) => {
+      setPdfjs(pdfjs)
+      pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+        'pdfjs-dist/build/pdf.worker.min.mjs',
+        import.meta.url,
+      ).toString()
+    })
+
+    // Dynamically import CSS
+    import('react-pdf/dist/Page/AnnotationLayer.css')
+    import('react-pdf/dist/Page/TextLayer.css')
   }, [])
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
@@ -82,8 +90,8 @@ export default function PDFViewer({
     setScale(1.0)
   }, [])
 
-  // Show loading state during hydration
-  if (!isClient) {
+  // Show loading state during hydration and PDF.js loading
+  if (!isClient || !pdfjs) {
     return (
       <div className={`border-2 border-dashed border-gray-300 rounded-lg p-8 text-center ${className}`}>
         <div className="text-gray-500">
