@@ -191,7 +191,7 @@ export function PodcastSidebar({ podcast }: PodcastSidebarProps) {
             Perfect for platforms, networks, and content creators.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
-            <Link href="/auth/signup?role=client" className="flex-1">
+            <Link href="https://google.com" className="flex-1" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="bg-red-600 text-white hover:bg-red-700 font-semibold w-full py-3 rounded-xl text-sm shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
                 🚀 Start Licensing
               </Button>

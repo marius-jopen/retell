@@ -19,6 +19,8 @@ interface Podcast {
   id: string
   title: string
   description: string
+  title_english?: string | null
+  description_english?: string | null
   category: string
   language: string
   country: string
@@ -81,6 +83,8 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
         const podcastMatches = 
           podcast.title.toLowerCase().includes(query) ||
           podcast.description.toLowerCase().includes(query) ||
+          (podcast.title_english && podcast.title_english.toLowerCase().includes(query)) ||
+          (podcast.description_english && podcast.description_english.toLowerCase().includes(query)) ||
           podcast.category.toLowerCase().includes(query)
         
         // Search in episode fields

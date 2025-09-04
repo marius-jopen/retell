@@ -13,6 +13,8 @@ interface Podcast {
   id: string
   title: string
   description: string
+  title_english?: string | null
+  description_english?: string | null
   category: string
   language: string
   country: string
@@ -113,11 +115,11 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
           </div>
           
           <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2 leading-snug">
-            {podcast.title}
+            {podcast.title_english || podcast.title}
           </h3>
           
           <p className="text-gray-600 text-sm mb-3 line-clamp-2 leading-relaxed flex-grow">
-            {podcast.description}
+            {podcast.description_english || podcast.description}
           </p>
           
           {/* Excluded Countries Information */}
