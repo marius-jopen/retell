@@ -8,6 +8,7 @@ import { EpisodesList } from '@/components/podcast/episodes-list'
 import { PodcastHero } from '@/components/podcast/podcast-hero'
 import { PodcastLicensing } from '@/components/podcast/podcast-licensing'
 import { PodcastContent } from '@/components/podcast/podcast-content'
+import { ImageGallerySlider } from '@/components/podcast/image-gallery-slider'
 import { ErrorState } from '@/components/ui/error-state'
 
 type Episode = Database['public']['Tables']['episodes']['Row']
@@ -36,6 +37,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
   const [languageTranslations, setLanguageTranslations] = useState<Record<string, { title: string; description: string; cover_image_url: string | null }>>({})
   const [availableCountries, setAvailableCountries] = useState<string[]>([])
   const [availableLanguages, setAvailableLanguages] = useState<string[]>([])
+  const [galleryImages, setGalleryImages] = useState<any[]>([])
   
   const supabase = createBrowserSupabaseClient()
 
@@ -202,6 +204,20 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
         setSelectedCountry(podcastData.country)
         setSelectedLanguage(podcastData.language)
         setPodcast(podcastData)
+
+        // Fetch gallery images
+        const { data: galleryData, error: galleryError } = await supabase
+          .from('podcast_image_gallery')
+          .select('*')
+          .eq('podcast_id', id)
+          .order('sort_order', { ascending: true })
+
+        if (galleryError) {
+          console.error('Error fetching gallery images:', galleryError)
+        } else {
+          setGalleryImages(galleryData || [])
+        }
+
         setLoading(false)
 
       } catch (err) {
@@ -304,6 +320,16 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
         <PodcastSidebar podcast={podcast} />
       </div>
 
+      {/* Image Gallery Section */}
+      {galleryImages.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Image Gallery</h2>
+            <p className="text-gray-600">Visual content and materials for this podcast</p>
+          </div>
+          <ImageGallerySlider images={galleryImages} />
+        </div>
+      )}
 
       {/* Script and Audio Content Section */}
       <PodcastContent podcast={podcast} />

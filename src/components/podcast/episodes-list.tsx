@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { EpisodeCard } from './episode-card'
+import AudioPlayer from '@/components/ui/audio-player'
 
 interface Episode {
   id: string
@@ -106,7 +107,7 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
             <div className="divide-y divide-gray-100">
               {remainingEpisodes.map((episode: Episode, index: number) => (
                 <div key={episode.id} className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-4 flex-1 min-w-0">
                       {/* Episode Number */}
                       <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
@@ -134,13 +135,6 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
                     
                     {/* Actions */}
                     <div className="flex items-center space-x-2 flex-shrink-0">
-                      {episode.audio_url && (
-                        <button className="w-8 h-8 bg-red-100 hover:bg-red-200 rounded-full flex items-center justify-center transition-colors duration-150">
-                          <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
-                          </svg>
-                        </button>
-                      )}
                       {user?.user_metadata?.role === 'client' && (
                         <button className="px-3 py-1 text-xs bg-red-50 text-red-600 border border-red-200 rounded-full hover:bg-red-100 transition-colors duration-150">
                           Script
@@ -148,6 +142,18 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
                       )}
                     </div>
                   </div>
+                  
+                  {/* Audio Player */}
+                  {episode.audio_url && (
+                    <div className="ml-12">
+                      <AudioPlayer 
+                        src={episode.audio_url} 
+                        title={episode.title}
+                        showDeleteButton={false}
+                        className="text-sm"
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -747,28 +747,6 @@ function PodcastEditContent({
                   </Select>
                 <Input label="RSS Feed URL (Optional)" id={`rss_${isAdmin ? 'admin' : 'author'}`} type="url" value={generalRss} onChange={(e) => setGeneralRss(e.target.value)} placeholder="https://.../rss" />
                 
-                {isAdmin && (
-                  <div className="text-right">
-                    <Button
-                      size="sm"
-                      className="bg-red-600 hover:bg-red-700 text-white"
-                      onClick={async () => {
-                        if (!podcastId) return
-                        const { error } = await supabase
-                          .from('podcasts')
-                          .update({ status: generalStatus, category: generalCategory, rss_url: generalRss, updated_at: new Date().toISOString() })
-                          .eq('id', podcastId)
-                        if (error) {
-                          addToast({ type: 'error', message: error.message })
-                        } else {
-                          addToast({ type: 'success', message: 'General info saved' })
-                        }
-                      }}
-                    >
-                      Save general info
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
 

@@ -60,13 +60,19 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
             </p>
           </div>
 
+          {/* Audio Player */}
+          {episode.audio_url && (
+            <div className="mt-4">
+              <AudioPlayer 
+                src={episode.audio_url} 
+                title={episode.title}
+                showDeleteButton={false}
+              />
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex items-center gap-2 mt-auto pt-4">
-            {episode.audio_url && (
-              <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white flex-1 rounded-lg">
-                Play
-              </Button>
-            )}
             {user?.user_metadata?.role === 'client' && (
               <Button variant="outline" size="sm" className="text-red-600 border-red-300 hover:bg-red-50 rounded-lg">
                 Script
@@ -109,13 +115,19 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
             </p>
           </div>
 
+          {/* Audio Player */}
+          {episode.audio_url && (
+            <div className="pt-6 border-t border-gray-100">
+              <AudioPlayer 
+                src={episode.audio_url} 
+                title={episode.title}
+                showDeleteButton={false}
+              />
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex items-center gap-3 pt-6 border-t border-gray-100">
-            {episode.audio_url && (
-              <Button size="lg" className="bg-red-500 hover:bg-red-600 text-white flex-1 rounded-xl font-semibold">
-                ▶ Play Episode
-              </Button>
-            )}
             {user?.user_metadata?.role === 'client' && (
               <Button variant="outline" size="lg" className="text-red-600 border-red-300 hover:bg-red-50 rounded-xl px-6">
                 📄 Script
