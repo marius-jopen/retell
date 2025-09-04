@@ -57,12 +57,12 @@ export default function Navbar({ user }: NavbarProps) {
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-modern border-b border-orange-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center group">
               <span className="sr-only">RETELL</span>
-              <div className="bg-red-600 rounded-md px-2 py-1 flex items-center shadow-sm">
+              <div className="bg-orange-600 rounded-md px-2 py-1 flex items-center shadow-sm">
                 <Image
                   src="/logo.avif"
                   alt="RETELL logo"
@@ -75,8 +75,8 @@ export default function Navbar({ user }: NavbarProps) {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          {/* Desktop Navigation - Centered */}
+          <div className="hidden md:flex items-center space-x-1 absolute left-1/2 transform -translate-x-1/2">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -103,8 +103,8 @@ export default function Navbar({ user }: NavbarProps) {
                   </div>
                   <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
                     user.profile.role === 'admin' 
-                      ? 'bg-red-50 text-red-700 border border-red-200' 
-                      : 'bg-red-50 text-red-700 border border-red-200'
+                      ? 'bg-orange-50 text-orange-700 border border-orange-200' 
+                      : 'bg-orange-50 text-orange-700 border border-orange-200'
                   }`}>
                     {user.profile.role === 'admin' ? 'Admin' : 'Author'}
                   </div>
@@ -188,8 +188,8 @@ export default function Navbar({ user }: NavbarProps) {
                     </div>
                     <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
                       user.profile.role === 'admin' 
-                        ? 'bg-red-50 text-red-700 border border-red-200' 
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                        ? 'bg-orange-50 text-orange-700 border border-orange-200' 
+                        : 'bg-orange-50 text-orange-700 border border-orange-200'
                     }`}>
                       {user.profile.role === 'admin' ? 'Admin' : 'Author'}
                     </div>
