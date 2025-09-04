@@ -39,6 +39,8 @@ export interface Database {
           id: string
           title: string
           description: string
+          title_english: string | null
+          description_english: string | null
           cover_image_url: string | null
           author_id: string
           category: string
@@ -67,6 +69,8 @@ export interface Database {
           id?: string
           title: string
           description: string
+          title_english?: string | null
+          description_english?: string | null
           cover_image_url?: string | null
           author_id: string
           category: string
@@ -95,6 +99,8 @@ export interface Database {
           id?: string
           title?: string
           description?: string
+          title_english?: string | null
+          description_english?: string | null
           cover_image_url?: string | null
           author_id?: string
           category?: string

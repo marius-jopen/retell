@@ -384,6 +384,8 @@ function PodcastEditContent({
       const podcastUpdate: any = {
         title: formData.title as string,
         description: formData.description as string,
+        title_english: formData.title_english as string | null,
+        description_english: formData.description_english as string | null,
         category: formData.category as string,
         language: formData.language as string,
         country: formData.country as string,

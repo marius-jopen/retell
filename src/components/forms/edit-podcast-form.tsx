@@ -29,6 +29,8 @@ export default function EditPodcastForm({
   const [formData, setFormData] = useState({
     title: podcast?.title || '',
     description: podcast?.description || '',
+    title_english: podcast?.title_english || '',
+    description_english: podcast?.description_english || '',
     category: podcast?.category || '',
     language: podcast?.language || 'en',
     country: podcast?.country || 'DE',
@@ -292,23 +294,63 @@ export default function EditPodcastForm({
             <div className="space-y-8">
               {/* Basic Details */}
               <div className="space-y-6">
-                <Input
-                  label="Podcast Title*"
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  required
-                  placeholder="Enter podcast title"
-                />
+                {/* Title Fields - Side by Side */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <Input
+                    label="Podcast Title*"
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    required
+                    placeholder="Enter podcast title"
+                  />
 
-                <TextArea
-                  label="Description*"
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  required
-                  placeholder="Describe your podcast"
-                />
+                  <Input
+                    label="Podcast Title (English)"
+                    id="title_english"
+                    value={formData.title_english}
+                    onChange={(e) => handleInputChange('title_english', e.target.value)}
+                    placeholder="Enter English title (optional)"
+                  />
+                </div>
+
+                {/* Description Fields - Side by Side */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <TextArea
+                    label="Description*"
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    required
+                    placeholder="Describe your podcast"
+                    rows={4}
+                  />
+
+                  <TextArea
+                    label="Description (English)"
+                    id="description_english"
+                    value={formData.description_english}
+                    onChange={(e) => handleInputChange('description_english', e.target.value)}
+                    placeholder="Enter English description (optional)"
+                    rows={4}
+                  />
+                </div>
+
+                {/* Helper Text */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-blue-700">
+                        <strong>English Translation:</strong> If provided, the English versions will be displayed on the public page instead of the original language.
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 <FileInput
                   label="Cover Image (Optional)"

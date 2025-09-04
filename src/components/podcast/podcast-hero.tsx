@@ -131,11 +131,11 @@ export function PodcastHero({
             </div>
             
             <h1 className="text-2xl lg:text-3xl font-bold mb-4 leading-tight">
-              {currentTranslation?.title || podcast.title}
+              {podcast.title_english || currentTranslation?.title || podcast.title}
             </h1>
             
             <p className="text-sm text-orange-100 mb-8 leading-relaxed">
-              {currentTranslation?.description || podcast.description}
+              {podcast.description_english || currentTranslation?.description || podcast.description}
             </p>
 
             {/* Language Selector - Only show if multiple languages */}
