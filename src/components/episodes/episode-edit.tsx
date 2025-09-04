@@ -484,8 +484,7 @@ export default function EpisodeEdit({
                   <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                     <p className="text-sm font-medium text-gray-700 mb-3">Current Audio</p>
                     <AudioPlayer 
-                      src={episode.audio_url} 
-                      title={episode.title}
+                      src={episode.audio_url}
                     />
                   </div>
                   

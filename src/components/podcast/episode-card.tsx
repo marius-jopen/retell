@@ -65,8 +65,6 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
             <div className="mt-4">
               <AudioPlayer 
                 src={episode.audio_url} 
-                title={episode.title}
-                showDeleteButton={false}
               />
             </div>
           )}
@@ -120,8 +118,6 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
             <div className="pt-6 border-t border-gray-100">
               <AudioPlayer 
                 src={episode.audio_url} 
-                title={episode.title}
-                showDeleteButton={false}
               />
             </div>
           )}
@@ -185,7 +181,6 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
           <div className="mt-3">
             <AudioPlayer 
               src={episode.audio_url} 
-              title={episode.title}
             />
           </div>
         )}

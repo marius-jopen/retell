@@ -315,17 +315,17 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
       {/* Licensing Information Section */}
       <PodcastLicensing podcast={podcast} />
 
-      {/* About Section - Full Width & Prominent */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      {/* About Section - Refined spacing */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <PodcastSidebar podcast={podcast} />
       </div>
 
       {/* Image Gallery Section */}
       {galleryImages.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="mb-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Image Gallery</h2>
-            <p className="text-gray-600">Visual content and materials for this podcast</p>
+            <p className="text-lg text-gray-600">Visual content and materials for this podcast</p>
           </div>
           <ImageGallerySlider images={galleryImages} />
         </div>
@@ -334,9 +334,8 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
       {/* Script and Audio Content Section */}
       <PodcastContent podcast={podcast} />
 
-
       {/* Episodes Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-16">
         <EpisodesList episodes={episodes} user={user} />
       </div>
     </div>

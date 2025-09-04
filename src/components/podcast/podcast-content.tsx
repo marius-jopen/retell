@@ -23,7 +23,7 @@ export function PodcastContent({ podcast }: PodcastContentProps) {
 
         {/* Script Files Section */}
         <div className="mb-12">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+          <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
             <span className="text-2xl mr-3">📄</span>
             Script Files
           </h3>
@@ -35,7 +35,6 @@ export function PodcastContent({ podcast }: PodcastContentProps) {
                 file={podcast.script_url}
                 title="Main Script"
                 className="w-full"
-                showDeleteButton={false}
               />
             )}
             
@@ -45,7 +44,6 @@ export function PodcastContent({ podcast }: PodcastContentProps) {
                 file={podcast.script_english_url}
                 title="English Script"
                 className="w-full"
-                showDeleteButton={false}
               />
             )}
           </div>
@@ -53,30 +51,50 @@ export function PodcastContent({ podcast }: PodcastContentProps) {
 
         {/* Audio Content Section */}
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+          <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
             <span className="text-2xl mr-3">🎵</span>
             Audio Content
           </h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Audio Tracks */}
+            {/* Audio Tracks Card */}
             {podcast.script_audio_tracks_url && (
-              <AudioPlayer
-                src={podcast.script_audio_tracks_url}
-                title="Audio Tracks"
-                className="w-full"
-                showDeleteButton={false}
-              />
+              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                <div className="mb-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                    {podcast.script_audio_tracks_title || 'Audio Tracks'}
+                  </h4>
+                  {podcast.script_audio_tracks_description && (
+                    <p className="text-gray-600 text-sm">
+                      {podcast.script_audio_tracks_description}
+                    </p>
+                  )}
+                </div>
+                <AudioPlayer
+                  src={podcast.script_audio_tracks_url}
+                  className="w-full"
+                />
+              </div>
             )}
             
-            {/* Music Files */}
+            {/* Music Files Card */}
             {podcast.script_music_url && (
-              <AudioPlayer
-                src={podcast.script_music_url}
-                title="Music & Sound Effects"
-                className="w-full"
-                showDeleteButton={false}
-              />
+              <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+                <div className="mb-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                    {podcast.script_music_title || 'Music & Sound Effects'}
+                  </h4>
+                  {podcast.script_music_description && (
+                    <p className="text-gray-600 text-sm">
+                      {podcast.script_music_description}
+                    </p>
+                  )}
+                </div>
+                <AudioPlayer
+                  src={podcast.script_music_url}
+                  className="w-full"
+                />
+              </div>
             )}
           </div>
         </div>

@@ -38,6 +38,10 @@ export default function EditPodcastForm({
     status: podcast?.status || 'draft',
     rss_url: podcast?.rss_url || '',
     auto_publish_episodes: podcast?.auto_publish_episodes ?? false,
+    script_audio_tracks_title: podcast?.script_audio_tracks_title || '',
+    script_audio_tracks_description: podcast?.script_audio_tracks_description || '',
+    script_music_title: podcast?.script_music_title || '',
+    script_music_description: podcast?.script_music_description || '',
   })
 
 
@@ -486,13 +490,29 @@ export default function EditPodcastForm({
                     <div className="mt-4">
                       <AudioPlayer
                         src={scriptAudioTracksFile || podcast?.script_audio_tracks_url}
-                        title="Script Audio Tracks"
                         className="w-full"
-                        onDelete={handleDeleteScriptAudioTracksFile}
-                        showDeleteButton={true}
                       />
                     </div>
                   )}
+                  
+                  {/* Audio Tracks Title and Description */}
+                  <div className="mt-4 space-y-4">
+                    <Input
+                      label="Audio Tracks Title"
+                      id="script_audio_tracks_title"
+                      value={formData.script_audio_tracks_title}
+                      onChange={(e) => setFormData(prev => ({ ...prev, script_audio_tracks_title: e.target.value }))}
+                      placeholder="Enter title for audio tracks"
+                    />
+                    <TextArea
+                      label="Audio Tracks Description"
+                      id="script_audio_tracks_description"
+                      value={formData.script_audio_tracks_description}
+                      onChange={(e) => setFormData(prev => ({ ...prev, script_audio_tracks_description: e.target.value }))}
+                      placeholder="Enter description for audio tracks"
+                      rows={3}
+                    />
+                  </div>
                   
                   {/* Show placeholder when no file or file was deleted */}
                   {!scriptAudioTracksFile && (!podcast?.script_audio_tracks_url || deletedFiles.scriptAudioTracks) && (
@@ -526,13 +546,29 @@ export default function EditPodcastForm({
                     <div className="mt-4">
                       <AudioPlayer
                         src={scriptMusicFile || podcast?.script_music_url}
-                        title="Script Music"
                         className="w-full"
-                        onDelete={handleDeleteScriptMusicFile}
-                        showDeleteButton={true}
                       />
                     </div>
                   )}
+                  
+                  {/* Music Title and Description */}
+                  <div className="mt-4 space-y-4">
+                    <Input
+                      label="Music Title"
+                      id="script_music_title"
+                      value={formData.script_music_title}
+                      onChange={(e) => setFormData(prev => ({ ...prev, script_music_title: e.target.value }))}
+                      placeholder="Enter title for music"
+                    />
+                    <TextArea
+                      label="Music Description"
+                      id="script_music_description"
+                      value={formData.script_music_description}
+                      onChange={(e) => setFormData(prev => ({ ...prev, script_music_description: e.target.value }))}
+                      placeholder="Enter description for music"
+                      rows={3}
+                    />
+                  </div>
                   
                   {/* Show placeholder when no file or file was deleted */}
                   {!scriptMusicFile && (!podcast?.script_music_url || deletedFiles.scriptMusic) && (

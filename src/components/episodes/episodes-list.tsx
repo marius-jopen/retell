@@ -201,8 +201,7 @@ export default function EpisodesList({
                           {episode.audio_url && (
                             <div className="mb-3">
                               <AudioPlayer 
-                                src={episode.audio_url} 
-                                title={episode.title}
+                                src={episode.audio_url}
                               />
                             </div>
                           )}

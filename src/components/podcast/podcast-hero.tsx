@@ -33,20 +33,20 @@ export function PodcastHero({
 }: PodcastHeroProps) {
   return (
     <div className="bg-brand text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
           {/* Cover Image and Authors */}
-          <div className="flex flex-col items-center lg:items-start space-y-10">
+          <div className="flex flex-col items-center lg:items-start space-y-6">
             {/* Cover Image */}
             <div className="relative">
               {(currentTranslation?.cover_image_url || podcast.cover_image_url) ? (
                 <img
                   src={(currentTranslation?.cover_image_url || podcast.cover_image_url) as string}
                   alt={currentTranslation?.title || podcast.title}
-                  className="w-64 h-64 object-cover rounded-modern-xl shadow-modern-lg"
+                  className="w-80 h-80 lg:w-96 lg:h-96 object-cover rounded-xl shadow-lg"
                 />
               ) : (
-                <div className="w-64 h-64 bg-brand rounded-modern-xl flex items-center justify-center shadow-modern-lg">
+                <div className="w-80 h-80 lg:w-96 lg:h-96 bg-brand rounded-xl flex items-center justify-center shadow-lg">
                   <span className="text-white text-4xl font-bold">
                     {(currentTranslation?.title || podcast.title).substring(0, 2).toUpperCase()}
                   </span>
@@ -130,11 +130,11 @@ export function PodcastHero({
               </span>
             </div>
             
-            <h1 className="text-2xl lg:text-3xl font-bold mb-4 leading-tight">
+            <h1 className="text-xl lg:text-2xl font-bold mb-3 leading-tight">
               {podcast.title_english || currentTranslation?.title || podcast.title}
             </h1>
             
-            <p className="text-sm text-orange-100 mb-8 leading-relaxed">
+            <p className="text-sm text-orange-100 mb-6 leading-relaxed">
               {podcast.description_english || currentTranslation?.description || podcast.description}
             </p>
 

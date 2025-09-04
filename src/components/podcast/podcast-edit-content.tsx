@@ -408,6 +408,11 @@ function PodcastEditContent({
         script_english_url: scriptEnglishUrl,
         script_audio_tracks_url: scriptAudioTracksUrl,
         script_music_url: scriptMusicUrl,
+        // Script metadata
+        script_audio_tracks_title: formData.script_audio_tracks_title as string | null,
+        script_audio_tracks_description: formData.script_audio_tracks_description as string | null,
+        script_music_title: formData.script_music_title as string | null,
+        script_music_description: formData.script_music_description as string | null,
         updated_at: new Date().toISOString()
       }
       
@@ -608,9 +613,74 @@ function PodcastEditContent({
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 min-h-0">
-          {/* Left Column - Country selector + Podcast Form (Sticky) */}
-          <div className="lg:w-2/3 lg:sticky lg:top-8 lg:self-start space-y-4">
+        <div className="space-y-8">
+          {/* Full Width - General Info at the top */}
+          <div className="space-y-4">
+            {/* General Info */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-4">
+              <div className="text-sm font-medium text-gray-900 mb-3">General Info</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {isAdmin && (
+                <Select label="Status" id={`status_${isAdmin ? 'admin' : 'author'}`} value={generalStatus} onChange={(e) => setGeneralStatus(e.target.value as any)}>
+                  <option value="draft">Draft</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </Select>
+                )}
+                <Select label="Category" id={`category_${isAdmin ? 'admin' : 'author'}`} value={generalCategory} onChange={(e) => setGeneralCategory(e.target.value)}>
+                  {['Business','Technology','Entertainment','Education','News','Health','Sports','Music','Comedy','True Crime','Science','History','Politics','Arts','Other'].map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </Select>
+                <Select label="Default Country" id={`country_${isAdmin ? 'admin' : 'author'}`} value={generalCountry} onChange={(e) => setGeneralCountry(e.target.value)}>
+                  {[
+                    // Germany first
+                    { code: 'DE', name: countryNameByCode('DE') },
+                    // Then all other countries alphabetically
+                    ...COUNTRIES.filter(c => c.code !== 'DE').map(c => ({ code: c.code, name: countryNameByCode(c.code) })).sort((a, b) => a.name.localeCompare(b.name))
+                  ].map((country) => (
+                    <option key={country.code} value={country.code}>{country.name}</option>
+                  ))}
+                </Select>
+                <Select label="Language" id={`language_${isAdmin ? 'admin' : 'author'}`} value={generalLanguage} onChange={(e) => setGeneralLanguage(e.target.value)}>
+                    <option value="en">English</option>
+                    <option value="de">German</option>
+                    <option value="fr">French</option>
+                    <option value="es">Spanish</option>
+                    <option value="it">Italian</option>
+                    <option value="nl">Dutch</option>
+                    <option value="pt">Portuguese</option>
+                    <option value="pl">Polish</option>
+                    <option value="sv">Swedish</option>
+                    <option value="da">Danish</option>
+                    <option value="no">Norwegian</option>
+                    <option value="fi">Finnish</option>
+                    <option value="ru">Russian</option>
+                    <option value="zh">Chinese</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ko">Korean</option>
+                    <option value="ar">Arabic</option>
+                    <option value="hi">Hindi</option>
+                    <option value="other">Other</option>
+                  </Select>
+                <Input label="RSS Feed URL (Optional)" id={`rss_${isAdmin ? 'admin' : 'author'}`} type="url" value={generalRss} onChange={(e) => setGeneralRss(e.target.value)} placeholder="https://.../rss" />
+                
+              </div>
+            </div>
+
+            {/* Hosts */}
+            <HostsManager 
+              hosts={currentHosts}
+              onHostsChange={setCurrentHosts}
+              onFileUpload={(hostId, file) => {
+                hostFilesRef.current.set(hostId, file)
+              }}
+            />
+          </div>
+
+          {/* Full Width - Country selector + Podcast Form */}
+          <div className="space-y-4">
             {/* Country Exclusion List */}
             <div className="bg-white border border-gray-200 rounded-2xl p-4">
               <div className="text-sm font-medium text-gray-900 mb-3">Countries where podcast is not available</div>
@@ -695,70 +765,8 @@ function PodcastEditContent({
             />
           </div>
 
-          {/* Right Column - General + Hosts + Episodes */}
-          <div className="lg:w-1/3 flex flex-col space-y-4 min-h-0">
-            {/* General Info */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-4">
-              <div className="text-sm font-medium text-gray-900 mb-3">General Info</div>
-              <div className="grid grid-cols-1 gap-3">
-                {isAdmin && (
-                <Select label="Status" id={`status_${isAdmin ? 'admin' : 'author'}`} value={generalStatus} onChange={(e) => setGeneralStatus(e.target.value as any)}>
-                  <option value="draft">Draft</option>
-                  <option value="pending">Pending</option>
-                  <option value="approved">Approved</option>
-                  <option value="rejected">Rejected</option>
-                </Select>
-                )}
-                <Select label="Category" id={`category_${isAdmin ? 'admin' : 'author'}`} value={generalCategory} onChange={(e) => setGeneralCategory(e.target.value)}>
-                  {['Business','Technology','Entertainment','Education','News','Health','Sports','Music','Comedy','True Crime','Science','History','Politics','Arts','Other'].map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </Select>
-                <Select label="Default Country" id={`country_${isAdmin ? 'admin' : 'author'}`} value={generalCountry} onChange={(e) => setGeneralCountry(e.target.value)}>
-                  {[
-                    // Germany first
-                    { code: 'DE', name: countryNameByCode('DE') },
-                    // Then all other countries alphabetically
-                    ...COUNTRIES.filter(c => c.code !== 'DE').map(c => ({ code: c.code, name: countryNameByCode(c.code) })).sort((a, b) => a.name.localeCompare(b.name))
-                  ].map((country) => (
-                    <option key={country.code} value={country.code}>{country.name}</option>
-                  ))}
-                </Select>
-                <Select label="Language" id={`language_${isAdmin ? 'admin' : 'author'}`} value={generalLanguage} onChange={(e) => setGeneralLanguage(e.target.value)}>
-                    <option value="en">English</option>
-                    <option value="de">German</option>
-                    <option value="fr">French</option>
-                    <option value="es">Spanish</option>
-                    <option value="it">Italian</option>
-                    <option value="nl">Dutch</option>
-                    <option value="pt">Portuguese</option>
-                    <option value="pl">Polish</option>
-                    <option value="sv">Swedish</option>
-                    <option value="da">Danish</option>
-                    <option value="no">Norwegian</option>
-                    <option value="fi">Finnish</option>
-                    <option value="ru">Russian</option>
-                    <option value="zh">Chinese</option>
-                    <option value="ja">Japanese</option>
-                    <option value="ko">Korean</option>
-                    <option value="ar">Arabic</option>
-                    <option value="hi">Hindi</option>
-                    <option value="other">Other</option>
-                  </Select>
-                <Input label="RSS Feed URL (Optional)" id={`rss_${isAdmin ? 'admin' : 'author'}`} type="url" value={generalRss} onChange={(e) => setGeneralRss(e.target.value)} placeholder="https://.../rss" />
-                
-              </div>
-            </div>
-
-            {/* Hosts */}
-            <HostsManager 
-              hosts={currentHosts}
-              onHostsChange={setCurrentHosts}
-              onFileUpload={(hostId, file) => {
-                hostFilesRef.current.set(hostId, file)
-              }}
-            />
-
+          {/* Full Width - Episodes */}
+          <div className="space-y-4">
             {/* Episodes List */}
             <div className="flex-1 min-h-0">
               <EpisodePreviewList

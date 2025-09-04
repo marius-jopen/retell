@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { EpisodeCard } from './episode-card'
 import AudioPlayer from '@/components/ui/audio-player'
 
 interface Episode {
@@ -30,7 +29,7 @@ interface EpisodesListProps {
 }
 
 export function EpisodesList({ episodes, user }: EpisodesListProps) {
-  const [showAllEpisodes, setShowAllEpisodes] = useState(false)
+  const [showAll, setShowAll] = useState(false)
   
   if (episodes.length === 0) {
     return (
@@ -51,115 +50,86 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
     )
   }
 
-  const featuredEpisodes = episodes.slice(0, 4)
-  const remainingEpisodes = episodes.slice(4)
+  const displayedEpisodes = showAll ? episodes : episodes.slice(0, 4)
+  const hasMoreEpisodes = episodes.length > 4
 
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-900 mb-4">Latest Episodes</h2>
-        <p className="text-xl text-gray-600">
-          {episodes.length} episodes available • Featuring the most recent content
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Episodes</h2>
+        <p className="text-gray-600">
+          {episodes.length} episodes available
         </p>
       </div>
 
-      {/* Featured Episodes - 2x2 Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        {featuredEpisodes.map((episode: Episode) => (
-          <div key={episode.id}>
-            <EpisodeCard episode={episode} user={user} isCompact={false} isFeatured={true} />
+      {/* Episodes List - Simple vertical list */}
+      <div className="space-y-4">
+        {displayedEpisodes.map((episode: Episode) => (
+          <div key={episode.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
+            <div className="flex items-start justify-between">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center space-x-3 mb-2">
+                  <span className="text-sm font-medium text-gray-500">
+                    Episode {episode.episode_number}
+                  </span>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-sm text-gray-500">
+                    {new Date(episode.created_at).toLocaleDateString()}
+                  </span>
+                  {episode.duration && (
+                    <>
+                      <span className="text-gray-300">•</span>
+                      <span className="text-sm text-gray-500">
+                        {Math.floor(episode.duration / 60)}:{String(episode.duration % 60).padStart(2, '0')}
+                      </span>
+                    </>
+                  )}
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {episode.title}
+                </h3>
+                {episode.description && (
+                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                    {episode.description}
+                  </p>
+                )}
+                
+                {/* Minimal Audio Player */}
+                {episode.audio_url && (
+                  <div className="mt-3">
+                    <AudioPlayer 
+                      src={episode.audio_url}
+                    />
+                  </div>
+                )}
+              </div>
+              
+              {/* Script Button */}
+              {user?.user_metadata?.role === 'client' && episode.script_url && (
+                <div className="ml-4 flex-shrink-0">
+                  <button className="px-3 py-1 text-xs bg-gray-100 text-gray-700 border border-gray-300 rounded hover:bg-gray-200 transition-colors">
+                    Script
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Remaining Episodes - Condensed Accordion */}
-      {remainingEpisodes.length > 0 && (
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-            <button
-              onClick={() => setShowAllEpisodes(!showAllEpisodes)}
-              className="flex items-center justify-between w-full text-left"
-            >
-              <div>
-                <h3 className="text-lg font-bold text-gray-900">More Episodes</h3>
-                <p className="text-sm text-gray-600">
-                  {remainingEpisodes.length} additional episodes available
-                </p>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-500">
-                  {showAllEpisodes ? 'Hide' : 'Show'} All
-                </span>
-                <svg 
-                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${showAllEpisodes ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-            </button>
-          </div>
-          
-          {showAllEpisodes && (
-            <div className="divide-y divide-gray-100">
-              {remainingEpisodes.map((episode: Episode, index: number) => (
-                <div key={episode.id} className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-4 flex-1 min-w-0">
-                      {/* Episode Number */}
-                      <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                        {episode.episode_number}
-                      </div>
-                      
-                      {/* Episode Info */}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-semibold text-gray-900 truncate">
-                          {episode.title}
-                        </h4>
-                        <div className="flex items-center space-x-3 text-xs text-gray-500 mt-1">
-                          <span>Episode {episode.episode_number}</span>
-                          <span>•</span>
-                          <span>{new Date(episode.created_at).toLocaleDateString()}</span>
-                          {episode.duration && (
-                            <>
-                              <span>•</span>
-                              <span>{Math.floor(episode.duration / 60)}:{String(episode.duration % 60).padStart(2, '0')}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Actions */}
-                    <div className="flex items-center space-x-2 flex-shrink-0">
-                      {user?.user_metadata?.role === 'client' && (
-                        <button className="px-3 py-1 text-xs bg-red-50 text-red-600 border border-red-200 rounded-full hover:bg-red-100 transition-colors duration-150">
-                          Script
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Audio Player */}
-                  {episode.audio_url && (
-                    <div className="ml-12">
-                      <AudioPlayer 
-                        src={episode.audio_url} 
-                        title={episode.title}
-                        showDeleteButton={false}
-                        className="text-sm"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+      {/* Load More Button */}
+      {hasMoreEpisodes && (
+        <div className="text-center mt-8">
+          <Button
+            onClick={() => setShowAll(!showAll)}
+            variant="outline"
+            className="px-8 py-2"
+          >
+            {showAll ? 'Show Less' : `Load More (${episodes.length - 4} more)`}
+          </Button>
         </div>
       )}
     </div>
   )
-} 
+}
