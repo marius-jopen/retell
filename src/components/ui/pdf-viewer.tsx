@@ -179,7 +179,7 @@ export default function PDFViewer({
             <p className="text-red-500 text-sm mt-1">{error}</p>
           </div>
         ) : (
-          <div className="flex justify-center">
+          <div className="flex justify-center overflow-x-auto">
             <Document
               file={file as any}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -194,7 +194,8 @@ export default function PDFViewer({
               <Page 
                 pageNumber={pageNumber} 
                 scale={scale}
-                className="shadow-lg"
+                className="shadow-lg max-w-full h-auto"
+                width={600}
               />
             </Document>
           </div>

@@ -1,63 +1,54 @@
-import Link from 'next/link'
+'use client'
+
 import { Button } from '@/components/ui/button'
-import { PodcastDescription } from './podcast-description'
+import { COUNTRIES, countryNameByCode } from '@/lib/countries'
+import { LANGUAGES } from '@/lib/languages'
 
-interface Episode {
-  id: string
-  duration?: number
-}
-
-interface Author {
-  full_name: string
-  avatar_url: string | null
-  company: string | null
-}
-
-interface Podcast {
-  id: string
-  title: string
-  description: string
-  category: string
-  language: string
-  country: string
-  cover_image_url: string | null
-  rss_url?: string | null
-  episodes?: Episode[]
-  user_profiles?: Author
-}
-
-interface User {
-  profile: {
-    role: string
-  }
+// Helper function to get language name
+const getLanguageName = (languageCode: string): string => {
+  const language = LANGUAGES.find(lang => lang.code === languageCode)
+  return language ? language.name : languageCode.toUpperCase()
 }
 
 interface PodcastHeroProps {
-  podcast: Podcast
-  user?: User | null
+  podcast: any
+  currentTranslation: any
+  selectedCountry: string
+  selectedLanguage: string
+  availableLanguages: string[]
+  episodes: any[]
+  user: any
+  onLanguageChange: (language: string) => void
 }
 
-export function PodcastHero({ podcast, user }: PodcastHeroProps) {
-  const episodes = podcast.episodes || []
-  const totalDuration = episodes.reduce((total: number, ep: Episode) => total + (ep.duration || 0), 0)
-
+export function PodcastHero({
+  podcast,
+  currentTranslation,
+  selectedCountry,
+  selectedLanguage,
+  availableLanguages,
+  episodes,
+  user,
+  onLanguageChange
+}: PodcastHeroProps) {
   return (
-    <div className="bg-gradient-to-br from-red-500 via-red-600 to-red-700 text-white">
+    <div className="bg-brand text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          {/* Cover Image */}
-          <div className="flex justify-center lg:justify-start">
+          {/* Cover Image and Authors */}
+          <div className="flex flex-col items-center lg:items-start space-y-10">
+            {/* Cover Image */}
             <div className="relative">
-              {podcast.cover_image_url ? (
+              {(currentTranslation?.cover_image_url || podcast.cover_image_url) ? (
                 <img
-                  src={podcast.cover_image_url}
-                  alt={podcast.title}
-                  className="w-64 h-64 object-cover rounded-2xl shadow-2xl"
+                  src={(currentTranslation?.cover_image_url || podcast.cover_image_url) as string}
+                  alt={currentTranslation?.title || podcast.title}
+                  className="w-64 h-64 object-cover rounded-modern-xl shadow-modern-lg"
                 />
               ) : (
-                <div className="w-64 h-64 bg-gradient-to-br from-red-300 via-red-400 to-red-500 rounded-2xl flex items-center justify-center shadow-2xl">
-                  <span className="text-white text-5xl font-bold">
-                    {podcast.title.substring(0, 2).toUpperCase()}
+                <div className="w-64 h-64 bg-brand rounded-modern-xl flex items-center justify-center shadow-modern-lg">
+                  <span className="text-white text-4xl font-bold">
+                    {(currentTranslation?.title || podcast.title).substring(0, 2).toUpperCase()}
                   </span>
                 </div>
               )}
@@ -67,94 +58,149 @@ export function PodcastHero({ podcast, user }: PodcastHeroProps) {
                 </span>
               </div>
             </div>
+
+            {/* Hosts Section */}
+            <div className="flex flex-wrap gap-6">
+              {podcast.hosts && podcast.hosts.length > 0 ? (
+                podcast.hosts.map((host: any, index: number) => (
+                  <div key={host.id || index} className="flex items-center space-x-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                      {host.image_url ? (
+                        <img
+                          src={host.image_url}
+                          alt={host.name || 'Host'}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-white/20 flex items-center justify-center">
+                          <span className="text-white font-semibold text-sm">
+                            {host.name?.substring(0, 2).toUpperCase() || 'H'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-left">
+                      <div className="text-sm text-white/80 font-medium">Host</div>
+                      <div className="text-base font-semibold text-white">
+                        {host.name || 'Unknown Host'}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                // Fallback to author if no hosts
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 rounded-full overflow-hidden">
+                    {podcast.user_profiles?.avatar_url ? (
+                      <img
+                        src={podcast.user_profiles.avatar_url}
+                        alt={podcast.user_profiles.full_name || 'Author'}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-white/20 flex items-center justify-center">
+                        <span className="text-white font-semibold text-sm">
+                          {podcast.user_profiles?.full_name?.substring(0, 2).toUpperCase() || 'AU'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-left">
+                    <div className="text-sm text-white/80 font-medium">Author</div>
+                    <div className="text-base font-semibold text-white">
+                      {podcast.user_profiles?.full_name || 'Unknown Author'}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Podcast Info */}
           <div className="text-center lg:text-left">
-            <div className="mb-3">
-              <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide">
-                {podcast.category}
+            <div className="mb-3 flex flex-wrap gap-2">
+              <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+                Category: {podcast.category}
+              </span>
+              <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+                Country: {countryNameByCode(selectedCountry)}
+              </span>
+              <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+                Language: {getLanguageName(selectedLanguage)}
               </span>
             </div>
             
-            <h1 className="text-3xl lg:text-4xl font-bold mb-4 leading-tight">
-              {podcast.title}
+            <h1 className="text-2xl lg:text-3xl font-bold mb-4 leading-tight">
+              {currentTranslation?.title || podcast.title}
             </h1>
             
-            <PodcastDescription 
-              description={podcast.description}
-              className="mb-6"
-            />
+            <p className="text-sm text-orange-100 mb-8 leading-relaxed">
+              {currentTranslation?.description || podcast.description}
+            </p>
 
-            {/* Author Info */}
-            <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">
-                  {podcast.user_profiles?.full_name?.substring(0, 2).toUpperCase() || 'AU'}
-                </span>
-              </div>
-              <div className="text-left">
-                <div className="text-base font-semibold text-white">
-                  {podcast.user_profiles?.full_name || 'Unknown Author'}
+            {/* Language Selector - Only show if multiple languages */}
+            {availableLanguages.length > 1 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-white/90 mb-3 uppercase tracking-wide">
+                  Available Languages
+                </h3>
+                <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                  {availableLanguages.map((languageCode) => (
+                    <button
+                      key={languageCode}
+                      onClick={() => onLanguageChange(languageCode)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl cursor-pointer ${
+                        selectedLanguage === languageCode
+                          ? 'bg-white text-orange-600 shadow-white/25'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:border-white/50'
+                      }`}
+                    >
+                      {getLanguageName(languageCode)}
+                    </button>
+                  ))}
                 </div>
-                {podcast.user_profiles?.company && (
-                  <div className="text-sm text-blue-200">
-                    {podcast.user_profiles.company}
-                  </div>
-                )}
+                <p className="text-xs text-white/70 mt-2 text-center lg:text-left">
+                  Click to see content in different languages
+                </p>
               </div>
-            </div>
+            )}
 
-            {/* Podcast Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{episodes.length}</div>
-                <div className="text-xs text-red-200">Episodes</div>
+            {/* Excluded Countries Warning - Prominent */}
+            {podcast.license_excluded_countries && podcast.license_excluded_countries.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-white/90 mb-3 uppercase tracking-wide">
+                  {podcast.license_excluded_countries.length === 1 
+                    ? 'Not Available in This Country'
+                    : 'Not Available in These Countries'
+                  }
+                </h3>
+                <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                  {podcast.license_excluded_countries.map((countryCode: string) => (
+                    <div
+                      key={countryCode}
+                      className="px-4 py-2 rounded-lg text-sm font-medium bg-white text-red-600 border border-white/30 shadow-lg"
+                    >
+                      {countryNameByCode(countryCode)}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-white/70 mt-2 text-center lg:text-left">
+                  This content is restricted in the selected regions
+                </p>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{Math.floor(totalDuration / 60)}h</div>
-                <div className="text-xs text-red-200">Total Duration</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{podcast.language.toUpperCase()}</div>
-                <div className="text-xs text-red-200">Language</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{podcast.country}</div>
-                <div className="text-xs text-red-200">Country</div>
-              </div>
-            </div>
+            )}
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              {user?.profile.role === 'client' && (
-                <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 font-semibold px-6 py-3">
+            {/* Action Buttons - Only for logged-in clients */}
+            {user?.user_metadata?.role === 'client' && (
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 py-3 rounded-full">
                   Request License
                 </Button>
-              )}
-              {!user && (
-                <Link href="/auth/signup?role=client">
-                  <Button size="lg" className="bg-white text-red-600 hover:bg-red-50 font-semibold px-6 py-3">
-                    Sign Up to License
-                  </Button>
-                </Link>
-              )}
-              {podcast.rss_url && (
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-red-600 font-semibold px-6 py-3">
-                  <a href={podcast.rss_url} target="_blank" rel="noopener noreferrer">
-                    RSS Feed
-                  </a>
-                </Button>
-              )}
-              <Link href="/catalog">
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-red-600 font-semibold px-6 py-3">
-                  Browse More
-                </Button>
-              </Link>
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   )
-} 
+}
