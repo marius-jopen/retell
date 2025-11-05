@@ -132,25 +132,25 @@ export function PodcastLicensing({ podcast }: PodcastLicensingProps) {
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   {podcast.license_total_listeners && (
                     <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
-                      <div className="text-2xl font-bold text-blue-600 mb-1">
+                      <div className="text-2xl font-bold text-white mb-1">
                         {podcast.license_total_listeners >= 1000 
                           ? `${Math.round(podcast.license_total_listeners / 1000)}K+` 
                           : podcast.license_total_listeners.toLocaleString()}
                       </div>
-                      <div className="text-sm text-blue-700 font-medium">Total Listeners</div>
-                      <div className="text-xs text-blue-600">per launch</div>
+                      <div className="text-sm text-white font-medium">Total Listeners</div>
+                      <div className="text-xs text-white">per launch</div>
                     </div>
                   )}
                   
                   {podcast.license_listeners_per_episode && (
                     <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
-                      <div className="text-2xl font-bold text-green-600 mb-1">
+                      <div className="text-2xl font-bold text-white mb-1">
                         {podcast.license_listeners_per_episode >= 1000 
                           ? `${Math.round(podcast.license_listeners_per_episode / 1000)}K+` 
                           : podcast.license_listeners_per_episode.toLocaleString()}
                       </div>
-                      <div className="text-sm text-green-700 font-medium">Per Episode</div>
-                      <div className="text-xs text-green-600">average</div>
+                      <div className="text-sm text-white font-medium">Per Episode</div>
+                      <div className="text-xs text-white">average</div>
                     </div>
                   )}
                 </div>
