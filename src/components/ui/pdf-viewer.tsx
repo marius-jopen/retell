@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import dynamic from 'next/dynamic'
@@ -38,6 +38,7 @@ export default function PDFViewer({
   const [error, setError] = useState<string | null>(null)
   const [isClient, setIsClient] = useState<boolean>(false)
   const [pdfjs, setPdfjs] = useState<any>(null)
+  const pageContainerRef = useRef<HTMLDivElement>(null)
 
   // Ensure this only runs on the client side and configure PDF.js
   useEffect(() => {
@@ -60,6 +61,37 @@ export default function PDFViewer({
     setError(null)
     onLoadSuccess?.(numPages)
   }, [onLoadSuccess])
+
+  // Aggressively remove text and annotation layers from DOM
+  useEffect(() => {
+    const removeLayers = () => {
+      // Find all text layers and remove them
+      const textLayers = document.querySelectorAll('.react-pdf__Page__textContent, .textLayer')
+      textLayers.forEach(layer => layer.remove())
+      
+      // Find all annotation layers and remove them
+      const annotationLayers = document.querySelectorAll('.react-pdf__Page__annotations, .annotationLayer')
+      annotationLayers.forEach(layer => layer.remove())
+    }
+
+    // Remove immediately
+    removeLayers()
+    
+    // Set up interval to keep removing them
+    const interval = setInterval(removeLayers, 100)
+    
+    // Also watch for mutations
+    const observer = new MutationObserver(removeLayers)
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    })
+
+    return () => {
+      clearInterval(interval)
+      observer.disconnect()
+    }
+  }, [pageNumber, scale, numPages])
 
   const onDocumentLoadError = useCallback((error: Error) => {
     setError(error.message)
@@ -194,6 +226,26 @@ export default function PDFViewer({
 
       {/* PDF Content */}
       <div className="p-4">
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            .react-pdf__Page__textContent,
+            .react-pdf__Page__textContent.textLayer,
+            .react-pdf__Page__textContent.textLayer.selecting,
+            .textLayer,
+            .annotationLayer,
+            .react-pdf__Page__annotations,
+            .react-pdf__Page__annotations.annotationLayer {
+              display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              height: 0 !important;
+              width: 0 !important;
+              position: absolute !important;
+              top: -9999px !important;
+              left: -9999px !important;
+            }
+          `
+        }} />
         {error ? (
           <div className="text-center py-8">
             <div className="text-red-600 mb-2">
@@ -206,24 +258,63 @@ export default function PDFViewer({
           </div>
         ) : (
           <div className="flex justify-center overflow-x-auto">
-            <Document
-              file={file as any}
-              onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={onDocumentLoadError}
-              loading={
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-2"></div>
-                  <p className="text-gray-600">Loading PDF...</p>
+            <div ref={pageContainerRef} className="relative" id={`pdf-viewer-${pageNumber}`}>
+              <Document
+                file={file as any}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
+                loading={
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-2"></div>
+                    <p className="text-gray-600">Loading PDF...</p>
+                  </div>
+                }
+              >
+                <div id={`pdf-clip-${pageNumber}`} style={{ position: 'relative', overflow: 'hidden' }}>
+                  <Page 
+                    pageNumber={pageNumber} 
+                    scale={scale}
+                    className="shadow-lg"
+                    width={600}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    onRenderSuccess={() => {
+                      // Immediately fix after render
+                      requestAnimationFrame(() => {
+                        const canvas = document.querySelector(`#pdf-viewer-${pageNumber} canvas`) as HTMLCanvasElement
+                        const clipDiv = document.getElementById(`pdf-clip-${pageNumber}`)
+                        const pageElement = document.querySelector(`#pdf-viewer-${pageNumber} .react-pdf__Page`) as HTMLElement
+                        
+                        if (canvas && clipDiv && pageElement) {
+                          // Remove layers permanently
+                          const textLayer = pageElement.querySelector('.react-pdf__Page__textContent')
+                          const annotationLayer = pageElement.querySelector('.react-pdf__Page__annotations')
+                          if (textLayer) {
+                            textLayer.remove()
+                          }
+                          if (annotationLayer) {
+                            annotationLayer.remove()
+                          }
+                          
+                          // Set clip container to exact canvas size
+                          const canvasHeight = canvas.offsetHeight
+                          const canvasWidth = canvas.offsetWidth
+                          clipDiv.style.height = `${canvasHeight}px`
+                          clipDiv.style.width = `${canvasWidth}px`
+                          clipDiv.style.maxHeight = `${canvasHeight}px`
+                          clipDiv.style.overflow = 'hidden'
+                          
+                          // Also set page element
+                          pageElement.style.height = `${canvasHeight}px`
+                          pageElement.style.maxHeight = `${canvasHeight}px`
+                          pageElement.style.overflow = 'hidden'
+                        }
+                      })
+                    }}
+                  />
                 </div>
-              }
-            >
-              <Page 
-                pageNumber={pageNumber} 
-                scale={scale}
-                className="shadow-lg max-w-full h-auto"
-                width={600}
-              />
-            </Document>
+              </Document>
+            </div>
           </div>
         )}
       </div>

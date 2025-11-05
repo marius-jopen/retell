@@ -381,3 +381,21 @@ p[class*="text-gray-"] {
 .hover\:shadow-3xl:hover {
   box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
 }
+
+/* Hide react-pdf text and annotation layers completely */
+.react-pdf__Page__textContent,
+.react-pdf__Page__textContent.textLayer,
+.react-pdf__Page__textContent.textLayer.selecting,
+.textLayer,
+.annotationLayer,
+.react-pdf__Page__annotations,
+.react-pdf__Page__annotations.annotationLayer {
+  display: none !important;
+}
+
+/* Ensure PDF page container only sizes to canvas */
+.react-pdf__Page {
+  position: relative !important;
+  display: inline-block !important;
+  overflow: hidden !important;
+}
