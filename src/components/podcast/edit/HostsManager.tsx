@@ -58,8 +58,7 @@ export default function HostsManager({
     const reader = new FileReader()
     reader.onload = () => {
       handleHostChange(hostId, 'imagePreviewUrl', reader.result as string)
-      handleHostChange(hostId, 'image', reader.result as string)
-      handleHostChange(hostId, 'imageFile', file)
+      handleHostChange(hostId, 'image', file) // Store the File object, not the data URL
     }
     reader.readAsDataURL(file)
   }
