@@ -11,6 +11,8 @@ interface Episode {
   id: string
   title: string
   description: string
+  title_english?: string | null
+  description_english?: string | null
   episode_number: number
   season_number?: number
 }

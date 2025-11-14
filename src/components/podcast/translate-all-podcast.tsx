@@ -30,9 +30,9 @@ export default function TranslateAllPodcast({
   podcastDescription,
   podcastTitleEnglish,
   podcastDescriptionEnglish,
-  episodes,
+  episodes: _episodes, // Not used - we always fetch all episodes
   onUpdate,
-  fetchAllEpisodes = true,
+  fetchAllEpisodes: _fetchAllEpisodes = true, // Not used - we always fetch all episodes
 }: TranslateAllPodcastProps) {
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState({ current: 0, total: 0, stage: '' })
@@ -58,7 +58,7 @@ export default function TranslateAllPodcast({
         try {
           const errorData = await response.json()
           errorMessage = errorData.error || errorData.details || errorMessage
-        } catch (e) {
+        } catch {
           errorMessage = `HTTP ${response.status}: ${response.statusText}`
         }
         throw new Error(errorMessage)
@@ -324,14 +324,8 @@ export default function TranslateAllPodcast({
   // Don't show episode count in button - will fetch all episodes when clicked
   const needsPodcastTitleTranslation = !podcastTitleEnglish || podcastTitleEnglish.trim() === ''
   const needsPodcastDescriptionTranslation = !podcastDescriptionEnglish || podcastDescriptionEnglish.trim() === ''
-  
-  // Only count podcast fields for button display (not episodes)
-  // Episodes will be fetched and counted when button is clicked
-  const totalNeedingTranslation = (needsPodcastTitleTranslation ? 1 : 0) + 
-                                  (needsPodcastDescriptionTranslation ? 1 : 0)
 
-  // Show button if podcast fields need translation OR if there are any episodes
-  // (episodes will be checked when clicked)
+  // Button is always shown - episodes will be fetched and counted when clicked
 
   return (
     <>
