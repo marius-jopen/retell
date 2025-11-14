@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase'
 import { Database } from '@/types/database'
-import { PodcastSidebar } from '@/components/podcast/podcast-sidebar'
 import { EpisodesList } from '@/components/podcast/episodes-list'
 import { PodcastHero } from '@/components/podcast/podcast-hero'
 import { PodcastLicensing } from '@/components/podcast/podcast-licensing'
@@ -314,11 +313,6 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
 
       {/* Licensing Information Section */}
       <PodcastLicensing podcast={podcast} />
-
-      {/* About Section - Refined spacing */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <PodcastSidebar podcast={podcast} />
-      </div>
 
       {/* Image Gallery Section */}
       {galleryImages.length > 0 && (
