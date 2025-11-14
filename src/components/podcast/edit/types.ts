@@ -29,6 +29,8 @@ export interface Podcast {
   id: string
   title: string
   description: string
+  title_english?: string | null
+  description_english?: string | null
   category: string
   language: string
   country: string

@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import HostsManager from '@/components/podcast/edit/HostsManager'
 import type { Host, Podcast as PodcastType } from '@/components/podcast/edit/types'
+import TranslateAllPodcast from '@/components/podcast/translate-all-podcast'
 
 // Using imported Podcast type from types.ts
 
@@ -30,8 +31,6 @@ function PodcastEditContent({
   user, 
   profile 
 }: PodcastEditContentProps) {
-  console.log('🚀 PodcastEditContent component rendering', { podcastId, hasUser: !!user, hasProfile: !!profile })
-  
   const [podcast, setPodcast] = useState<PodcastType | null>(null)
   const [episodes, setEpisodes] = useState<Episode[]>([])
   const [loading, setLoading] = useState(false)
@@ -67,16 +66,21 @@ function PodcastEditContent({
 
 
   useEffect(() => {
+    if (!podcastId) {
+      setFetching(false)
+      return
+    }
+
+    let cancelled = false
+
     const fetchPodcast = async () => {
       try {
-        console.log('🔍 Starting fetchPodcast', { podcastId, user: !!user, profile: !!profile, isAdmin })
         setFetching(true)
         setFetchError('')
         
         if (!user) {
-          console.error('❌ No user found')
           setFetchError('You must be logged in to edit a podcast')
-          setFetching(false)
+          if (!cancelled) setFetching(false)
           return
         }
 
@@ -84,13 +88,13 @@ function PodcastEditContent({
         if (isAdmin) {
           if (!profile || profile.role !== 'admin') {
             setFetchError('You must be an admin to edit podcasts')
-            setFetching(false)
+            if (!cancelled) setFetching(false)
             return
           }
         } else {
           if (!profile || (profile.role !== 'author' && profile.role !== 'admin')) {
             setFetchError('You must be an author or admin to edit podcasts')
-            setFetching(false)
+            if (!cancelled) setFetching(false)
             return
           }
         }
@@ -114,26 +118,27 @@ function PodcastEditContent({
         }
 
         // Execute podcast data and episodes queries in parallel
+        // Only fetch 5 episodes for preview to improve performance
         const [podcastResult, episodesResult] = await Promise.all([
           query.single(),
           supabase
             .from('episodes')
-            .select('*')
+            .select('id, title, description, title_english, description_english, episode_number, duration, published_at, audio_url, cover_image_url, script_url, season_number, created_at, updated_at, status')
             .eq('podcast_id', podcastId)
             .order('episode_number', { ascending: false })
+            .limit(5)
         ])
 
+        if (cancelled) return
+
         const { data: podcastData, error: podcastError } = podcastResult
-        console.log('📦 Podcast result:', { hasData: !!podcastData, error: podcastError })
         
         if (podcastError || !podcastData) {
-          console.error('❌ Podcast fetch error:', podcastError)
           setFetchError(podcastError?.message || 'Failed to fetch podcast')
           setFetching(false)
           return
         }
 
-        console.log('✅ Podcast data fetched successfully')
         // Set podcast data
         setPodcast({
           ...podcastData,
@@ -149,16 +154,11 @@ function PodcastEditContent({
         
         // Initialize excluded countries from podcast data
         const excludedCountriesData = podcastData?.license_excluded_countries || []
-        console.log('Excluded countries data:', excludedCountriesData)
         
         // Filter out invalid country codes
         const validExcludedCountries = excludedCountriesData.filter((code: string) => {
           const name = countryNameByCode(code)
-          if (name === 'Unknown') {
-            console.warn(`Removing invalid country code: ${code}`)
-            return false
-          }
-          return true
+          return name !== 'Unknown'
         })
         
         setExcludedCountries(validExcludedCountries)
@@ -179,52 +179,37 @@ function PodcastEditContent({
           setCurrentHosts([])
         }
 
-
-
         // Set episodes
         const { data: episodesData, error: episodesError } = episodesResult
-        console.log('📺 Episodes result:', { count: episodesData?.length || 0, error: episodesError })
         
         if (episodesError) {
-          console.error('❌ Error fetching episodes:', episodesError)
           // Don't fail the whole page if episodes fail to load
           setEpisodes([])
         } else {
           setEpisodes(episodesData || [])
         }
 
-        console.log('✅ Fetch complete, setting fetching to false')
         setFetching(false)
 
       } catch (err) {
-        console.error('Error in fetchPodcast:', err)
-        setFetchError(err instanceof Error ? err.message : 'An unexpected error occurred')
-        setFetching(false)
+        if (!cancelled) {
+          setFetchError(err instanceof Error ? err.message : 'An unexpected error occurred')
+          setFetching(false)
+        }
       }
     }
 
-    if (podcastId) {
-      fetchPodcast()
-    } else {
-      console.log('⏸️ Skipping fetchPodcast - podcastId is empty')
-      setFetching(false)
+    fetchPodcast()
+
+    return () => {
+      cancelled = true
     }
-  }, [podcastId, supabase, user, profile, isAdmin])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [podcastId, user?.id, profile?.role, isAdmin])
 
 
 
   const handleSubmit = async (formData: Record<string, unknown>, coverImage: File | null) => {
-    console.log('🚀 PodcastEditContent handleSubmit called with:', {
-      formData,
-      coverImage: coverImage?.name,
-      scriptFiles: {
-        scriptFile: formData.scriptFile,
-        scriptEnglishFile: formData.scriptEnglishFile,
-        scriptAudioTracksFile: formData.scriptAudioTracksFile,
-        scriptMusicFile: formData.scriptMusicFile
-      }
-    })
-    
     setLoading(true)
 
     try {
@@ -249,13 +234,6 @@ function PodcastEditContent({
       }
 
       // Upload script files if provided
-      console.log('🚀 UPLOAD - Checking for script files:', {
-        scriptFile: formData.scriptFile,
-        scriptEnglishFile: formData.scriptEnglishFile,
-        scriptAudioTracksFile: formData.scriptAudioTracksFile,
-        scriptMusicFile: formData.scriptMusicFile
-      })
-      
       let scriptUrl = podcast?.script_url
       let scriptEnglishUrl = podcast?.script_english_url
       let scriptAudioTracksUrl = podcast?.script_audio_tracks_url
@@ -272,14 +250,12 @@ function PodcastEditContent({
           .upload(fileName, scriptFile)
 
         if (scriptUploadError) {
-          console.error('Script upload error:', scriptUploadError)
           addToast({ type: 'error', message: `Failed to upload script: ${scriptUploadError.message}` })
         } else {
           const { data: scriptUrlData } = supabase.storage
             .from('podcast-covers')
             .getPublicUrl(fileName)
           scriptUrl = scriptUrlData.publicUrl
-          console.log('Script uploaded successfully:', scriptUrl)
         }
       }
 
@@ -294,14 +270,12 @@ function PodcastEditContent({
           .upload(fileName, scriptEnglishFile)
 
         if (scriptEnglishUploadError) {
-          console.error('Script English upload error:', scriptEnglishUploadError)
           addToast({ type: 'error', message: `Failed to upload script English: ${scriptEnglishUploadError.message}` })
         } else {
           const { data: scriptEnglishUrlData } = supabase.storage
           .from('podcast-covers')
             .getPublicUrl(fileName)
           scriptEnglishUrl = scriptEnglishUrlData.publicUrl
-          console.log('Script English uploaded successfully:', scriptEnglishUrl)
         }
       }
 
@@ -316,14 +290,12 @@ function PodcastEditContent({
           .upload(fileName, scriptAudioTracksFile)
 
         if (scriptAudioTracksUploadError) {
-          console.error('Script Audio Tracks upload error:', scriptAudioTracksUploadError)
           addToast({ type: 'error', message: `Failed to upload script audio tracks: ${scriptAudioTracksUploadError.message}` })
         } else {
-                    const { data: scriptAudioTracksUrlData } = supabase.storage
+          const { data: scriptAudioTracksUrlData } = supabase.storage
           .from('podcast-covers')
           .getPublicUrl(fileName)
           scriptAudioTracksUrl = scriptAudioTracksUrlData.publicUrl
-          console.log('Script Audio Tracks uploaded successfully:', scriptAudioTracksUrl)
         }
       }
 
@@ -338,36 +310,24 @@ function PodcastEditContent({
           .upload(fileName, scriptMusicFile)
 
         if (scriptMusicUploadError) {
-          console.error('Script Music upload error:', scriptMusicUploadError)
           addToast({ type: 'error', message: `Failed to upload script music: ${scriptMusicUploadError.message}` })
         } else {
           const { data: scriptMusicUrlData } = supabase.storage
             .from('podcast-covers')
             .getPublicUrl(fileName)
           scriptMusicUrl = scriptMusicUrlData.publicUrl
-          console.log('Script Music uploaded successfully:', scriptMusicUrl)
         }
       }
 
       // Process hosts and upload host images
       const processedHosts = []
       const hostsData = currentHosts || []
-      
-      console.log('🧑‍🤝‍🧑 Hosts before processing:', hostsData)
 
       for (const host of hostsData) {
         let hostImageUrl = null
         const fileToUpload = host.imageFile
-        console.log('➡️ Host snapshot:', {
-          id: host.id,
-          name: host.name,
-          hasImage: Boolean(host.image),
-          imageType: typeof host.image,
-          hasImageFile: Boolean(fileToUpload)
-        })
         
         if (fileToUpload) {
-          console.log('📤 Uploading host image for', host.name)
           const fileExt = fileToUpload.name.split('.').pop()
           const fileName = `host-image-${podcastId}-${host.id}-${Date.now()}.${fileExt}`
           
@@ -377,18 +337,15 @@ function PodcastEditContent({
 
           if (hostUploadError) {
             addToast({ type: 'error', message: `Failed to upload image for ${host.name}: ${hostUploadError.message}` })
-            console.error('❌ Host image upload failed', hostUploadError)
           } else {
             const { data: hostUrlData } = supabase.storage
               .from('podcast-covers')
               .getPublicUrl(fileName)
             hostImageUrl = hostUrlData.publicUrl
-            console.log('✅ Host image uploaded for', host.name, hostImageUrl)
           }
         } else if (typeof host.image === 'string' && host.image) {
           // Keep existing image URL (already stored)
           hostImageUrl = host.image
-          console.log('🔁 Reusing existing host image for', host.name)
         }
 
         if (host.name.trim()) { // Only save hosts with names
@@ -400,8 +357,6 @@ function PodcastEditContent({
           })
         }
       }
-
-      console.log('📦 Processed hosts payload:', processedHosts)
 
       const resolvedCategory = generalCategory || formData.category || ''
       const resolvedLanguage = generalLanguage || formData.language || 'en'
@@ -589,44 +544,51 @@ function PodcastEditContent({
               </div>
             )}
             
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2 items-center">
               <Link href={backHref}>
-                <Button variant="outline" className={isAdmin ? "border-gray-300 text-gray-700 hover:bg-gray-50" : ""}>
-                  ← Back to Podcasts
+                <Button variant="outline" size="sm" className={isAdmin ? "border-gray-300 text-gray-700 hover:bg-gray-50 whitespace-nowrap" : "whitespace-nowrap"}>
+                  ← Back
                 </Button>
               </Link>
+              <div className="relative">
+                <TranslateAllPodcast
+                  podcastId={podcastId}
+                  podcastTitle={podcast.title}
+                  podcastDescription={podcast.description || ''}
+                  podcastTitleEnglish={podcast.title_english || null}
+                  podcastDescriptionEnglish={podcast.description_english || null}
+                  episodes={episodes.map(ep => ({
+                    ...ep,
+                    title_english: ep.title_english || null,
+                    description_english: ep.description_english || null
+                  }))}
+                  onUpdate={() => {
+                    // Refresh the page data
+                    window.location.reload()
+                  }}
+                />
+              </div>
                 <Button 
                   type="button"
                   variant="default"
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  size="sm"
+                  className="bg-red-600 hover:bg-red-700 text-white whitespace-nowrap"
                   disabled={loading}
                   onClick={async (e) => {
                     e.preventDefault()
                     e.stopPropagation()
-                    console.log('🚀 SAVE BUTTON CLICKED!')
-                    console.log('🚀 SAVE - Podcast ID:', podcastId)
-                    console.log('🚀 SAVE - Loading state:', loading)
                     
                     if (!podcastId) {
-                      console.log('❌ SAVE - No podcast ID, returning')
                       return
                     }
                     setLoading(true)
                     
                     try {
-                      console.log('🚀 SAVE - Starting save process...')
                       // Define default country once at the top
                       const defaultCountry = generalCountry || 'DE'
                       
                     // Use the handleSubmit function with form data
                       if (currentFormData) {
-                        console.log('🚀 SAVE - Form data:', currentFormData)
-                        console.log('🚀 SAVE - Script files in form data:', {
-                          scriptFile: currentFormData.scriptFile,
-                          scriptEnglishFile: currentFormData.scriptEnglishFile,
-                          scriptAudioTracksFile: currentFormData.scriptAudioTracksFile,
-                          scriptMusicFile: currentFormData.scriptMusicFile
-                        })
                         await handleSubmit(currentFormData, currentCoverImage)
                       } else {
                       // Fallback: update general info only
@@ -667,15 +629,13 @@ function PodcastEditContent({
                       }
                       
                     } catch (error: any) {
-                      console.error('❌ SAVE - Error in save process:', error)
                       addToast({ type: 'error', message: `Save failed: ${error.message}` })
                     } finally {
-                      console.log('🚀 SAVE - Finished save process, setting loading to false')
                       setLoading(false)
                     }
                   }}
                 >
-                  {loading ? 'Saving...' : 'Save All Changes'}
+                  {loading ? 'Saving...' : 'Save'}
                 </Button>
             </div>
           </div>
@@ -739,8 +699,17 @@ function PodcastEditContent({
 
             {/* Hosts */}
             <HostsManager 
-              hosts={currentHosts}
-              onHostsChange={setCurrentHosts}
+              hosts={currentHosts.map(h => ({
+                ...h,
+                image: h.imageFile ? h.imageFile : h.image
+              }))}
+              onHostsChange={(hosts) => {
+                setCurrentHosts(hosts.map(h => ({
+                  ...h,
+                  imageFile: h.image instanceof File ? h.image : null,
+                  image: typeof h.image === 'string' ? h.image : ''
+                })))
+              }}
             />
           </div>
 
@@ -832,30 +801,40 @@ function PodcastEditContent({
 
           {/* Full Width - Episodes */}
           <div className="space-y-4">
-            {/* Episodes List */}
-            <div className="flex-1 min-h-0">
-              <EpisodePreviewList
-                title={`Episodes (${episodes.length})`}
-                episodes={episodes.slice(0, 5)}
-                autoHeight
-                emptyStateMessage="No episodes yet"
-                emptyStateIcon="🎙️"
-                showActions={true}
-                getEpisodeHref={(episode) => isAdmin ? `/admin/episodes/${episode.id}/edit` : `/author/podcasts/${podcastId}/episodes/${episode.id}/edit`}
-                className="w-full overflow-hidden"
-              />
-              
-              <div className="space-y-2 flex-shrink-0 mt-3">
-                <Link href={isAdmin ? `/author/podcasts/${podcastId}/episodes` : `/author/podcasts/${podcastId}/episodes`} className="block">
-                  <Button
-                    variant="outline" 
-                    size="lg" 
-                    className={`w-full ${isAdmin ? '' : 'rounded-full'}`}
-                  >
-                    Manage All Episodes
-                  </Button>
-                </Link>
+            {/* Episodes Preview */}
+            {/* {episodes.length > 0 ? (
+              <div className="flex-1 min-h-0">
+                <EpisodePreviewList
+                  title={`Recent Episodes (showing ${episodes.length})`}
+                  episodes={episodes}
+                  autoHeight
+                  emptyStateMessage="No episodes yet"
+                  emptyStateIcon="🎙️"
+                  showActions={true}
+                  getEpisodeHref={(episode) => isAdmin ? `/admin/episodes/${episode.id}/edit` : `/author/podcasts/${podcastId}/episodes/${episode.id}/edit`}
+                  className="w-full overflow-hidden"
+                />
               </div>
+            ) : (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                <p className="text-gray-600 mb-4">No episodes yet</p>
+              </div>
+            )} */}
+            
+            {/* Manage Episodes Button - Always Prominent */}
+            <div className="space-y-2 flex-shrink-0">
+              <Link href={isAdmin ? `/admin/podcasts/${podcastId}/episodes` : `/author/podcasts/${podcastId}/episodes`} className="block">
+                <Button
+                  variant="default" 
+                  size="lg" 
+                  className={`w-full bg-blue-600 hover:bg-blue-700 text-white ${isAdmin ? '' : 'rounded-full'}`}
+                >
+                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Manage All Episodes
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

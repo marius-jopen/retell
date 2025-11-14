@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input, TextArea, FileInput, PDFViewer, AudioPlayer } from '@/components/ui'
 import { ImageGalleryUpload } from '@/components/podcast/image-gallery-upload'
@@ -322,58 +322,73 @@ export default function EditPodcastForm({
   }
 
   // Notify parent component when form data changes (hosts moved to HostsManager)
+  // Use a ref to prevent infinite loops
+  const prevFormDataRef = React.useRef<string>('')
+  
   useEffect(() => {
-    console.log('📋 Form data useEffect triggered:', {
-      scriptFile: scriptFile?.name,
-      scriptEnglishFile: scriptEnglishFile?.name,
-      scriptAudioTracksFile: scriptAudioTracksFile?.name,
-      scriptMusicFile: scriptMusicFile?.name
+    if (!onFormDataChange) return
+    
+    // Create a stable key to detect actual changes
+    const formDataKey = JSON.stringify({
+      title: formData.title,
+      description: formData.description,
+      category: formData.category,
+      license_countries: licenseCountries,
+      scriptFiles: {
+        script: scriptFile?.name,
+        scriptEnglish: scriptEnglishFile?.name,
+        scriptAudioTracks: scriptAudioTracksFile?.name,
+        scriptMusic: scriptMusicFile?.name
+      }
     })
     
-    if (onFormDataChange) {
-      const effectiveTitle = formData.title
-      const effectiveDescription = formData.description
-      
-      // Prepare license demographics
-      const demographics = {
-        gender: {
-          male: licenseData.genderMale ? parseInt(licenseData.genderMale) : null,
-          female: licenseData.genderFemale ? parseInt(licenseData.genderFemale) : null,
-          diverse: licenseData.genderDiverse ? parseInt(licenseData.genderDiverse) : null
-        },
-        age: {
-          age_18_27: licenseData.age18_27 ? parseInt(licenseData.age18_27) : null,
-          age_27_34: licenseData.age27_34 ? parseInt(licenseData.age27_34) : null,
-          age_35_45: licenseData.age35_45 ? parseInt(licenseData.age35_45) : null,
-          age_45_plus: licenseData.age45plus ? parseInt(licenseData.age45plus) : null
-        }
+    // Only call onFormDataChange if data actually changed
+    if (formDataKey === prevFormDataRef.current) return
+    prevFormDataRef.current = formDataKey
+    
+    const effectiveTitle = formData.title
+    const effectiveDescription = formData.description
+    
+    // Prepare license demographics
+    const demographics = {
+      gender: {
+        male: licenseData.genderMale ? parseInt(licenseData.genderMale) : null,
+        female: licenseData.genderFemale ? parseInt(licenseData.genderFemale) : null,
+        diverse: licenseData.genderDiverse ? parseInt(licenseData.genderDiverse) : null
+      },
+      age: {
+        age_18_27: licenseData.age18_27 ? parseInt(licenseData.age18_27) : null,
+        age_27_34: licenseData.age27_34 ? parseInt(licenseData.age27_34) : null,
+        age_35_45: licenseData.age35_45 ? parseInt(licenseData.age35_45) : null,
+        age_45_plus: licenseData.age45plus ? parseInt(licenseData.age45plus) : null
       }
-      
-      onFormDataChange(
-        { 
-          ...formData, 
-          title: effectiveTitle, 
-          description: effectiveDescription, 
-          license_countries: licenseCountries,
-          // License agreement data
-          license_format: licenseData.format || null,
-          license_copyright: licenseData.copyright || null,
-          license_territory: licenseData.territory || null,
-          license_excluded_countries: licenseData.excludedCountries ? licenseData.excludedCountries.split(',').map((s: string) => s.trim()).filter(Boolean) : null,
-          license_total_listeners: licenseData.totalListeners ? parseInt(licenseData.totalListeners) : null,
-          license_listeners_per_episode: licenseData.listenersPerEpisode ? parseInt(licenseData.listenersPerEpisode) : null,
-          license_demographics: demographics,
-          license_rights_ownership: licenseData.rightsOwnership || null,
-          // Script files
-          scriptFile,
-          scriptEnglishFile,
-          scriptAudioTracksFile,
-          scriptMusicFile
-        },
-        coverImage
-      )
     }
-  }, [formData, licenseCountries, coverImage, licenseData, scriptFile, scriptEnglishFile, scriptAudioTracksFile, scriptMusicFile, onFormDataChange])
+    
+    onFormDataChange(
+      { 
+        ...formData, 
+        title: effectiveTitle, 
+        description: effectiveDescription, 
+        license_countries: licenseCountries,
+        // License agreement data
+        license_format: licenseData.format || null,
+        license_copyright: licenseData.copyright || null,
+        license_territory: licenseData.territory || null,
+        license_excluded_countries: licenseData.excludedCountries ? licenseData.excludedCountries.split(',').map((s: string) => s.trim()).filter(Boolean) : null,
+        license_total_listeners: licenseData.totalListeners ? parseInt(licenseData.totalListeners) : null,
+        license_listeners_per_episode: licenseData.listenersPerEpisode ? parseInt(licenseData.listenersPerEpisode) : null,
+        license_demographics: demographics,
+        license_rights_ownership: licenseData.rightsOwnership || null,
+        // Script files
+        scriptFile,
+        scriptEnglishFile,
+        scriptAudioTracksFile,
+        scriptMusicFile
+      },
+      coverImage
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, licenseCountries, coverImage, licenseData, scriptFile, scriptEnglishFile, scriptAudioTracksFile, scriptMusicFile])
 
   return (
     <>
