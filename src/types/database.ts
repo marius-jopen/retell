@@ -62,6 +62,7 @@ export interface Database {
           script_english_url: string | null
           script_audio_tracks_url: string | null
           script_music_url: string | null
+          manual_overrides: Record<string, boolean> | null
           created_at: string
           updated_at: string
         }
@@ -92,6 +93,7 @@ export interface Database {
           script_english_url?: string | null
           script_audio_tracks_url?: string | null
           script_music_url?: string | null
+          manual_overrides?: Record<string, boolean> | null
           created_at?: string
           updated_at?: string
         }
@@ -122,6 +124,7 @@ export interface Database {
           script_english_url?: string | null
           script_audio_tracks_url?: string | null
           script_music_url?: string | null
+          manual_overrides?: Record<string, boolean> | null
           created_at?: string
           updated_at?: string
         }

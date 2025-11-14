@@ -119,11 +119,12 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
 
 
         // Process country translations
+        const defaultCountry = podcastData.country || 'DE'
         const translationsMap: Record<string, { title: string; description: string; cover_image_url: string | null }> = {}
-        const countries = [podcastData.country] // Start with default country
+        const countries = [defaultCountry] // Start with default country
         
         // Add default country data
-        translationsMap[podcastData.country] = {
+        translationsMap[defaultCountry] = {
           title: podcastData.title,
           description: podcastData.description,
           cover_image_url: podcastData.cover_image_url
@@ -133,7 +134,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
         if (countryTrans && countryTrans.length > 0) {
           console.log('Using real country translations:', countryTrans)
           countryTrans.forEach((trans: any) => {
-            if (trans.country_code && trans.country_code !== podcastData.country) {
+            if (trans.country_code && trans.country_code !== defaultCountry) {
               translationsMap[trans.country_code] = {
                 title: trans.title,
                 description: trans.description,
@@ -198,10 +199,10 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
         
         setCountryTranslations(translationsMap)
         setLanguageTranslations(languageTranslationsMap)
-        setAvailableCountries(countries)
+        setAvailableCountries(Array.from(new Set(countries)))
         setAvailableLanguages(languages)
-        setSelectedCountry(podcastData.country)
-        setSelectedLanguage(podcastData.language)
+        setSelectedCountry(defaultCountry)
+        setSelectedLanguage(podcastData.language || 'en')
         setPodcast(podcastData)
 
         // Fetch gallery images

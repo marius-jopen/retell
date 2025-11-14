@@ -15,6 +15,15 @@ export interface CountryTranslation {
 
 
 
+export interface ManualOverrides {
+  title?: boolean
+  description?: boolean
+  cover_image?: boolean
+  category?: boolean
+  language?: boolean
+  country?: boolean
+}
+
 export interface Podcast {
   id: string
   title: string
@@ -38,6 +47,7 @@ export interface Podcast {
     email: string
   }
   hosts?: Host[]
+  manual_overrides?: ManualOverrides
 }
 
 export interface Episode {

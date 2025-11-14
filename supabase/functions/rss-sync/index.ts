@@ -175,31 +175,39 @@ async function syncPodcastRSS(supabase: any, podcast: any): Promise<{ newEpisode
       return { newEpisodes: 0, errors }
     }
     
+    const overrides = podcast.manual_overrides || {}
+    const isOverridden = (field: 'title' | 'description' | 'cover_image' | 'category' | 'language' | 'country') =>
+      overrides && overrides[field] === true
+
     // Update podcast metadata if needed
     const updates: any = {}
     let podcastUpdated = false
     
-    if (feed.title && feed.title !== podcast.title) {
+    if (!isOverridden('title') && feed.title && feed.title !== podcast.title) {
       updates.title = feed.title
       podcastUpdated = true
     }
     
-    if (feed.description && feed.description !== podcast.description) {
+    if (!isOverridden('description') && feed.description && feed.description !== podcast.description) {
       updates.description = feed.description
       podcastUpdated = true
     }
     
-    if (feed.image?.url && feed.image.url !== podcast.cover_image_url) {
+    if (!isOverridden('cover_image') && feed.image?.url && feed.image.url !== podcast.cover_image_url) {
       updates.cover_image_url = feed.image.url
       podcastUpdated = true
     }
 
-    if (feed.itunes?.category?.[0] && feed.itunes.category[0] !== podcast.category) {
+    if (
+      !isOverridden('category') &&
+      feed.itunes?.category?.[0] &&
+      feed.itunes.category[0] !== podcast.category
+    ) {
       updates.category = feed.itunes.category[0]
       podcastUpdated = true
     }
 
-    if (feed.language && feed.language !== podcast.language) {
+    if (!isOverridden('language') && feed.language && feed.language !== podcast.language) {
       updates.language = feed.language
       podcastUpdated = true
     }
@@ -301,7 +309,7 @@ Deno.serve(async (req) => {
     // Get all podcasts with RSS URLs
     const { data: podcasts, error: podcastsError } = await supabase
       .from('podcasts')
-      .select('id, title, description, cover_image_url, rss_url, author_id, auto_publish_episodes')
+      .select('id, title, description, cover_image_url, rss_url, author_id, auto_publish_episodes, category, language, manual_overrides')
       .not('rss_url', 'is', null)
       .eq('status', 'approved') // Only sync approved podcasts
     

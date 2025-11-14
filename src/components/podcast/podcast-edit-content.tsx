@@ -380,17 +380,37 @@ function PodcastEditContent({
         }
       }
 
+      const resolvedCategory = generalCategory || formData.category || ''
+      const resolvedLanguage = generalLanguage || formData.language || 'en'
+      const resolvedCountry = generalCountry || formData.country || 'DE'
+      const resolvedStatus = (generalStatus || formData.status || 'draft') as 'draft' | 'pending' | 'approved' | 'rejected'
+      const resolvedRssUrl = generalRss || formData.rss_url || null
+
+      const existingOverrides =
+        (podcast as any)?.manual_overrides ? { ...(podcast as any).manual_overrides } : {}
+      const updatedOverrides = { ...existingOverrides }
+
+      if (resolvedCategory && resolvedCategory !== podcast?.category) {
+        updatedOverrides.category = true
+      }
+      if (resolvedLanguage && resolvedLanguage !== podcast?.language) {
+        updatedOverrides.language = true
+      }
+      if (resolvedCountry && resolvedCountry !== podcast?.country) {
+        updatedOverrides.country = true
+      }
+
       // Update podcast with normal fields
       const podcastUpdate: any = {
         title: formData.title as string,
         description: formData.description as string,
         title_english: formData.title_english as string | null,
         description_english: formData.description_english as string | null,
-        category: formData.category as string,
-        language: formData.language as string,
-        country: formData.country as string,
-        status: formData.status as 'draft' | 'pending' | 'approved' | 'rejected',
-        rss_url: formData.rss_url as string | null,
+        category: resolvedCategory,
+        language: resolvedLanguage,
+        country: resolvedCountry,
+        status: resolvedStatus,
+        rss_url: resolvedRssUrl,
         auto_publish_episodes: formData.auto_publish_episodes as boolean,
         cover_image_url: coverImageUrl,
         hosts: processedHosts,
@@ -414,6 +434,10 @@ function PodcastEditContent({
         script_music_title: formData.script_music_title as string | null,
         script_music_description: formData.script_music_description as string | null,
         updated_at: new Date().toISOString()
+      }
+
+      if (Object.keys(updatedOverrides).length > 0) {
+        podcastUpdate.manual_overrides = updatedOverrides
       }
       
       const { error: updateError } = await supabase
@@ -578,13 +602,29 @@ function PodcastEditContent({
                         await handleSubmit(currentFormData, currentCoverImage)
                       } else {
                       // Fallback: update general info only
+                        const generalOverrides =
+                          (podcast as any)?.manual_overrides ? { ...(podcast as any).manual_overrides } : {}
+                        if (generalCategory && generalCategory !== podcast?.category) {
+                          generalOverrides.category = true
+                        }
+                        if (generalLanguage && generalLanguage !== podcast?.language) {
+                          generalOverrides.language = true
+                        }
+                        if (generalCountry && generalCountry !== podcast?.country) {
+                          generalOverrides.country = true
+                        }
+
                         const podcastUpdateData: any = { 
                           status: generalStatus, 
                           category: generalCategory, 
                           language: generalLanguage,
                           rss_url: generalRss, 
                           country: generalCountry,
-                          updated_at: new Date().toISOString() 
+                          updated_at: new Date().toISOString(),
+                        }
+
+                        if (Object.keys(generalOverrides).length > 0) {
+                          podcastUpdateData.manual_overrides = generalOverrides
                         }
                         
                         const { error: generalError } = await supabase

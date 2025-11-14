@@ -255,8 +255,24 @@ export const COUNTRIES: Country[] = [
 
 export const countryNameByCode = (code: string): string => {
   if (!code) return 'Unknown';
-  const c = COUNTRIES.find((c) => c.code === code);
-  return c ? c.name : 'Unknown';
+
+  const trimmed = code.trim();
+  if (!trimmed) return 'Unknown';
+
+  const normalizedCode = trimmed.toUpperCase();
+  const byCode = COUNTRIES.find((c) => c.code === normalizedCode);
+  if (byCode) return byCode.name;
+
+  const normalizedName = trimmed.toLowerCase();
+  const byName = COUNTRIES.find((c) => c.name.toLowerCase() === normalizedName);
+  if (byName) return byName.name;
+
+  // As a last resort, return the provided value capitalized
+  return trimmed
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 };
 
 

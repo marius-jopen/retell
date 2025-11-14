@@ -31,6 +31,16 @@ export function PodcastHero({
   user,
   onLanguageChange
 }: PodcastHeroProps) {
+  const displayCountryCode = selectedCountry || podcast.country || 'DE'
+  const displayLanguageCode = selectedLanguage || podcast.language || 'en'
+
+  const scrollToLicensing = () => {
+    const target = document.getElementById('licensing-section')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
   return (
     <div className="bg-brand text-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -123,10 +133,10 @@ export function PodcastHero({
                 Category: {podcast.category}
               </span>
               <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
-                Country: {countryNameByCode(selectedCountry)}
+                Country: {countryNameByCode(displayCountryCode)}
               </span>
               <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
-                Language: {getLanguageName(selectedLanguage)}
+                Language: {getLanguageName(displayLanguageCode)}
               </span>
             </div>
             
@@ -199,6 +209,16 @@ export function PodcastHero({
               </div>
             )}
           </div>
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <Button
+            size="lg"
+            onClick={scrollToLicensing}
+            className="bg-white text-black hover:bg-gray-100 font-semibold px-8 py-3 rounded-full shadow-lg shadow-orange-900/30 transition-transform hover:-translate-y-0.5"
+          >
+            🚀 Start Licensing
+          </Button>
         </div>
       </div>
     </div>

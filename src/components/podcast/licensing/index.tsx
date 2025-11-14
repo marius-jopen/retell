@@ -132,7 +132,7 @@ export function PodcastLicensing({ podcast }: PodcastLicensingProps) {
   const excludedCountries = podcast.license_excluded_countries?.map((c: string) => countryNameByCode(c)) ?? []
 
   return (
-    <section className="bg-orange-50 border-y border-orange-100">
+    <section id="licensing-section" className="bg-orange-50 border-y border-orange-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <LicensingHeader />
 
