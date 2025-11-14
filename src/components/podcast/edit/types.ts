@@ -2,9 +2,10 @@ export interface Host {
   id: string
   name: string
   language: string
-  image?: File | string
+  image?: string
   imagePreviewUrl?: string
   image_url?: string // For database storage
+  imageFile?: File | null
 }
 
 export interface CountryTranslation {

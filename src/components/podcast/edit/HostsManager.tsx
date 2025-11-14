@@ -18,16 +18,13 @@ interface Host {
 interface HostsManagerProps {
   hosts: Host[]
   onHostsChange: (hosts: Host[]) => void
-  onFileUpload?: (hostId: string, file: File) => void
 }
 
 export default function HostsManager({ 
   hosts, 
-  onHostsChange, 
-  onFileUpload 
+  onHostsChange
 }: HostsManagerProps) {
   const { addToast } = useToast()
-  const hostFilesRef = useRef<Map<string, File>>(new Map())
 
   const handleAddHost = () => {
     const newHost: Host = {
@@ -41,9 +38,6 @@ export default function HostsManager({
   const handleRemoveHost = (hostId: string) => {
     const updatedHosts = hosts.filter(h => h.id !== hostId)
     onHostsChange(updatedHosts)
-    
-    // Clean up file reference
-    hostFilesRef.current.delete(hostId)
   }
 
   const handleHostChange = (hostId: string, field: keyof Host, value: any) => {
@@ -60,19 +54,12 @@ export default function HostsManager({
       return
     }
 
-    // Store file reference
-    hostFilesRef.current.set(hostId, file)
-    
-    // Notify parent component
-    if (onFileUpload) {
-      onFileUpload(hostId, file)
-    }
-
     // Create preview
     const reader = new FileReader()
     reader.onload = () => {
-      handleHostChange(hostId, 'image', file)
       handleHostChange(hostId, 'imagePreviewUrl', reader.result as string)
+      handleHostChange(hostId, 'image', reader.result as string)
+      handleHostChange(hostId, 'imageFile', file)
     }
     reader.readAsDataURL(file)
   }
@@ -137,6 +124,7 @@ export default function HostsManager({
               id={`host_${host.id}_image`}
               accept="image/*"
               helperText="Upload host photo (max 5MB)"
+              value={undefined}
               onChange={(e) => {
                 const file = (e.target as HTMLInputElement).files?.[0]
                 if (file) {

@@ -72,31 +72,61 @@ export function PodcastHero({
             {/* Hosts Section */}
             <div className="flex flex-wrap gap-6">
               {podcast.hosts && podcast.hosts.length > 0 ? (
-                podcast.hosts.map((host: any, index: number) => (
-                  <div key={host.id || index} className="flex items-center space-x-3">
-                    <div className="w-12 h-12 rounded-full overflow-hidden">
-                      {host.image_url ? (
-                        <img
-                          src={host.image_url}
-                          alt={host.name || 'Host'}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-white/20 flex items-center justify-center">
-                          <span className="text-white font-semibold text-sm">
-                            {host.name?.substring(0, 2).toUpperCase() || 'H'}
-                          </span>
+                podcast.hosts
+                  .map((host: any, index: number) => {
+                    const hostImage =
+                      host.image_url ||
+                      host.imageUrl ||
+                      host.image ||
+                      host.imagePreviewUrl ||
+                      host.imageFile?.preview ||
+                      null
+
+                    return {
+                      key: host.id || index,
+                      hasImage: Boolean(hostImage),
+                      image: hostImage,
+                      name: host.name || 'Unknown Host',
+                    }
+                  })
+                  .sort((a: { hasImage: boolean }, b: { hasImage: boolean }) => Number(b.hasImage) - Number(a.hasImage))
+                  .map(
+                    ({
+                      key,
+                      hasImage,
+                      image,
+                      name,
+                    }: {
+                      key: string | number
+                      hasImage: boolean
+                      image: string | null
+                      name: string
+                    }) => (
+                    <div key={key} className="flex items-center space-x-3">
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10">
+                        {hasImage && image ? (
+                          <img
+                            src={image}
+                            alt={name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-white/20 flex items-center justify-center">
+                            <span className="text-white font-semibold text-sm">
+                              {name.substring(0, 2).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-left">
+                        <div className="text-sm text-white/80 font-medium">Host</div>
+                        <div className="text-base font-semibold text-white">
+                          {name}
                         </div>
-                      )}
-                    </div>
-                    <div className="text-left">
-                      <div className="text-sm text-white/80 font-medium">Host</div>
-                      <div className="text-base font-semibold text-white">
-                        {host.name || 'Unknown Host'}
                       </div>
                     </div>
-                  </div>
-                ))
+                    )
+                  )
               ) : (
                 // Fallback to author if no hosts
                 <div className="flex items-center space-x-3">

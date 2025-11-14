@@ -18,6 +18,13 @@ type PodcastType = Database['public']['Tables']['podcasts']['Row'] & {
     avatar_url: string | null
     company: string | null
   }
+  hosts: Array<{
+    id: string
+    name: string
+    language: string
+    image_url?: string | null
+    image?: string | null
+  }> | null
 }
 
 interface PodcastDetailPageProps {

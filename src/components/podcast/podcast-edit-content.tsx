@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
@@ -50,9 +50,6 @@ function PodcastEditContent({
   const [currentFormData, setCurrentFormData] = useState<any>(null)
   const [currentCoverImage, setCurrentCoverImage] = useState<File | null>(null)
   const [currentHosts, setCurrentHosts] = useState<Host[]>([])
-  
-  // Store host files separately to avoid serialization issues
-  const hostFilesRef = useRef<Map<string, File>>(new Map())
 
   // Country exclusion list
   const [excludedCountries, setExcludedCountries] = useState<string[]>([])
@@ -157,7 +154,8 @@ function PodcastEditContent({
             name: host.name || '',
             language: host.language || 'en',
             image: host.image_url || '',
-            imagePreviewUrl: host.image_url || undefined
+            imagePreviewUrl: host.image_url || undefined,
+            imageFile: null
           }))
           setCurrentHosts(hostsData)
         } else {
@@ -324,50 +322,42 @@ function PodcastEditContent({
       const processedHosts = []
       const hostsData = currentHosts || []
       
+      console.log('🧑‍🤝‍🧑 Hosts before processing:', hostsData)
+
       for (const host of hostsData) {
         let hostImageUrl = null
+        const fileToUpload = host.imageFile
+        console.log('➡️ Host snapshot:', {
+          id: host.id,
+          name: host.name,
+          hasImage: Boolean(host.image),
+          imageType: typeof host.image,
+          hasImageFile: Boolean(fileToUpload)
+        })
         
-        // Check if image is a File reference
-        if (host.image && typeof host.image === 'string' && host.image.startsWith('FILE:')) {
-          const hostId = host.image.replace('FILE:', '')
-          const imageFile = hostFilesRef.current.get(hostId)
-          
-          if (imageFile) {
-            const fileExt = imageFile.name.split('.').pop()
-            const fileName = `host-image-${podcastId}-${host.id}-${Date.now()}.${fileExt}`
-            
-            const { error: hostUploadError } = await supabase.storage
-              .from('podcast-covers')
-              .upload(fileName, imageFile)
-
-            if (hostUploadError) {
-              addToast({ type: 'error', message: `Failed to upload image for ${host.name}: ${hostUploadError.message}` })
-            } else {
-              const { data: hostUrlData } = supabase.storage
-                .from('podcast-covers')
-                .getPublicUrl(fileName)
-              hostImageUrl = hostUrlData.publicUrl
-            }
-          }
-        } else if (host.image && host.image instanceof File) {
-          const fileExt = host.image.name.split('.').pop()
+        if (fileToUpload) {
+          console.log('📤 Uploading host image for', host.name)
+          const fileExt = fileToUpload.name.split('.').pop()
           const fileName = `host-image-${podcastId}-${host.id}-${Date.now()}.${fileExt}`
           
           const { error: hostUploadError } = await supabase.storage
             .from('podcast-covers')
-            .upload(fileName, host.image)
+            .upload(fileName, fileToUpload)
 
           if (hostUploadError) {
             addToast({ type: 'error', message: `Failed to upload image for ${host.name}: ${hostUploadError.message}` })
+            console.error('❌ Host image upload failed', hostUploadError)
           } else {
             const { data: hostUrlData } = supabase.storage
               .from('podcast-covers')
               .getPublicUrl(fileName)
             hostImageUrl = hostUrlData.publicUrl
+            console.log('✅ Host image uploaded for', host.name, hostImageUrl)
           }
-        } else if (typeof host.image === 'string' && host.image && !host.image.startsWith('FILE:')) {
-          // Keep existing image URL
+        } else if (typeof host.image === 'string' && host.image) {
+          // Keep existing image URL (already stored)
           hostImageUrl = host.image
+          console.log('🔁 Reusing existing host image for', host.name)
         }
 
         if (host.name.trim()) { // Only save hosts with names
@@ -379,6 +369,8 @@ function PodcastEditContent({
           })
         }
       }
+
+      console.log('📦 Processed hosts payload:', processedHosts)
 
       const resolvedCategory = generalCategory || formData.category || ''
       const resolvedLanguage = generalLanguage || formData.language || 'en'
@@ -713,9 +705,6 @@ function PodcastEditContent({
             <HostsManager 
               hosts={currentHosts}
               onHostsChange={setCurrentHosts}
-              onFileUpload={(hostId, file) => {
-                hostFilesRef.current.set(hostId, file)
-              }}
             />
           </div>
 
