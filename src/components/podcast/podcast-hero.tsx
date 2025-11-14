@@ -231,13 +231,13 @@ export function PodcastHero({
             )}
 
             {/* Action Buttons - Only for logged-in clients */}
-            {user?.user_metadata?.role === 'client' && (
+            {/* {user?.user_metadata?.role === 'client' && (
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 font-semibold px-6 py-3 rounded-full">
                   Request License
                 </Button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 
