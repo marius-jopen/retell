@@ -62,6 +62,8 @@ export default function EpisodeEdit({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [fetchError, setFetchError] = useState('')
+  const [translatingTitle, setTranslatingTitle] = useState(false)
+  const [translatingDescription, setTranslatingDescription] = useState(false)
   const router = useRouter()
   const supabase = createBrowserSupabaseClient()
   const { addToast } = useToast()
@@ -198,6 +200,103 @@ export default function EpisodeEdit({
     }
   }
 
+  const translateText = async (text: string, sourceLang: string = 'auto'): Promise<string | null> => {
+    try {
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          sourceLang,
+          targetLang: 'EN',
+        }),
+      })
+
+      if (!response.ok) {
+        let errorMessage = 'Translation failed'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorData.details || errorMessage
+        } catch (e) {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`
+        }
+        throw new Error(errorMessage)
+      }
+
+      const data = await response.json()
+      return data.translatedText || null
+    } catch (error) {
+      console.error('Translation error:', error)
+      throw error
+    }
+  }
+
+  const handleTranslateTitle = async () => {
+    if (!formData.title.trim()) {
+      addToast({
+        type: 'error',
+        message: 'Please enter a title to translate',
+      })
+      return
+    }
+
+    setTranslatingTitle(true)
+    setError('')
+
+    try {
+      const translated = await translateText(formData.title)
+      if (translated) {
+        setFormData({ ...formData, title_english: translated })
+        addToast({
+          type: 'success',
+          message: 'Title translated successfully',
+        })
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to translate title')
+      addToast({
+        type: 'error',
+        message: 'Failed to translate title. Please try again.',
+      })
+    } finally {
+      setTranslatingTitle(false)
+    }
+  }
+
+  const handleTranslateDescription = async () => {
+    if (!formData.description.trim()) {
+      addToast({
+        type: 'error',
+        message: 'Please enter a description to translate',
+      })
+      return
+    }
+
+    setTranslatingDescription(true)
+    setError('')
+
+    try {
+      const translated = await translateText(formData.description)
+      if (translated) {
+        setFormData({ ...formData, description_english: translated })
+        addToast({
+          type: 'success',
+          message: 'Description translated successfully',
+        })
+      }
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to translate description')
+      addToast({
+        type: 'error',
+        message: 'Failed to translate description. Please try again.',
+      })
+    } finally {
+      setTranslatingDescription(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -245,8 +344,8 @@ export default function EpisodeEdit({
       }
 
       // Upload new files if provided
-      let audioUrl = episode?.audio_url || null
-      let scriptUrl = episode?.script_url || null
+      let audioUrl = episode?.audio_url || ''
+      let scriptUrl = episode?.script_url || ''
 
       if (audioFile) {
         audioUrl = await uploadFile(audioFile, 'podcast-audio', `${podcastId}/${audioFile.name}`)
@@ -256,9 +355,16 @@ export default function EpisodeEdit({
         scriptUrl = await uploadFile(scriptFile, 'podcast-scripts', `${podcastId}/${scriptFile.name}`)
       }
       
-      // Normalize empty strings to null
-      if (scriptUrl === '') {
-        scriptUrl = null
+      // Ensure script_url is never null (database constraint requires NOT NULL)
+      // Use empty string if no script is provided
+      if (!scriptUrl) {
+        scriptUrl = ''
+      }
+      
+      // Ensure audio_url is never null (database constraint requires NOT NULL)
+      // Use empty string if no audio is provided
+      if (!audioUrl) {
+        audioUrl = ''
       }
 
       // Parse duration from string (mm:ss format)
@@ -274,26 +380,59 @@ export default function EpisodeEdit({
         }
       }
 
+      // Prepare update data
+      const updateData: any = {
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        episode_number: formData.episode_number,
+        season_number: formData.season_number,
+        duration: durationInSeconds,
+        audio_url: audioUrl,
+        script_url: scriptUrl,
+        updated_at: new Date().toISOString()
+      }
+
+      // Only include translation fields if they have values (to avoid errors if columns don't exist)
+      if (formData.title_english && formData.title_english.trim()) {
+        updateData.title_english = formData.title_english.trim()
+      } else if (formData.title_english === '') {
+        updateData.title_english = null
+      }
+
+      if (formData.description_english && formData.description_english.trim()) {
+        updateData.description_english = formData.description_english.trim()
+      } else if (formData.description_english === '') {
+        updateData.description_english = null
+      }
+
       // Update episode
-      const { error: updateError } = await supabase
+      const { data: updatedData, error: updateError } = await supabase
         .from('episodes')
-        .update({
-          title: formData.title.trim(),
-          description: formData.description.trim(),
-          title_english: formData.title_english.trim() || null,
-          description_english: formData.description_english.trim() || null,
-          episode_number: formData.episode_number,
-          season_number: formData.season_number,
-          duration: durationInSeconds,
-          audio_url: audioUrl,
-          script_url: scriptUrl,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', episodeId)
+        .select()
+        .single()
 
       if (updateError) {
-        console.error('Error updating episode:', updateError)
-        setError('Failed to update episode. Please try again.')
+        console.error('Error updating episode:', {
+          error: updateError,
+          message: updateError.message,
+          details: updateError.details,
+          hint: updateError.hint,
+          code: updateError.code,
+          updateData
+        })
+        const errorMsg = updateError.message || updateError.details || updateError.hint || 'Failed to update episode. Please try again.'
+        setError(errorMsg)
+        addToast({
+          type: 'error',
+          message: errorMsg
+        })
+        return
+      }
+
+      if (!updatedData) {
+        setError('Update completed but no data returned')
         return
       }
 
@@ -305,8 +444,12 @@ export default function EpisodeEdit({
       router.push(successRedirectUrl)
       router.refresh()
     } catch (error) {
-      console.error('Error updating episode:', error)
-      setError('Failed to update episode. Please try again.')
+      console.error('Error updating episode:', {
+        error,
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      })
+      setError(error instanceof Error ? error.message : 'Failed to update episode. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -419,13 +562,42 @@ export default function EpisodeEdit({
               required
             />
 
-            <Input
-              label="Episode Title (English)"
-              id="title_english"
-              value={formData.title_english}
-              onChange={(e) => setFormData({ ...formData, title_english: e.target.value })}
-              placeholder="Enter English title (optional)"
-            />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="title_english" className="block text-sm font-medium text-gray-700">
+                  Episode Title (English)
+                </label>
+                <button
+                  type="button"
+                  onClick={handleTranslateTitle}
+                  disabled={translatingTitle || !formData.title.trim()}
+                  className="text-xs px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded border border-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                >
+                  {translatingTitle ? (
+                    <>
+                      <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Translating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                      </svg>
+                      Translate
+                    </>
+                  )}
+                </button>
+              </div>
+              <Input
+                id="title_english"
+                value={formData.title_english}
+                onChange={(e) => setFormData({ ...formData, title_english: e.target.value })}
+                placeholder="Enter English title (optional)"
+              />
+            </div>
           </div>
 
           {/* Description Fields - Side by Side */}
@@ -440,14 +612,43 @@ export default function EpisodeEdit({
               required
             />
 
-            <TextArea
-              label="Description (English)"
-              id="description_english"
-              value={formData.description_english}
-              onChange={(e) => setFormData({ ...formData, description_english: e.target.value })}
-              rows={4}
-              placeholder="Enter English description (optional)"
-            />
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="description_english" className="block text-sm font-medium text-gray-700">
+                  Description (English)
+                </label>
+                <button
+                  type="button"
+                  onClick={handleTranslateDescription}
+                  disabled={translatingDescription || !formData.description.trim()}
+                  className="text-xs px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded border border-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                >
+                  {translatingDescription ? (
+                    <>
+                      <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Translating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                      </svg>
+                      Translate
+                    </>
+                  )}
+                </button>
+              </div>
+              <TextArea
+                id="description_english"
+                value={formData.description_english}
+                onChange={(e) => setFormData({ ...formData, description_english: e.target.value })}
+                rows={4}
+                placeholder="Enter English description (optional)"
+              />
+            </div>
           </div>
 
           {/* Helper Text */}

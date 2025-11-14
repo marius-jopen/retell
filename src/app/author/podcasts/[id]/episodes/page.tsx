@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
 import EpisodeActions from '@/components/author/episode-actions'
 import EpisodesLayout from '@/components/author/episodes-layout'
+import TranslateAllEpisodes from '@/components/author/translate-all-episodes'
 
 interface Episode {
   id: string
@@ -137,6 +138,9 @@ export default async function EpisodesPage({
               <p className="text-sm text-gray-500">{episodes.length} episodes</p>
             </div>
             <div className="flex items-center space-x-4">
+              {episodes.length > 0 && (
+                <TranslateAllEpisodes podcastId={id} episodes={episodes} />
+              )}
               <Link href={`/author/podcasts/${id}/episodes/new`}>
                 <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
                   Add Episode
