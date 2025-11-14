@@ -72,35 +72,34 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
             <img
               src={podcast.cover_image_url}
               alt={podcast.title}
-              className="w-full h-50 object-cover transition-transform duration-300"
+              className="w-full h-40 sm:h-48 object-cover transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-40 bg-brand flex items-center justify-center group-hover:brightness-110 transition-all duration-300">
-              <span className="text-white text-2xl font-bold">
+            <div className="w-full h-40 sm:h-48 bg-brand flex items-center justify-center group-hover:brightness-110 transition-all duration-300">
+              <span className="text-white text-xl sm:text-2xl font-bold">
                 {podcast.title.substring(0, 2).toUpperCase()}
               </span>
             </div>
           )}
           <div className="absolute top-2 right-2">
-            <span className="bg-black/70 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-medium text-white">
+            <span className="bg-black/70 backdrop-blur-sm px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs font-medium text-white">
               {podcast.episodes?.length || 0}
             </span>
           </div>
         </div>
         
-        <div className="p-4 flex flex-col flex-grow">
+        <div className="p-3 sm:p-4 flex flex-col flex-grow">
           {/* Category, Language and Country Info - All in one line */}
-          <div className="flex items-center justify-between gap-4 mb-3 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <div className="flex items-center gap-1">
-                <span>📂</span>
+                <span className="text-sm sm:text-base">📂</span>
                 <span className="capitalize">{podcast.category}</span>
               </div>
-        
             </div>
             <div className="flex items-center gap-1">
-            <div className="flex items-center gap-1">
-                <span>🗣️</span>
+              <div className="flex items-center gap-1">
+                <span className="text-sm sm:text-base">🗣️</span>
                 <span>{podcast.language === 'en' ? 'English' :
                       podcast.language === 'de' ? 'German' :
                       podcast.language === 'fr' ? 'French' :
@@ -114,11 +113,11 @@ export function PodcastCard({ podcast }: PodcastCardProps) {
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2 leading-snug">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 group-hover:text-red-600 transition-colors line-clamp-2 leading-snug">
             {podcast.title_english || podcast.title}
           </h3>
           
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2 leading-relaxed flex-grow">
+          <p className="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2 leading-relaxed flex-grow">
             {podcast.description_english || podcast.description}
           </p>
           

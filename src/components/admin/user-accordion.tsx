@@ -54,22 +54,22 @@ export default function UserAccordion({ user, currentUserId }: UserAccordionProp
     <div className="border-gray-200">
       {/* Header - Always Visible */}
       <div 
-        className="px-6 py-4 hover:bg-orange-50 transition-colors cursor-pointer"
+        className="px-4 sm:px-6 py-3 sm:py-4 hover:bg-orange-50 transition-colors cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
             {/* Avatar */}
             <div className="flex-shrink-0">
               {user.avatar_url ? (
                 <img 
                   src={user.avatar_url} 
                   alt={user.full_name}
-                  className="h-12 w-12 rounded-full object-cover"
+                  className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover"
                 />
               ) : (
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                  <span className="text-white font-bold text-xs sm:text-sm">
                     {user.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                   </span>
                 </div>
@@ -78,36 +78,38 @@ export default function UserAccordion({ user, currentUserId }: UserAccordionProp
 
             {/* Basic Info */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-3">
-                <h3 className="text-lg font-semibold text-gray-900 truncate">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 break-words">
                   {user.full_name}
                 </h3>
-                <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${getRoleColor(user.role)}`}>
+                <span className={`inline-flex items-center px-2 sm:px-3 py-1 text-xs font-medium rounded-full ${getRoleColor(user.role)}`}>
                   {getRoleIcon(user.role)} {user.role}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 truncate">{user.email}</p>
-              <div className="flex items-center space-x-4 text-xs text-gray-500 mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 break-words">{user.email}</p>
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 sm:space-x-4 text-xs text-gray-500 mt-1">
                 <span>{user.company || 'No company'}</span>
-                <span>•</span>
+                <span className="hidden sm:inline">•</span>
                 <span>{user.country || 'No country'}</span>
-                <span>•</span>
-                <span>Joined {new Date(user.created_at).toLocaleDateString()}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="w-full sm:w-auto">Joined {new Date(user.created_at).toLocaleDateString()}</span>
               </div>
             </div>
           </div>
 
           {/* Expand Arrow */}
-          <div className="flex items-center space-x-2">
-            <UserRoleActions
-              userId={user.id}
-              currentRole={user.role}
-              userName={user.full_name}
-              currentUserId={currentUserId}
-            />
-            <button className="p-2 hover:bg-orange-100 rounded-full transition-colors">
+          <div className="flex items-center justify-between sm:justify-end gap-2">
+            <div className="sm:hidden">
+              <UserRoleActions
+                userId={user.id}
+                currentRole={user.role}
+                userName={user.full_name}
+                currentUserId={currentUserId}
+              />
+            </div>
+            <button className="p-2 hover:bg-orange-100 rounded-full transition-colors flex-shrink-0">
               <svg 
-                className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -115,14 +117,22 @@ export default function UserAccordion({ user, currentUserId }: UserAccordionProp
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
+            <div className="hidden sm:block">
+              <UserRoleActions
+                userId={user.id}
+                currentRole={user.role}
+                userName={user.full_name}
+                currentUserId={currentUserId}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="px-6 pb-6 bg-orange-50 border-t border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        <div className="px-4 sm:px-6 pb-4 sm:pb-6 bg-orange-50 border-t border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-3 sm:mt-4">
             {/* Personal Information */}
             <div className="bg-white rounded-modern p-4 border border-orange-200">
               <h4 className="text-sm font-semibold text-gray-900 mb-3">Personal Information</h4>
@@ -204,25 +214,25 @@ export default function UserAccordion({ user, currentUserId }: UserAccordionProp
           </div>
 
           {/* Quick Actions */}
-          <div className="mt-6 pt-4 border-t border-gray-200">
-            <h4 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h4>
+          <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-200">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-900 mb-2 sm:mb-3">Quick Actions</h4>
             <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50">
+              <Button size="sm" variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 text-xs sm:text-sm flex-1 sm:flex-none min-w-0">
                 📧 Send Email
               </Button>
-              <Button size="sm" variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50">
+              <Button size="sm" variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 text-xs sm:text-sm flex-1 sm:flex-none min-w-0">
                 🔍 View Activity
               </Button>
-              <Button size="sm" variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50">
+              <Button size="sm" variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 text-xs sm:text-sm flex-1 sm:flex-none min-w-0">
                 ⚙️ Edit Profile
               </Button>
               {user.role === 'author' && (
-                <Button size="sm" variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50">
+                <Button size="sm" variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 text-xs sm:text-sm flex-1 sm:flex-none min-w-0">
                   🎤 View Podcasts
                 </Button>
               )}
               {user.id !== currentUserId && (
-                <Button size="sm" variant="outline" className="rounded-full border-red-200 text-red-600 hover:bg-red-50">
+                <Button size="sm" variant="outline" className="rounded-full border-red-200 text-red-600 hover:bg-red-50 text-xs sm:text-sm flex-1 sm:flex-none min-w-0">
                   🚫 Suspend User
                 </Button>
               )}

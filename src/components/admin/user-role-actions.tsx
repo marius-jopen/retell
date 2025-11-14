@@ -59,12 +59,12 @@ export default function UserRoleActions({ userId, currentRole, userName, current
   }
 
   return (
-    <div className="flex space-x-1">
+    <div className="flex gap-1">
       {currentRole !== 'author' && (
         <Button
           size="sm"
           variant="outline"
-          className="text-xs"
+          className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3"
           onClick={() => updateUserRole('author')}
           disabled={loading !== null}
         >

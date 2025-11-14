@@ -66,18 +66,18 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
       <div className="absolute inset-0 bg-red-600/20"></div>
       <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
-          <div className="text-6xl mb-6">🚀</div>
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <div className="text-5xl sm:text-6xl mb-4 sm:mb-6">🚀</div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
             Join the Adventure! ✨
           </h2>
-          <p className="text-red-100 mb-8">
+          <p className="text-sm sm:text-base text-red-100 mb-6 sm:mb-8">
             🎙️ Ready to share your amazing podcast stories with the world? Let&apos;s create your account!
           </p>
-          <p className="text-red-100/80">
+          <p className="text-xs sm:text-sm text-red-100/80">
             Already have an account?{' '}
             <Link href="/auth/login" className="font-medium text-white hover:text-red-200 underline decoration-white/50 hover:decoration-white transition-all">
               🎧 Sign in here
@@ -86,8 +86,8 @@ export default function SignupPage() {
         </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
-        <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-8 py-12 border border-white/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
+      <div className="mt-6 sm:mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
+        <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-8 sm:py-12 border border-white/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
           <form className="space-y-6" onSubmit={handleSignup}>
             <Input
               label="👤 Full Name"
@@ -155,7 +155,7 @@ export default function SignupPage() {
             <div>
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm sm:text-base"
                 disabled={loading}
               >
                 {loading ? '🔄 Creating your account...' : '🎉 Create Account'}
@@ -163,9 +163,9 @@ export default function SignupPage() {
             </div>
           </form>
 
-          <div className="mt-8">
-            <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border border-red-100">
-              <p className="text-xs text-gray-600 text-center">
+          <div className="mt-6 sm:mt-8">
+            <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-red-100">
+              <p className="text-xs text-gray-600 text-center break-words">
                 🤝 By creating an account, you agree to our{' '}
                 <Link href="/terms" className="text-red-600 hover:text-red-700 underline">
                   Terms of Service
@@ -179,7 +179,7 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <div className="mt-6 text-center">
+          <div className="mt-4 sm:mt-6 text-center">
             <p className="text-xs text-gray-500">
               🎧 Join thousands of podcast creators sharing their stories with the world!
             </p>

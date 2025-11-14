@@ -43,26 +43,26 @@ export function PodcastHero({
 
   return (
     <div className="bg-brand text-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center">
           {/* Cover Image and Authors */}
-          <div className="flex flex-col items-center lg:items-start space-y-6">
+          <div className="flex flex-col items-center lg:items-start space-y-4 sm:space-y-6">
             {/* Cover Image */}
             <div className="relative">
               {(currentTranslation?.cover_image_url || podcast.cover_image_url) ? (
                 <img
                   src={(currentTranslation?.cover_image_url || podcast.cover_image_url) as string}
                   alt={currentTranslation?.title || podcast.title}
-                  className="w-80 h-80 lg:w-96 lg:h-96 object-cover rounded-xl shadow-lg"
+                  className="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[384px] sm:aspect-square object-cover rounded-xl shadow-lg mx-auto lg:mx-0"
                 />
               ) : (
-                <div className="w-80 h-80 lg:w-96 lg:h-96 bg-brand rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white text-4xl font-bold">
+                <div className="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[384px] sm:aspect-square bg-brand rounded-xl flex items-center justify-center shadow-lg mx-auto lg:mx-0 min-h-[200px] sm:min-h-0">
+                  <span className="text-white text-3xl sm:text-4xl font-bold">
                     {(currentTranslation?.title || podcast.title).substring(0, 2).toUpperCase()}
                   </span>
                 </div>
               )}
-              <div className="absolute -bottom-3 -right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
+              <div className="absolute -bottom-2 sm:-bottom-3 -right-2 sm:-right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 sm:px-3 py-1">
                 <span className="text-xs font-semibold text-gray-800">
                   {episodes.length} Episodes
                 </span>
@@ -70,7 +70,7 @@ export function PodcastHero({
             </div>
 
             {/* Hosts Section */}
-            <div className="flex flex-wrap gap-6">
+            <div className="flex flex-wrap gap-4 sm:gap-6 justify-center lg:justify-start w-full">
               {podcast.hosts && podcast.hosts.length > 0 ? (
                 podcast.hosts
                   .map((host: any, index: number) => {
@@ -102,8 +102,8 @@ export function PodcastHero({
                       image: string | null
                       name: string
                     }) => (
-                    <div key={key} className="flex items-center space-x-3">
-                      <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10">
+                    <div key={key} className="flex items-center space-x-2 sm:space-x-3">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-white/10 flex-shrink-0">
                         {hasImage && image ? (
                           <img
                             src={image}
@@ -112,15 +112,15 @@ export function PodcastHero({
                           />
                         ) : (
                           <div className="w-full h-full bg-white/20 flex items-center justify-center">
-                            <span className="text-white font-semibold text-sm">
+                            <span className="text-white font-semibold text-xs sm:text-sm">
                               {name.substring(0, 2).toUpperCase()}
                             </span>
                           </div>
                         )}
                       </div>
                       <div className="text-left">
-                        <div className="text-sm text-white/80 font-medium">Host</div>
-                        <div className="text-base font-semibold text-white">
+                        <div className="text-xs sm:text-sm text-white/80 font-medium">Host</div>
+                        <div className="text-sm sm:text-base font-semibold text-white">
                           {name}
                         </div>
                       </div>
@@ -129,8 +129,8 @@ export function PodcastHero({
                   )
               ) : (
                 // Fallback to author if no hosts
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-full overflow-hidden">
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex-shrink-0">
                     {podcast.user_profiles?.avatar_url ? (
                       <img
                         src={podcast.user_profiles.avatar_url}
@@ -139,15 +139,15 @@ export function PodcastHero({
                       />
                     ) : (
                       <div className="w-full h-full bg-white/20 flex items-center justify-center">
-                        <span className="text-white font-semibold text-sm">
+                        <span className="text-white font-semibold text-xs sm:text-sm">
                           {podcast.user_profiles?.full_name?.substring(0, 2).toUpperCase() || 'AU'}
                         </span>
                       </div>
                     )}
                   </div>
                   <div className="text-left">
-                    <div className="text-sm text-white/80 font-medium">Author</div>
-                    <div className="text-base font-semibold text-white">
+                    <div className="text-xs sm:text-sm text-white/80 font-medium">Author</div>
+                    <div className="text-sm sm:text-base font-semibold text-white">
                       {podcast.user_profiles?.full_name || 'Unknown Author'}
                     </div>
                   </div>
@@ -158,23 +158,23 @@ export function PodcastHero({
 
           {/* Podcast Info */}
           <div className="text-center lg:text-left">
-            <div className="mb-3 flex flex-wrap gap-2">
-              <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+            <div className="mb-3 flex flex-wrap gap-2 justify-center lg:justify-start">
+              <span className="bg-white/20 backdrop-blur-sm text-white px-2 sm:px-3 py-1 rounded-full text-xs font-medium tracking-wide">
                 Category: {podcast.category}
               </span>
-              <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+              <span className="bg-white/20 backdrop-blur-sm text-white px-2 sm:px-3 py-1 rounded-full text-xs font-medium tracking-wide">
                 Country: {countryNameByCode(displayCountryCode)}
               </span>
-              <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium tracking-wide">
+              <span className="bg-white/20 backdrop-blur-sm text-white px-2 sm:px-3 py-1 rounded-full text-xs font-medium tracking-wide">
                 Language: {getLanguageName(displayLanguageCode)}
               </span>
             </div>
             
-            <h1 className="text-xl lg:text-2xl font-bold mb-3 leading-tight">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-3 leading-tight px-2 lg:px-0">
               {podcast.title_english || currentTranslation?.title || podcast.title}
             </h1>
             
-            <p className="text-sm text-orange-100 mb-6 leading-relaxed">
+            <p className="text-sm text-orange-100 mb-4 sm:mb-6 leading-relaxed px-2 lg:px-0">
               {podcast.description_english || currentTranslation?.description || podcast.description}
             </p>
 
@@ -241,11 +241,11 @@ export function PodcastHero({
           </div>
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-6 sm:mt-8 lg:mt-10 flex justify-center px-4">
           <Button
             size="lg"
             onClick={scrollToLicensing}
-            className="bg-white text-black hover:bg-gray-100 font-semibold px-8 py-3 rounded-full shadow-lg shadow-orange-900/30 transition-transform hover:-translate-y-0.5"
+            className="bg-white text-black hover:bg-gray-100 font-semibold px-6 sm:px-8 py-2.5 sm:py-3 rounded-full shadow-lg shadow-orange-900/30 transition-transform hover:-translate-y-0.5 w-full sm:w-auto text-sm sm:text-base"
           >
             🚀 Start Licensing
           </Button>

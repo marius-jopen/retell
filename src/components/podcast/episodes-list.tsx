@@ -58,48 +58,48 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Episodes</h2>
-        <p className="text-gray-600">
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Episodes</h2>
+        <p className="text-sm sm:text-base text-gray-600">
           {episodes.length} episodes available
         </p>
       </div>
 
       {/* Episodes List - Simple vertical list */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {displayedEpisodes.map((episode: Episode) => (
-          <div key={episode.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow">
-            <div className="flex items-start justify-between">
+          <div key={episode.id} className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 hover:shadow-sm transition-shadow">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-3 mb-2">
-                  <span className="text-sm font-medium text-gray-500">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                  <span className="text-xs sm:text-sm font-medium text-gray-500">
                     Episode {episode.episode_number}
                   </span>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-sm text-gray-500">
+                  <span className="hidden sm:inline text-gray-300">•</span>
+                  <span className="text-xs sm:text-sm text-gray-500">
                     {new Date(episode.created_at).toLocaleDateString()}
                   </span>
                   {episode.duration && (
                     <>
-                      <span className="text-gray-300">•</span>
-                      <span className="text-sm text-gray-500">
+                      <span className="hidden sm:inline text-gray-300">•</span>
+                      <span className="text-xs sm:text-sm text-gray-500">
                         {Math.floor(episode.duration / 60)}:{String(episode.duration % 60).padStart(2, '0')}
                       </span>
                     </>
                   )}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                   {episode.title_english || episode.title}
                 </h3>
                 {(episode.description_english || episode.description) && (
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                  <p className="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2">
                     {episode.description_english || episode.description}
                   </p>
                 )}
                 
                 {/* Minimal Audio Player */}
                 {episode.audio_url && (
-                  <div className="mt-3">
+                  <div className="mt-2 sm:mt-3">
                     <AudioPlayer 
                       src={episode.audio_url}
                     />
@@ -109,7 +109,7 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
               
               {/* Script Button */}
               {user?.user_metadata?.role === 'client' && episode.script_url && (
-                <div className="ml-4 flex-shrink-0">
+                <div className="sm:ml-4 flex-shrink-0 self-start">
                   <button className="px-3 py-1 text-xs bg-gray-100 text-gray-700 border border-gray-300 rounded hover:bg-gray-200 transition-colors">
                     Script
                   </button>
@@ -122,11 +122,11 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
 
       {/* Load More Button */}
       {hasMoreEpisodes && (
-        <div className="text-center mt-8">
+        <div className="text-center mt-6 sm:mt-8">
           <Button
             onClick={() => setShowAll(!showAll)}
             variant="outline"
-            className="px-8 py-2"
+            className="px-6 sm:px-8 py-2 text-sm sm:text-base"
           >
             {showAll ? 'Show Less' : `Load More (${episodes.length - 4} more)`}
           </Button>

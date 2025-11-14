@@ -331,10 +331,10 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
 
       {/* Image Gallery Section */}
       {galleryImages.length > 0 && (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Image Gallery</h2>
-            <p className="text-lg text-gray-600">Visual content and materials for this podcast</p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 px-2">Image Gallery</h2>
+            <p className="text-base sm:text-lg text-gray-600 px-4">Visual content and materials for this podcast</p>
           </div>
           <ImageGallerySlider images={galleryImages} />
         </div>
@@ -344,7 +344,7 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
       <PodcastContent podcast={podcast} />
 
       {/* Episodes Section */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16 lg:pb-20 pt-8 sm:pt-12 lg:pt-16">
         <EpisodesList episodes={episodes} user={user} />
       </div>
     </div>

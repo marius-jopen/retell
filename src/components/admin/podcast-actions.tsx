@@ -85,8 +85,10 @@ export default function PodcastActions({
           { action: 'pending', label: 'Mark Pending', variant: 'outline' as const }
         ]
       case 'draft':
+        // Admins can directly approve drafts, no need to submit for review
         return [
-          { action: 'pending', label: 'Submit for Review', variant: 'outline' as const }
+          { action: 'approved', label: 'Approve', variant: 'primary' as const },
+          { action: 'rejected', label: 'Reject', variant: 'destructive' as const }
         ]
       default:
         return []
@@ -100,7 +102,7 @@ export default function PodcastActions({
   }
 
   return (
-    <div className={`flex flex-wrap gap-1 ${className}`}>
+    <div className={`flex flex-wrap gap-2 ${className}`}>
       {availableActions.map(({ action, label, variant }) => (
         <Button
           key={action}
@@ -108,7 +110,7 @@ export default function PodcastActions({
           size="sm"
           onClick={() => updatePodcastStatus(action as 'approved' | 'rejected' | 'pending')}
           disabled={loading !== null}
-          className="text-xs px-2 py-1 h-7 min-w-0 whitespace-nowrap"
+          className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 h-7 sm:h-8 min-w-0 whitespace-nowrap"
         >
           {loading === (action === 'approved' ? 'approve' : action === 'rejected' ? 'reject' : 'pending') ? 
             `${action === 'approved' ? 'Approving' : action === 'rejected' ? 'Rejecting' : 'Updating'}...` : 

@@ -81,37 +81,37 @@ const PodcastList = forwardRef<HTMLDivElement, PodcastListProps>(
         className={cn('', className)} 
         {...props}
       >
-        <CardHeader className="p-4 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-gray-900">{title}</CardTitle>
+        <CardHeader className="p-5 sm:p-6 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">{title}</CardTitle>
             {viewAllHref && (
               <Link href={viewAllHref}>
-                <Button variant="outline" size="sm">View All</Button>
+                <Button variant="outline" size="sm" className="text-xs sm:text-sm w-full sm:w-auto">View All</Button>
               </Link>
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-4">
+        <CardContent className="p-5 sm:p-6">
           {isEmpty ? (
-            <div className="text-center py-6">
-              <div className="text-3xl mb-3">{emptyStateIcon}</div>
-              <p className="text-sm text-gray-500">{emptyStateMessage}</p>
+            <div className="text-center py-8 sm:py-12">
+              <div className="text-4xl sm:text-5xl mb-4">{emptyStateIcon}</div>
+              <p className="text-sm sm:text-base text-gray-500">{emptyStateMessage}</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4 sm:space-y-5">
               {podcasts?.map((podcast) => (
-                <div key={podcast.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <div key={podcast.id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 sm:p-5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   {/* Podcast Image */}
                   <div className="flex-shrink-0">
                     {podcast.cover_image_url ? (
                       <img 
                         src={podcast.cover_image_url} 
                         alt={podcast.title}
-                        className="w-10 h-10 rounded-lg object-cover"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover shadow-sm"
                       />
                     ) : (
-                      <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-xs">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-sm">
+                        <span className="text-white font-bold text-sm sm:text-base">
                           {podcast.title.substring(0, 2).toUpperCase()}
                         </span>
                       </div>
@@ -120,37 +120,37 @@ const PodcastList = forwardRef<HTMLDivElement, PodcastListProps>(
 
                   {/* Podcast Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-900 truncate">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 break-words">
                       {podcast.title}
                     </h3>
-                    <div className="flex items-center space-x-1.5 text-xs text-gray-500">
-                      <span>{podcast.category}</span>
-                      <span>•</span>
-                      <span>{podcast.language.toUpperCase()}</span>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 mb-2">
+                      <span className="capitalize font-medium">{podcast.category}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span className="font-medium uppercase">{podcast.language}</span>
                       {showAuthor && (
                         <>
-                          <span>•</span>
-                          <span>by {getAuthorName(podcast)}</span>
+                          <span className="hidden sm:inline">•</span>
+                          <span className="w-full sm:w-auto">by {getAuthorName(podcast)}</span>
                         </>
                       )}
                     </div>
-                    <div className="flex items-center space-x-1.5 text-xs text-gray-400 mt-0.5">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-gray-500">
                       <span>{episodeCount(podcast)} episodes</span>
-                      <span>•</span>
-                      <span>Created {formatDate(podcast.created_at)}</span>
+                      <span className="hidden sm:inline">•</span>
+                      <span className="w-full sm:w-auto">Created {formatDate(podcast.created_at)}</span>
                     </div>
                   </div>
 
                   {/* Status and Action */}
-                  <div className="flex items-center space-x-2">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-3 flex-shrink-0">
+                    <span className={`inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-medium ${
                       statusVariants[podcast.status as keyof typeof statusVariants] || 'bg-gray-100 text-gray-800'
                     }`}>
                       {podcast.status}
                     </span>
                     {getItemHref && (
-                      <Link href={getItemHref(podcast)}>
-                        <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7">
+                      <Link href={getItemHref(podcast)} className="w-full sm:w-auto">
+                        <Button variant="outline" size="sm" className="text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 h-8 sm:h-9 w-full sm:w-auto">
                           {showAuthor ? 'View' : 'Edit'}
                         </Button>
                       </Link>

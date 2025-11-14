@@ -28,19 +28,19 @@ export default async function CatalogPage() {
     <div className="min-h-screen bg-orange-50">
       {/* Hero Section */}
       <div className="bg-brand text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">
               Discover Podcasts
             </h1>
-            <p className="text-xl text-orange-100 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg lg:text-xl text-orange-100 max-w-3xl mx-auto px-4">
               Explore premium podcast content from talented creators worldwide. Find your next favorite show.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
         <CatalogClient podcasts={podcasts || []} />
       </div>
     </div>

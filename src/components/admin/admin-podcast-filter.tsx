@@ -43,25 +43,25 @@ export function AdminPodcastFilter({
   const hasActiveFilters = statusValue || categoryValue || languageValue || authorValue
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-3 sm:p-4 mb-4 sm:mb-6">
       {/* Search Bar */}
-      <div className="flex items-center space-x-3 mb-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-3 mb-3">
         <div className="relative flex-1">
           <input
             type="text"
             placeholder="Search podcasts or authors..."
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full px-4 py-2.5 text-sm bg-gray-50 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-red-500 pl-10 transition-all"
+            className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm bg-gray-50 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-red-500 pl-8 sm:pl-10 transition-all"
           />
-          <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
         
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center space-x-1.5 px-3 py-2.5 text-xs font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors relative"
+          className="flex items-center justify-center space-x-1.5 px-3 py-2 sm:py-2.5 text-xs font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors relative whitespace-nowrap"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
@@ -74,7 +74,7 @@ export function AdminPodcastFilter({
       </div>
 
       {/* Results count and clear filters */}
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-2 text-xs text-gray-500">
         <span>{resultCount} podcast{resultCount !== 1 ? 's' : ''}</span>
         {hasActiveFilters && (
           <button
@@ -93,7 +93,7 @@ export function AdminPodcastFilter({
 
       {/* Filters */}
       {showFilters && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-3 mt-3 border-t border-gray-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 pt-3 mt-3 border-t border-gray-100">
           <Select
             value={statusValue}
             onChange={(e) => onStatusChange(e.target.value)}

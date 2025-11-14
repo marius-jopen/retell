@@ -75,22 +75,22 @@ export default function RSSUpdate({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 w-full sm:w-auto">
       <Button
         onClick={handleUpdate}
         disabled={loading}
         variant="outline"
         size="sm"
-        className="rounded-2xl hover:bg-orange-50 transition-colors"
+        className="rounded-2xl hover:bg-orange-50 transition-colors w-full sm:w-auto text-xs sm:text-sm whitespace-nowrap"
       >
         {loading ? '🔄 Syncing...' : '🔄 Sync RSS'}
       </Button>
       
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-3">
-          <div className="flex items-center">
-            <span className="text-red-600 mr-2">⚠️</span>
-            <p className="text-red-700 text-sm">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-2 sm:p-3">
+          <div className="flex items-start sm:items-center">
+            <span className="text-red-600 mr-2 flex-shrink-0">⚠️</span>
+            <p className="text-red-700 text-xs sm:text-sm break-words">{error}</p>
           </div>
         </div>
       )}

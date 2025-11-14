@@ -55,17 +55,17 @@ export default async function AuthorDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Author Dashboard</h1>
-          <p className="text-gray-600 mt-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Author Dashboard</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             Welcome back, {user.profile.full_name}
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {stats.map((stat) => (
             <div key={stat.title} className="bg-white rounded-xl shadow-lg p-6">
               <div className="flex items-center">
@@ -82,9 +82,9 @@ export default async function AuthorDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             <Link href="/author/upload">
               <div className="bg-white border border-orange-200 rounded-modern-lg p-6 text-center hover:bg-orange-50 hover:border-orange-300 transition-all duration-300 shadow-modern hover:shadow-modern-lg card-hover">
                 <div className="text-3xl mb-3">🎤</div>
@@ -109,21 +109,21 @@ export default async function AuthorDashboard() {
 
         {/* All Podcasts - Single Column */}
         <div className="bg-white rounded-modern-lg shadow-modern">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Your Podcasts</h2>
+          <div className="p-4 sm:p-6 border-b border-gray-200">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Your Podcasts</h2>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
             {recentPodcasts && recentPodcasts.length > 0 ? (
               recentPodcasts.map((podcast) => (
-                <div key={podcast.id} className="flex items-center justify-between p-4 bg-orange-50 rounded-modern">
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-gray-900">{podcast.title}</h3>
-                    <p className="text-sm text-gray-600">
+                <div key={podcast.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 bg-orange-50 rounded-modern">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-gray-900 truncate">{podcast.title}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600">
                       {podcast.category} • {podcast.language.toUpperCase()} • {podcast.episodes?.length || 0} episodes
                     </p>
                     <p className="text-xs text-gray-500">Created {formatDate(podcast.created_at)}</p>
                   </div>
-                  <div className="ml-4 flex items-center space-x-2">
+                  <div className="flex items-center justify-between sm:justify-end gap-2 sm:ml-4">
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                       podcast.status === 'approved' ? 'bg-green-100 text-green-800' :
                       podcast.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -133,7 +133,7 @@ export default async function AuthorDashboard() {
                       {podcast.status}
                     </span>
                     <Link href={`/author/podcasts/${podcast.id}/edit`}>
-                      <Button variant="outline" size="sm" className="rounded-full">
+                      <Button variant="outline" size="sm" className="rounded-full text-xs sm:text-sm">
                         Edit
                       </Button>
                     </Link>
@@ -141,20 +141,20 @@ export default async function AuthorDashboard() {
                 </div>
               ))
             ) : (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready to start creating?</h3>
-                <p className="text-gray-600 mb-6">Upload your first podcast and share your voice with the world!</p>
+              <div className="text-center py-8 sm:py-12">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Ready to start creating?</h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Upload your first podcast and share your voice with the world!</p>
                 <Link href="/author/upload">
-                  <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
+                  <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm sm:text-base">
                     Create Your First Podcast
                   </Button>
                 </Link>
               </div>
             )}
           </div>
-          <div className="p-6 border-t border-gray-200">
+          <div className="p-4 sm:p-6 border-t border-gray-200">
             <Link href="/author/podcasts">
-              <Button variant="outline" className="w-full rounded-full">
+              <Button variant="outline" className="w-full rounded-full text-sm sm:text-base">
                 View All Podcasts
               </Button>
             </Link>

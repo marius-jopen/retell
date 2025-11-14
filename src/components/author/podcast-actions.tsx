@@ -117,16 +117,17 @@ export default function AuthorPodcastActions({ podcastId, podcastTitle, status, 
   }
 
   return (
-    <div className="flex space-x-2">
+    <div className="flex flex-wrap gap-2 w-full sm:w-auto">
       {/* Submit/Resubmit button for draft and rejected podcasts */}
       {(status === 'draft' || status === 'rejected') && (
         <Button
           size="sm"
-          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg"
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg flex-1 sm:flex-none min-w-0 text-xs sm:text-sm whitespace-nowrap"
           onClick={submitForReview}
           disabled={loading !== null}
         >
-          {loading === 'submit' ? 'Submitting...' : status === 'rejected' ? 'Resubmit' : 'Submit for Review'}
+          <span className="hidden sm:inline">{loading === 'submit' ? 'Submitting...' : status === 'rejected' ? 'Resubmit' : 'Submit for Review'}</span>
+          <span className="sm:hidden">{loading === 'submit' ? 'Submitting...' : status === 'rejected' ? 'Resubmit' : 'Submit'}</span>
         </Button>
       )}
       
@@ -134,7 +135,7 @@ export default function AuthorPodcastActions({ podcastId, podcastTitle, status, 
       <Button
         size="sm"
         variant="destructive"
-        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg"
+        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg flex-1 sm:flex-none min-w-0 text-xs sm:text-sm whitespace-nowrap"
         onClick={deletePodcast}
         disabled={loading !== null}
       >

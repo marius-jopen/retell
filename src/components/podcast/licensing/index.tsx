@@ -222,16 +222,16 @@ export function PodcastLicensing({ podcast }: PodcastLicensingProps) {
 
   return (
     <section id="licensing-section" className="bg-orange-50 border-y border-orange-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         <LicensingHeader />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-8 sm:mb-12">
           {gridCards.map((card, index) => (
             <UnifiedCard key={index} headline={card.headline} text={card.text} subtext={card.subtext} icon={card.icon} />
           ))}
         </div>
 
-        <div className="mt-20 flex flex-col items-center">
+        <div className="mt-12 sm:mt-16 lg:mt-20 flex flex-col items-center">
           <LicensingCTA />
         </div>
       </div>

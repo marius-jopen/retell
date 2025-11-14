@@ -26,81 +26,81 @@ export function PodcastSidebar({ podcast }: PodcastSidebarProps) {
   return (
     <div className="w-full">
       {/* Main Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">About This Podcast</h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+      <div className="text-center mb-8 sm:mb-10 lg:mb-12">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">About This Podcast</h2>
+        <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
           Comprehensive licensing information and premium podcast content details
         </p>
       </div>
 
       {/* Basic Stats Cards - Top Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8 lg:mb-10">
         {/* Duration Card */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-5 text-center hover:shadow-xl transition-all duration-300">
-          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-3 sm:p-4 lg:p-5 text-center hover:shadow-xl transition-all duration-300">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">{totalHours}h {remainingMinutes}m</div>
-          <div className="text-sm text-gray-500 font-medium">Total Duration</div>
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{totalHours}h {remainingMinutes}m</div>
+          <div className="text-xs sm:text-sm text-gray-500 font-medium">Total Duration</div>
         </div>
 
         {/* Episodes Card */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-5 text-center hover:shadow-xl transition-all duration-300">
-          <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-3 sm:p-4 lg:p-5 text-center hover:shadow-xl transition-all duration-300">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 616 0v6a3 3 0 01-3 3z" />
             </svg>
           </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">{podcast.episodes?.length || 0}</div>
-          <div className="text-sm text-gray-500 font-medium">Episodes</div>
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{podcast.episodes?.length || 0}</div>
+          <div className="text-xs sm:text-sm text-gray-500 font-medium">Episodes</div>
         </div>
 
         {/* Language Card */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-5 text-center hover:shadow-xl transition-all duration-300">
-          <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-3 sm:p-4 lg:p-5 text-center hover:shadow-xl transition-all duration-300">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
             </svg>
           </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1 uppercase">{podcast.language}</div>
-          <div className="text-sm text-gray-500 font-medium">Language</div>
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 uppercase">{podcast.language}</div>
+          <div className="text-xs sm:text-sm text-gray-500 font-medium">Language</div>
         </div>
 
         {/* Genre Card */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-5 text-center hover:shadow-xl transition-all duration-300">
-          <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-3 sm:p-4 lg:p-5 text-center hover:shadow-xl transition-all duration-300">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3">
+            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
           </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1 capitalize">{podcast.category}</div>
-          <div className="text-sm text-gray-500 font-medium">Genre</div>
+          <div className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 capitalize">{podcast.category}</div>
+          <div className="text-xs sm:text-sm text-gray-500 font-medium">Genre</div>
         </div>
       </div>
 
       {/* Premium Licensing CTA - Full Width */}
-      <div className="bg-white rounded-2xl shadow-lg p-8 text-center mb-8 border border-gray-200 hover:shadow-xl transition-all duration-300 mt-12">
+      <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 text-center mb-6 sm:mb-8 border border-gray-200 hover:shadow-xl transition-all duration-300 mt-8 sm:mt-10 lg:mt-12">
         <div className="max-w-3xl mx-auto">
-          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold mb-4 text-gray-900">Ready to License This Podcast?</h2>
-          <p className="text-lg text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900 px-2">Ready to License This Podcast?</h2>
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 mb-4 sm:mb-6 leading-relaxed max-w-2xl mx-auto px-4">
             Get instant access to premium podcast content with comprehensive licensing terms. 
             Perfect for platforms, networks, and content creators.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
-            <Link href="https://google.com" className="flex-1" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="bg-red-600 text-white hover:bg-red-700 font-semibold w-full py-3 rounded-xl text-sm shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto px-4">
+            <Link href="https://google.com" className="flex-1 w-full sm:w-auto" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="bg-red-600 text-white hover:bg-red-700 font-semibold w-full py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap">
                 🚀 Start Licensing
               </Button>
             </Link>
-            <Link href="/catalog" className="flex-1">
-              <Button variant="outline" size="lg" className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 font-semibold w-full py-3 rounded-xl text-sm whitespace-nowrap">
+            <Link href="/catalog" className="flex-1 w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 font-semibold w-full py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm whitespace-nowrap">
                 📚 Browse Catalog
               </Button>
             </Link>

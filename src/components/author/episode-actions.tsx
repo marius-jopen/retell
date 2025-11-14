@@ -59,7 +59,7 @@ export default function EpisodeActions({ episodeId, episodeTitle }: EpisodeActio
       size="sm"
       onClick={handleDelete}
       disabled={loading}
-      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+      className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs sm:text-sm whitespace-nowrap px-2 sm:px-3"
     >
       {loading ? 'Deleting...' : 'Delete'}
     </Button>

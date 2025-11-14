@@ -86,21 +86,21 @@ export default function AuthorUploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+              <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">
                 Create New Podcast
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Upload manually or import from your existing RSS feed
               </p>
             </div>
-            <Link href="/author/podcasts">
-              <Button variant="outline" size="lg" rounded="full">
+            <Link href="/author/podcasts" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" rounded="full" className="w-full sm:w-auto text-sm sm:text-base">
                 Back to Podcasts
               </Button>
             </Link>
@@ -108,12 +108,12 @@ export default function AuthorUploadPage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
+            <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('manual')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap ${
                   activeTab === 'manual'
                     ? 'border-red-500 text-red-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -123,7 +123,7 @@ export default function AuthorUploadPage() {
               </button>
               <button
                 onClick={() => setActiveTab('rss')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-3 sm:py-4 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors whitespace-nowrap ${
                   activeTab === 'rss'
                     ? 'border-red-500 text-red-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'

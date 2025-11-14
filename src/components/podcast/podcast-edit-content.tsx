@@ -496,24 +496,24 @@ function PodcastEditContent({
     : 'Update your podcast information and settings'
 
   return (
-    <div className={`min-h-screen ${isAdmin ? '' : 'bg-orange-50'}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className={`min-h-screen ${isAdmin ? '' : 'bg-orange-50'} overflow-x-hidden`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             {isAdmin ? (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
                 {/* Podcast Cover Image */}
                 <div className="flex-shrink-0">
                   {podcast.cover_image_url ? (
                     <img
                       src={podcast.cover_image_url}
                       alt={podcast.title}
-                      className="w-16 h-16 rounded-2xl object-cover shadow-md"
+                      className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl object-cover shadow-md"
                     />
                   ) : (
-                    <div className="w-16 h-16 bg-gradient-to-br from-red-400 via-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-md">
-                      <span className="text-white font-bold text-lg">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-red-400 via-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-md">
+                      <span className="text-white font-bold text-sm sm:text-lg">
                         {podcast.title.substring(0, 2).toUpperCase()}
                       </span>
                     </div>
@@ -521,36 +521,36 @@ function PodcastEditContent({
                 </div>
                 
                 {/* Title and Description */}
-                <div>
-                  <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900 mb-1 sm:mb-2 break-words">
                     {pageTitle}
                   </h1>
-                  <p className="text-gray-600">
+                  <p className="text-sm sm:text-base text-gray-600 break-words">
                     {pageSubtitle}
                   </p>
                   {podcast.user_profiles && (
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1 break-words">
                       Author: {podcast.user_profiles.full_name} ({podcast.user_profiles.email})
                     </p>
                   )}
                 </div>
               </div>
             ) : (
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">{pageTitle}</h1>
-                <p className="mt-2 text-lg text-gray-600">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 break-words">{pageTitle}</h1>
+                <p className="mt-2 text-base sm:text-lg text-gray-600 break-words">
                   {pageSubtitle}
                 </p>
               </div>
             )}
             
-            <div className="flex flex-wrap gap-2 items-center">
-              <Link href={backHref}>
-                <Button variant="outline" size="sm" className={isAdmin ? "border-gray-300 text-gray-700 hover:bg-gray-50 whitespace-nowrap" : "whitespace-nowrap"}>
+            <div className="flex flex-col sm:flex-row flex-wrap gap-2 items-stretch sm:items-center w-full sm:w-auto">
+              <Link href={backHref} className="w-full sm:w-auto">
+                <Button variant="outline" size="sm" className={`w-full sm:w-auto text-xs sm:text-sm ${isAdmin ? "border-gray-300 text-gray-700 hover:bg-gray-50 whitespace-nowrap" : "whitespace-nowrap"}`}>
                   ← Back
                 </Button>
               </Link>
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <TranslateAllPodcast
                   podcastId={podcastId}
                   podcastTitle={podcast.title}
@@ -572,7 +572,7 @@ function PodcastEditContent({
                   type="button"
                   variant="default"
                   size="sm"
-                  className="bg-red-600 hover:bg-red-700 text-white whitespace-nowrap"
+                  className="bg-red-600 hover:bg-red-700 text-white whitespace-nowrap w-full sm:w-auto text-xs sm:text-sm"
                   disabled={loading}
                   onClick={async (e) => {
                     e.preventDefault()
@@ -827,9 +827,9 @@ function PodcastEditContent({
                 <Button
                   variant="default" 
                   size="lg" 
-                  className={`w-full bg-blue-600 hover:bg-blue-700 text-white ${isAdmin ? '' : 'rounded-full'}`}
+                  className={`w-full bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base ${isAdmin ? '' : 'rounded-full'}`}
                 >
-                  <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                   Manage All Episodes

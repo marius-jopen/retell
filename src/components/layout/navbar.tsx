@@ -89,9 +89,9 @@ export default function Navbar({ user }: NavbarProps) {
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             {user ? (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
                 <div className="hidden md:flex items-center space-x-3">
                   <div className="text-right">
                     <div className="text-sm font-medium text-gray-900">
@@ -113,13 +113,13 @@ export default function Navbar({ user }: NavbarProps) {
                   variant="outline"
                   size="sm"
                   onClick={handleSignOut}
-                  className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200"
+                  className="hidden sm:inline-flex rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200 text-xs sm:text-sm"
                 >
                   Sign Out
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="hidden sm:flex items-center space-x-2">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -177,7 +177,7 @@ export default function Navbar({ user }: NavbarProps) {
             {user && (
               <div className="pt-4 mt-4 border-t border-gray-100">
                 <div className="px-4 py-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                       <div className="text-base font-medium text-gray-900">
                         {user.profile.full_name}
@@ -186,15 +186,52 @@ export default function Navbar({ user }: NavbarProps) {
                         {user.profile.role === 'admin' ? 'Administrator' : 'Content Creator'}
                       </div>
                     </div>
-                    <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
-                      user.profile.role === 'admin' 
-                        ? 'bg-orange-50 text-orange-700 border border-orange-200' 
-                        : 'bg-orange-50 text-orange-700 border border-orange-200'
-                    }`}>
-                      {user.profile.role === 'admin' ? 'Admin' : 'Author'}
+                    <div className="flex items-center gap-3">
+                      <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
+                        user.profile.role === 'admin' 
+                          ? 'bg-orange-50 text-orange-700 border border-orange-200' 
+                          : 'bg-orange-50 text-orange-700 border border-orange-200'
+                      }`}>
+                        {user.profile.role === 'admin' ? 'Admin' : 'Author'}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSignOut}
+                        className="sm:hidden rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300 transition-all duration-200 text-xs"
+                      >
+                        Sign Out
+                      </Button>
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+            
+            {/* Mobile Auth Buttons */}
+            {!user && (
+              <div className="pt-4 mt-4 border-t border-gray-100 space-y-2 sm:hidden">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    router.push('/auth/login')
+                    setIsMenuOpen(false)
+                  }}
+                  className="w-full rounded-full text-orange-600 hover:bg-orange-50 transition-all duration-200"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    router.push('/auth/signup')
+                    setIsMenuOpen(false)
+                  }}
+                  className="w-full rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-modern hover:shadow-modern-lg transition-all duration-200"
+                >
+                  Get Started
+                </Button>
               </div>
             )}
           </div>

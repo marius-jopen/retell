@@ -70,9 +70,9 @@ const Table = forwardRef<HTMLDivElement, TableProps>(
     return (
       <Card ref={ref} className={cn('overflow-hidden', className)} {...props}>
         {title && (
-          <CardHeader className="p-4 border-b border-gray-100">
+          <CardHeader className="p-5 sm:p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-gray-900">{title}</CardTitle>
+              <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">{title}</CardTitle>
               {actions && <div>{actions}</div>}
             </div>
           </CardHeader>
@@ -80,54 +80,58 @@ const Table = forwardRef<HTMLDivElement, TableProps>(
         
         <CardContent className="p-0">
           {loading ? (
-            <div className="text-center py-8">
+            <div className="text-center py-10 sm:py-12">
               <div className="animate-spin inline-block w-6 h-6 border-2 border-gray-300 border-t-gray-900 rounded-full mb-3"></div>
               <p className="text-sm text-gray-500">Loading...</p>
             </div>
           ) : data.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="text-3xl mb-3">{emptyStateIcon}</div>
-              <p className="text-sm text-gray-500">{emptyStateMessage}</p>
+            <div className="text-center py-10 sm:py-12">
+              <div className="text-4xl mb-4">{emptyStateIcon}</div>
+              <p className="text-sm sm:text-base text-gray-500">{emptyStateMessage}</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/50">
-                    {columns.map((column) => (
-                      <TableHeaderCell
-                        key={column.key}
-                        sortable={column.sortable}
-                        align={column.align}
-                        style={{ width: column.width }}
-                      >
-                        {column.title}
-                      </TableHeaderCell>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.map((row, index) => (
-                    <tr
-                      key={index}
-                      className={cn(
-                        'border-b border-gray-50 hover:bg-gray-50/50 transition-colors',
-                        onRowClick ? 'cursor-pointer' : ''
-                      )}
-                      onClick={() => onRowClick?.(row)}
-                    >
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="inline-block min-w-full align-middle px-4 sm:px-0">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="border-b border-gray-100 bg-gray-50/50">
                       {columns.map((column) => (
-                        <TableCell
+                        <TableHeaderCell
                           key={column.key}
+                          sortable={column.sortable}
                           align={column.align}
+                          style={{ width: column.width }}
+                          className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-semibold"
                         >
-                          {renderCellContent(column, row)}
-                        </TableCell>
+                          {column.title}
+                        </TableHeaderCell>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {data.map((row, index) => (
+                      <tr
+                        key={index}
+                        className={cn(
+                          'border-b border-gray-50 hover:bg-gray-50/50 transition-colors',
+                          onRowClick ? 'cursor-pointer' : ''
+                        )}
+                        onClick={() => onRowClick?.(row)}
+                      >
+                        {columns.map((column) => (
+                          <TableCell
+                            key={column.key}
+                            align={column.align}
+                            className="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm"
+                          >
+                            {renderCellContent(column, row)}
+                          </TableCell>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </CardContent>

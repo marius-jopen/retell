@@ -127,27 +127,29 @@ export default async function EpisodesPage({
   const episodes = podcast.episodes || []
 
   return (
-    <div className="min-h-screen bg-orange-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-orange-50 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Episodes</h1>
-              <p className="mt-2 text-lg text-gray-600">{podcast.title}</p>
-              <p className="text-sm text-gray-500">{episodes.length} episodes</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Episodes</h1>
+              <p className="mt-2 text-base sm:text-lg text-gray-600 break-words">{podcast.title}</p>
+              <p className="text-xs sm:text-sm text-gray-500">{episodes.length} episodes</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-4 w-full sm:w-auto">
               {episodes.length > 0 && (
-                <TranslateAllEpisodes podcastId={id} episodes={episodes} />
+                <div className="w-full sm:w-auto">
+                  <TranslateAllEpisodes podcastId={id} episodes={episodes} />
+                </div>
               )}
-              <Link href={`/author/podcasts/${id}/episodes/new`}>
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
+              <Link href={`/author/podcasts/${id}/episodes/new`} className="w-full sm:w-auto">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full w-full sm:w-auto text-sm sm:text-base">
                   Add Episode
                 </Button>
               </Link>
-              <Link href={`/author/podcasts/${id}/edit`}>
-                <Button variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50">
+              <Link href={`/author/podcasts/${id}/edit`} className="w-full sm:w-auto">
+                <Button variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 w-full sm:w-auto text-sm sm:text-base">
                   Back to Podcast
                 </Button>
               </Link>
@@ -156,22 +158,22 @@ export default async function EpisodesPage({
         </div>
 
         {/* 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Left Column - Episodes List */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-modern-lg shadow-modern border border-orange-200">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-900">All Episodes</h2>
+            <div className="bg-white rounded-modern-lg shadow-modern border border-orange-200 overflow-hidden">
+              <div className="p-4 sm:p-6 border-b border-gray-200">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">All Episodes</h2>
               </div>
 
               <div className="divide-y divide-gray-200">
                 {episodes.length === 0 ? (
-                  <div className="p-12 text-center">
-                    <div className="text-4xl mb-4">🎧</div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No episodes yet</h3>
-                    <p className="text-gray-600 mb-6">Create your first episode to get started</p>
-                    <Link href={`/author/podcasts/${id}/episodes/new`}>
-                      <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
+                  <div className="p-8 sm:p-12 text-center">
+                    <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">🎧</div>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No episodes yet</h3>
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Create your first episode to get started</p>
+                    <Link href={`/author/podcasts/${id}/episodes/new`} className="inline-block w-full sm:w-auto">
+                      <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full w-full sm:w-auto text-sm sm:text-base">
                         Create First Episode
                       </Button>
                     </Link>
@@ -180,41 +182,42 @@ export default async function EpisodesPage({
                   episodes.map((episode) => (
                     <div 
                       key={episode.id} 
-                      className={`p-6 hover:bg-orange-50 transition-colors ${
+                      className={`p-4 sm:p-6 hover:bg-orange-50 transition-colors ${
                         selected === episode.id ? 'bg-orange-50 border-l-4 border-orange-500' : ''
                       }`}
                     >
-                      <div className="flex items-start justify-between">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <span className="inline-flex items-center justify-center h-8 w-8 bg-orange-600 text-white text-sm font-medium rounded-full">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                            <span className="inline-flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 bg-orange-600 text-white text-xs sm:text-sm font-medium rounded-full">
                               #{episode.episode_number}
                             </span>
                             {episode.season_number && (
-                              <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                              <span className="inline-flex items-center px-2 sm:px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
                                 Season {episode.season_number}
                               </span>
                             )}
                           </div>
                           
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 break-words">
                             {episode.title_english || episode.title}
                           </h3>
                           
-                          <p className="text-gray-600 mb-3 line-clamp-2">
+                          <p className="text-sm sm:text-base text-gray-600 mb-2 sm:mb-3 line-clamp-2 break-words">
                             {episode.description_english || episode.description}
                           </p>
                           
-                          <div className="flex items-center text-sm text-gray-500 space-x-4">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
                             <span>Duration: {formatDuration(episode.duration)}</span>
-                            <span>Created: {formatDate(episode.created_at)}</span>
+                            <span className="hidden sm:inline">•</span>
+                            <span className="w-full sm:w-auto">Created: {formatDate(episode.created_at)}</span>
                           </div>
                         </div>
                         
-                        <div className="ml-6 flex items-center space-x-2">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:ml-6 sm:space-x-2">
                           <Link 
                             href={`/author/podcasts/${id}/episodes?selected=${episode.id}`}
-                            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                            className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full transition-colors text-center ${
                               selected === episode.id 
                                 ? 'bg-orange-500 text-white' 
                                 : 'bg-gray-100 text-gray-700 hover:bg-orange-100 hover:text-orange-700'
@@ -222,10 +225,12 @@ export default async function EpisodesPage({
                           >
                             {selected === episode.id ? 'Selected' : 'Select'}
                           </Link>
-                          <EpisodeActions
-                            episodeId={episode.id}
-                            episodeTitle={episode.title}
-                          />
+                          <div className="w-full sm:w-auto">
+                            <EpisodeActions
+                              episodeId={episode.id}
+                              episodeTitle={episode.title}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -237,7 +242,7 @@ export default async function EpisodesPage({
 
           {/* Right Column - Episode Details (Sticky) */}
           <div className="lg:col-span-1">
-            <div className="sticky-sidebar">
+            <div className="lg:sticky lg:top-2 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
               <EpisodesLayout 
                 podcastId={id}
                 episodes={episodes}

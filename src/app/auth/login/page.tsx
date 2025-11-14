@@ -83,30 +83,30 @@ export default function LoginPage() {
 
   if (magicLinkSent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
         <div className="absolute inset-0 bg-red-600/20 backdrop-blur-sm"></div>
         <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-8 py-12 border border-white/20">
+          <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-8 sm:py-12 border border-white/20">
             <div className="text-center animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
-              <div className="text-6xl mb-6">📧</div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <div className="text-5xl sm:text-6xl mb-4 sm:mb-6">📧</div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
                 ✨ Check Your Email!
               </h2>
-              <p className="text-gray-600 mb-2">
+              <p className="text-sm sm:text-base text-gray-600 mb-2 break-words">
                 🎉 We&apos;ve sent a magic link to
               </p>
-              <p className="text-red-600 font-semibold mb-8">
+              <p className="text-sm sm:text-base text-red-600 font-semibold mb-6 sm:mb-8 break-all">
                 {email}
               </p>
-              <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 mb-8 border border-red-100">
-                <p className="text-sm text-gray-700">
+              <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 border border-red-100">
+                <p className="text-xs sm:text-sm text-gray-700">
                   🔮 Click the magic link in your email to sign in instantly!
                 </p>
               </div>
               <Button
                 variant="outline"
                 onClick={() => setMagicLinkSent(false)}
-                className="border-red-200 text-red-600 hover:bg-red-50"
+                className="border-red-200 text-red-600 hover:bg-red-50 w-full sm:w-auto text-sm sm:text-base"
               >
                 🔙 Back to Login
               </Button>
@@ -118,18 +118,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-red-400 via-red-500 to-red-600 flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
       <div className="absolute inset-0 bg-red-600/20"></div>
       <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
-          <div className="text-6xl mb-6">🎙️</div>
-          <h2 className="text-3xl font-bold text-white mb-4">
+          <div className="text-5xl sm:text-6xl mb-4 sm:mb-6">🎙️</div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">
             Welcome Back! ✨
           </h2>
-          <p className="text-red-100 mb-8">
+          <p className="text-sm sm:text-base text-red-100 mb-6 sm:mb-8">
             🎧 Ready to dive back into your podcast journey? Let&apos;s get you signed in!
           </p>
-          <p className="text-red-100/80">
+          <p className="text-xs sm:text-sm text-red-100/80">
             Don&apos;t have an account yet?{' '}
             <Link href="/auth/signup" className="font-medium text-white hover:text-red-200 underline decoration-white/50 hover:decoration-white transition-all">
               🚀 Create one here
@@ -138,8 +138,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
-        <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl px-8 py-12 border border-white/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
+      <div className="mt-6 sm:mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
+        <div className="bg-white/95 backdrop-blur-sm shadow-2xl rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-8 sm:py-12 border border-white/20 animate-in fade-in-0 slide-in-from-bottom-2 duration-1000 delay-300">
           <form className="space-y-6" onSubmit={handleEmailLogin}>
             <Input
               label="📧 Email Address"
@@ -176,28 +176,28 @@ export default function LoginPage() {
             <div>
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 text-sm sm:text-base"
                 disabled={loading}
               >
                 {loading ? '🔄 Signing in...' : '🎉 Sign In'}
               </Button>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-4 sm:mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-red-200" />
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white/95 text-gray-500">✨ Or try magic ✨</span>
+                <div className="relative flex justify-center text-xs sm:text-sm">
+                  <span className="px-3 sm:px-4 bg-white/95 text-gray-500">✨ Or try magic ✨</span>
                 </div>
               </div>
 
-              <div className="mt-6">
+              <div className="mt-4 sm:mt-6">
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 py-3 px-6 rounded-xl font-medium transition-all duration-200"
+                  className="w-full border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl font-medium transition-all duration-200 text-sm sm:text-base"
                   onClick={handleMagicLink}
                   disabled={loading}
                 >

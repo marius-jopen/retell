@@ -59,12 +59,12 @@ export default function EpisodesLayout({
 
   if (episodes.length === 0) {
     return (
-      <div className="bg-white rounded-modern-lg shadow-modern border border-orange-200 p-8 text-center">
-        <div className="text-4xl mb-4">📝</div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No Episodes Yet</h3>
-        <p className="text-gray-600 mb-6">Create your first episode to get started</p>
-        <Link href={`/author/podcasts/${podcastId}/episodes/new`}>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
+      <div className="bg-white rounded-modern-lg shadow-modern border border-orange-200 p-6 sm:p-8 text-center">
+        <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">📝</div>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No Episodes Yet</h3>
+        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Create your first episode to get started</p>
+        <Link href={`/author/podcasts/${podcastId}/episodes/new`} className="inline-block w-full sm:w-auto">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white rounded-full w-full sm:w-auto text-sm sm:text-base">
             Create Episode
           </Button>
         </Link>
@@ -74,10 +74,10 @@ export default function EpisodesLayout({
 
   if (!selectedEpisode) {
     return (
-      <div className="bg-white rounded-modern-lg shadow-modern border border-orange-200 p-8 text-center">
-        <div className="text-4xl mb-4">👈</div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Select an Episode</h3>
-        <p className="text-gray-600">Choose an episode from the list to view and edit its details</p>
+      <div className="bg-white rounded-modern-lg shadow-modern border border-orange-200 p-6 sm:p-8 text-center">
+        <div className="text-3xl sm:text-4xl mb-3 sm:mb-4">👈</div>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Select an Episode</h3>
+        <p className="text-sm sm:text-base text-gray-600">Choose an episode from the list to view and edit its details</p>
       </div>
     )
   }
@@ -85,29 +85,29 @@ export default function EpisodesLayout({
   return (
     <div className="bg-white rounded-modern-lg shadow-modern border border-orange-200">
       {/* Episode Header */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-3 mb-3">
-          <span className="inline-flex items-center justify-center h-8 w-8 bg-orange-600 text-white text-sm font-medium rounded-full">
+      <div className="p-4 sm:p-6 border-b border-gray-200">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+          <span className="inline-flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 bg-orange-600 text-white text-xs sm:text-sm font-medium rounded-full">
             #{selectedEpisode.episode_number}
           </span>
           {selectedEpisode.season_number && (
-            <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+            <span className="inline-flex items-center px-2 sm:px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
               Season {selectedEpisode.season_number}
             </span>
           )}
         </div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 break-words">
           {selectedEpisode.title_english || selectedEpisode.title}
         </h2>
         {selectedEpisode.title_english && (
-          <p className="text-sm text-gray-500 italic">
+          <p className="text-xs sm:text-sm text-gray-500 italic break-words">
             Original: {selectedEpisode.title}
           </p>
         )}
       </div>
 
       {/* Episode Details */}
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Description */}
         <div>
           <h3 className="text-sm font-medium text-gray-700 mb-2">Description</h3>
@@ -164,12 +164,12 @@ export default function EpisodesLayout({
         {/* Script/Transcript */}
         {selectedEpisode.script_url && (
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Transcript</h3>
+            <h3 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">Transcript</h3>
             <a 
               href={selectedEpisode.script_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-orange-600 bg-orange-50 border border-orange-200 rounded-full hover:bg-orange-100 transition-colors"
+              className="inline-flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-orange-600 bg-orange-50 border border-orange-200 rounded-full hover:bg-orange-100 transition-colors w-full sm:w-auto"
             >
               📄 View Transcript
             </a>
@@ -177,15 +177,15 @@ export default function EpisodesLayout({
         )}
 
         {/* Actions */}
-        <div className="pt-4 border-t border-gray-200 space-y-3">
+        <div className="pt-3 sm:pt-4 border-t border-gray-200 space-y-2 sm:space-y-3">
           <Link href={`/author/podcasts/${podcastId}/episodes/${selectedEpisode.id}/edit`}>
-            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full">
+            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full text-sm sm:text-base">
               Edit Episode
             </Button>
           </Link>
           
           <Link href={`/author/podcasts/${podcastId}/episodes/new`}>
-            <Button variant="outline" className="w-full rounded-full border-orange-200 text-orange-600 hover:bg-orange-50">
+            <Button variant="outline" className="w-full rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 text-sm sm:text-base">
               Create New Episode
             </Button>
           </Link>

@@ -60,27 +60,27 @@ export default function AdminPodcastTable({ podcasts }: AdminPodcastTableProps) 
       key: 'podcast',
       title: 'Podcast',
       render: (_, podcast) => (
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 sm:space-x-4">
           <div className="flex-shrink-0">
             {podcast.cover_image_url ? (
               <img 
                 src={podcast.cover_image_url} 
                 alt={podcast.title}
-                className="w-10 h-10 rounded-lg object-cover"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover shadow-sm"
               />
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center">
-                <span className="text-white font-bold text-xs">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-sm">
+                <span className="text-white font-bold text-sm">
                   {podcast.title.substring(0, 2).toUpperCase()}
                 </span>
               </div>
             )}
           </div>
           <div className="min-w-0">
-            <div className="text-sm font-medium text-gray-900 truncate">
+            <div className="text-sm sm:text-base font-semibold text-gray-900 truncate mb-1">
               {podcast.title}
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs sm:text-sm text-gray-500">
               {podcast.language.toUpperCase()} • {podcast.country}
             </div>
           </div>
@@ -92,8 +92,8 @@ export default function AdminPodcastTable({ podcasts }: AdminPodcastTableProps) 
       title: 'Author',
       render: (_, podcast) => (
         <div>
-          <div className="text-sm text-gray-900">{podcast.user_profiles?.full_name || 'Unknown Author'}</div>
-          <div className="text-xs text-gray-500">{podcast.user_profiles?.email || 'No email'}</div>
+          <div className="text-sm font-medium text-gray-900 truncate mb-0.5">{podcast.user_profiles?.full_name || 'Unknown Author'}</div>
+          <div className="text-xs text-gray-500 truncate">{podcast.user_profiles?.email || 'No email'}</div>
         </div>
       ),
     },
@@ -102,7 +102,7 @@ export default function AdminPodcastTable({ podcasts }: AdminPodcastTableProps) 
       key: 'status',
       title: 'Status',
       render: (_, podcast) => (
-        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(podcast.status)}`}>
+        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${getStatusColor(podcast.status)}`}>
           {podcast.status}
         </span>
       ),
@@ -112,7 +112,7 @@ export default function AdminPodcastTable({ podcasts }: AdminPodcastTableProps) 
       key: 'created_at',
       title: 'Submitted',
       render: (_, podcast) => (
-        <span className="text-xs text-gray-500">
+        <span className="text-xs sm:text-sm text-gray-600">
           {formatDate(podcast.created_at)}
         </span>
       ),
@@ -122,15 +122,17 @@ export default function AdminPodcastTable({ podcasts }: AdminPodcastTableProps) 
       key: 'actions',
       title: 'Actions',
       render: (_, podcast) => (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-2 justify-end">
           <Link href={`/podcast/${podcast.id}`}>
-            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7 min-w-0">
-              View
+            <Button variant="outline" size="sm" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 h-7 sm:h-8 min-w-0">
+              <span className="hidden sm:inline">View</span>
+              <span className="sm:hidden">👁</span>
             </Button>
           </Link>
           <Link href={`/admin/podcasts/${podcast.id}/edit`}>
-            <Button variant="outline" size="sm" className="text-xs px-2 py-1 h-7 min-w-0">
-              Edit
+            <Button variant="outline" size="sm" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 h-7 sm:h-8 min-w-0">
+              <span className="hidden sm:inline">Edit</span>
+              <span className="sm:hidden">✏</span>
             </Button>
           </Link>
           <PodcastActions

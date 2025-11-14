@@ -78,23 +78,23 @@ export default async function AdminPodcastsPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Podcast Management</h1>
-            <p className="mt-2 text-lg text-gray-600">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Podcast Management</h1>
+            <p className="mt-2 text-base sm:text-lg text-gray-600">
               Review and moderate podcast submissions
             </p>
           </div>
           <Link href="/admin">
-            <Button variant="outline">Back to Dashboard</Button>
+            <Button variant="outline" className="w-full sm:w-auto text-sm sm:text-base">Back to Dashboard</Button>
           </Link>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <StatsCard
           title="Total Podcasts"
           value={stats.total}

@@ -44,18 +44,18 @@ export default async function AdminUsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-orange-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-orange-50 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-              <p className="mt-2 text-lg text-gray-600">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">User Management</h1>
+              <p className="mt-2 text-base sm:text-lg text-gray-600">
                 Manage user accounts and roles
               </p>
             </div>
-            <Link href="/admin">
-              <Button variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50">
+            <Link href="/admin" className="w-full sm:w-auto">
+              <Button variant="outline" className="rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 w-full sm:w-auto text-sm sm:text-base">
                 Back to Dashboard
               </Button>
             </Link>
@@ -63,22 +63,22 @@ export default async function AdminUsersPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-modern-lg shadow-modern p-6 border border-orange-200">
-            <h3 className="text-lg font-semibold text-gray-900">Total Users</h3>
-            <p className="text-3xl font-bold text-orange-600">{stats.total}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-modern-lg shadow-modern p-4 sm:p-6 border border-orange-200">
+            <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">Total Users</h3>
+            <p className="text-2xl sm:text-3xl font-bold text-orange-600">{stats.total}</p>
           </div>
-          <div className="bg-white rounded-modern-lg shadow-modern p-6 border border-orange-200">
-            <h3 className="text-lg font-semibold text-gray-900">Admins</h3>
-            <p className="text-3xl font-bold text-red-600">{stats.admins}</p>
+          <div className="bg-white rounded-modern-lg shadow-modern p-4 sm:p-6 border border-orange-200">
+            <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">Admins</h3>
+            <p className="text-2xl sm:text-3xl font-bold text-red-600">{stats.admins}</p>
           </div>
-          <div className="bg-white rounded-modern-lg shadow-modern p-6 border border-orange-200">
-            <h3 className="text-lg font-semibold text-gray-900">Authors</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.authors}</p>
+          <div className="bg-white rounded-modern-lg shadow-modern p-4 sm:p-6 border border-orange-200">
+            <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">Authors</h3>
+            <p className="text-2xl sm:text-3xl font-bold text-blue-600">{stats.authors}</p>
           </div>
-          <div className="bg-white rounded-modern-lg shadow-modern p-6 border border-orange-200">
-            <h3 className="text-lg font-semibold text-gray-900">Clients</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.clients}</p>
+          <div className="bg-white rounded-modern-lg shadow-modern p-4 sm:p-6 border border-orange-200">
+            <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">Clients</h3>
+            <p className="text-2xl sm:text-3xl font-bold text-green-600">{stats.clients}</p>
           </div>
         </div>
 
