@@ -329,34 +329,6 @@ export default function EditPodcastForm({
             </div>
           </div>
 
-          {/* Territory */}
-          <div>
-            <h3 className="text-base font-semibold text-gray-900 mb-4">
-              Territory* <span className="text-sm font-normal text-gray-600">🌍</span>
-            </h3>
-            <div className="space-y-3">
-              <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="territory" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
-                <div>
-                  <span className="text-sm font-medium text-gray-900">All Countries</span>
-                  <p className="text-xs text-gray-600">License applies worldwide</p>
-                </div>
-              </label>
-              <label className="flex items-start space-x-3 cursor-pointer">
-                <input type="radio" name="territory" className="mt-1 h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
-                <div>
-                  <span className="text-sm font-medium text-gray-900">All countries except:</span>
-                  <Input
-                    id="excluded_countries"
-                    placeholder="Enter excluded countries (comma-separated)"
-                    className="mt-2"
-                  />
-                  <p className="text-xs text-gray-600 mt-1">These countries will be marked differently on the frontend map</p>
-                </div>
-              </label>
-            </div>
-          </div>
-
           {/* The Numbers */}
           <div>
             <h3 className="text-base font-semibold text-gray-900 mb-4">
