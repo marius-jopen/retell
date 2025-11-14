@@ -17,8 +17,8 @@ export default function AuthorUploadPage() {
   const { addToast } = useToast()
 
   const handleRSSImportSuccess = (podcastId: string) => {
-    // Redirect to the podcast's episodes page
-    router.push(`/author/podcasts/${podcastId}/episodes`)
+    // Redirect to the podcast's edit page so the author can review details immediately
+    router.push(`/author/podcasts/${podcastId}/edit`)
   }
 
   const handleCreatePodcast = async (formData: any, coverImage: File | null) => {
