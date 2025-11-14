@@ -55,10 +55,16 @@ export interface Episode {
   id: string
   title: string
   description: string
+  title_english?: string | null
+  description_english?: string | null
   episode_number: number
-  duration: number
-  published_at: string | null
-  audio_url: string | null
-  cover_image_url: string | null
-  status: 'draft' | 'scheduled' | 'published'
+  duration: number | null
+  published_at?: string | null
+  audio_url?: string | null
+  cover_image_url?: string | null
+  script_url?: string | null
+  season_number?: number | null
+  created_at?: string
+  updated_at?: string
+  status?: 'draft' | 'scheduled' | 'published'
 }

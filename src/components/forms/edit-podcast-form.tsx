@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input, TextArea, FileInput, PDFViewer, AudioPlayer } from '@/components/ui'
 import { ImageGalleryUpload } from '@/components/podcast/image-gallery-upload'
+import { useToast } from '@/components/ui/toast'
 
 interface EditPodcastFormProps {
   podcast: any
@@ -50,6 +51,11 @@ export default function EditPodcastForm({
   const [licenseCountries, setLicenseCountries] = useState<string[]>(podcast?.license_countries || [])
 
   const [coverImage, setCoverImage] = useState<File | null>(null)
+  
+  // Translation states
+  const [translatingTitle, setTranslatingTitle] = useState(false)
+  const [translatingDescription, setTranslatingDescription] = useState(false)
+  const { addToast } = useToast()
   
   // Script file uploads
   const [scriptFile, setScriptFile] = useState<File | null>(null)
@@ -197,6 +203,99 @@ export default function EditPodcastForm({
     setFormData({ ...formData, [field]: value })
   }
 
+  const translateText = async (text: string, sourceLang: string = 'auto'): Promise<string | null> => {
+    try {
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          sourceLang,
+          targetLang: 'EN',
+        }),
+      })
+
+      if (!response.ok) {
+        let errorMessage = 'Translation failed'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorData.details || errorMessage
+        } catch (e) {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`
+        }
+        throw new Error(errorMessage)
+      }
+
+      const data = await response.json()
+      return data.translatedText || null
+    } catch (error) {
+      console.error('Translation error:', error)
+      throw error
+    }
+  }
+
+  const handleTranslateTitle = async () => {
+    if (!formData.title.trim()) {
+      addToast({
+        type: 'error',
+        message: 'Please enter a title to translate',
+      })
+      return
+    }
+
+    setTranslatingTitle(true)
+
+    try {
+      const translated = await translateText(formData.title)
+      if (translated) {
+        setFormData({ ...formData, title_english: translated })
+        addToast({
+          type: 'success',
+          message: 'Title translated successfully',
+        })
+      }
+    } catch (error) {
+      addToast({
+        type: 'error',
+        message: 'Failed to translate title. Please try again.',
+      })
+    } finally {
+      setTranslatingTitle(false)
+    }
+  }
+
+  const handleTranslateDescription = async () => {
+    if (!formData.description.trim()) {
+      addToast({
+        type: 'error',
+        message: 'Please enter a description to translate',
+      })
+      return
+    }
+
+    setTranslatingDescription(true)
+
+    try {
+      const translated = await translateText(formData.description)
+      if (translated) {
+        setFormData({ ...formData, description_english: translated })
+        addToast({
+          type: 'success',
+          message: 'Description translated successfully',
+        })
+      }
+    } catch (error) {
+      addToast({
+        type: 'error',
+        message: 'Failed to translate description. Please try again.',
+      })
+    } finally {
+      setTranslatingDescription(false)
+    }
+  }
+
   // Delete handlers for script files
   const handleDeleteScriptFile = () => {
     setScriptFile(null)
@@ -310,13 +409,42 @@ export default function EditPodcastForm({
                     placeholder="Enter podcast title"
                   />
 
-                  <Input
-                    label="Podcast Title (English)"
-                    id="title_english"
-                    value={formData.title_english}
-                    onChange={(e) => handleInputChange('title_english', e.target.value)}
-                    placeholder="Enter English title (optional)"
-                  />
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label htmlFor="title_english" className="block text-sm font-medium text-gray-700">
+                        Podcast Title (English)
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleTranslateTitle}
+                        disabled={translatingTitle || !formData.title.trim()}
+                        className="text-xs px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded border border-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                      >
+                        {translatingTitle ? (
+                          <>
+                            <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Translating...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                            </svg>
+                            Translate
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <Input
+                      id="title_english"
+                      value={formData.title_english}
+                      onChange={(e) => handleInputChange('title_english', e.target.value)}
+                      placeholder="Enter English title (optional)"
+                    />
+                  </div>
                 </div>
 
                 {/* Description Fields - Side by Side */}
@@ -331,14 +459,43 @@ export default function EditPodcastForm({
                     rows={4}
                   />
 
-                  <TextArea
-                    label="Description (English)"
-                    id="description_english"
-                    value={formData.description_english}
-                    onChange={(e) => handleInputChange('description_english', e.target.value)}
-                    placeholder="Enter English description (optional)"
-                    rows={4}
-                  />
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label htmlFor="description_english" className="block text-sm font-medium text-gray-700">
+                        Description (English)
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleTranslateDescription}
+                        disabled={translatingDescription || !formData.description.trim()}
+                        className="text-xs px-2 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded border border-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                      >
+                        {translatingDescription ? (
+                          <>
+                            <svg className="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Translating...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                            </svg>
+                            Translate
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <TextArea
+                      id="description_english"
+                      value={formData.description_english}
+                      onChange={(e) => handleInputChange('description_english', e.target.value)}
+                      placeholder="Enter English description (optional)"
+                      rows={4}
+                    />
+                  </div>
                 </div>
 
                 {/* Helper Text */}

@@ -30,9 +30,12 @@ function PodcastEditContent({
   user, 
   profile 
 }: PodcastEditContentProps) {
+  console.log('🚀 PodcastEditContent component rendering', { podcastId, hasUser: !!user, hasProfile: !!profile })
+  
   const [podcast, setPodcast] = useState<PodcastType | null>(null)
   const [episodes, setEpisodes] = useState<Episode[]>([])
   const [loading, setLoading] = useState(false)
+  const [fetching, setFetching] = useState(true)
   const [fetchError, setFetchError] = useState('')
   const supabase = createBrowserSupabaseClient()
   const { addToast } = useToast()
@@ -66,8 +69,14 @@ function PodcastEditContent({
   useEffect(() => {
     const fetchPodcast = async () => {
       try {
+        console.log('🔍 Starting fetchPodcast', { podcastId, user: !!user, profile: !!profile, isAdmin })
+        setFetching(true)
+        setFetchError('')
+        
         if (!user) {
+          console.error('❌ No user found')
           setFetchError('You must be logged in to edit a podcast')
+          setFetching(false)
           return
         }
 
@@ -75,11 +84,13 @@ function PodcastEditContent({
         if (isAdmin) {
           if (!profile || profile.role !== 'admin') {
             setFetchError('You must be an admin to edit podcasts')
+            setFetching(false)
             return
           }
         } else {
           if (!profile || (profile.role !== 'author' && profile.role !== 'admin')) {
             setFetchError('You must be an author or admin to edit podcasts')
+            setFetching(false)
             return
           }
         }
@@ -113,11 +124,16 @@ function PodcastEditContent({
         ])
 
         const { data: podcastData, error: podcastError } = podcastResult
+        console.log('📦 Podcast result:', { hasData: !!podcastData, error: podcastError })
+        
         if (podcastError || !podcastData) {
+          console.error('❌ Podcast fetch error:', podcastError)
           setFetchError(podcastError?.message || 'Failed to fetch podcast')
+          setFetching(false)
           return
         }
 
+        console.log('✅ Podcast data fetched successfully')
         // Set podcast data
         setPodcast({
           ...podcastData,
@@ -166,18 +182,33 @@ function PodcastEditContent({
 
 
         // Set episodes
-        const { data: episodesData } = episodesResult
-        setEpisodes(episodesData || [])
+        const { data: episodesData, error: episodesError } = episodesResult
+        console.log('📺 Episodes result:', { count: episodesData?.length || 0, error: episodesError })
+        
+        if (episodesError) {
+          console.error('❌ Error fetching episodes:', episodesError)
+          // Don't fail the whole page if episodes fail to load
+          setEpisodes([])
+        } else {
+          setEpisodes(episodesData || [])
+        }
 
-
+        console.log('✅ Fetch complete, setting fetching to false')
+        setFetching(false)
 
       } catch (err) {
         console.error('Error in fetchPodcast:', err)
-        setFetchError('An unexpected error occurred')
+        setFetchError(err instanceof Error ? err.message : 'An unexpected error occurred')
+        setFetching(false)
       }
     }
 
-    fetchPodcast()
+    if (podcastId) {
+      fetchPodcast()
+    } else {
+      console.log('⏸️ Skipping fetchPodcast - podcastId is empty')
+      setFetching(false)
+    }
   }, [podcastId, supabase, user, profile, isAdmin])
 
 
@@ -483,7 +514,7 @@ function PodcastEditContent({
     )
   }
 
-  if (!podcast) {
+  if (fetching || !podcast) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="animate-pulse">
@@ -495,6 +526,11 @@ function PodcastEditContent({
             <div className="h-4 bg-gray-200 rounded w-1/2"></div>
           </div>
         </div>
+        {fetchError && (
+          <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-700">{fetchError}</p>
+          </div>
+        )}
       </div>
     )
   }
@@ -828,5 +864,5 @@ function PodcastEditContent({
   )
 }
 
-// Memoize the component to prevent unnecessary re-renders
-export default React.memo(PodcastEditContent)
+// Export the component (memo removed to fix lazy loading issue)
+export default PodcastEditContent

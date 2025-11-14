@@ -66,9 +66,16 @@ export default function TranslateAllEpisodes({ podcastId, episodes }: TranslateA
       return
     }
 
-    // Filter episodes that need translation (don't have English translations yet)
+    // Filter episodes that need translation (skip episodes that already have both translations)
     const episodesToTranslate = episodes.filter(
-      (ep) => !ep.title_english || !ep.description_english
+      (ep) => {
+        // Skip if both title_english and description_english already exist
+        const hasTitleTranslation = ep.title_english && ep.title_english.trim() !== ''
+        const hasDescriptionTranslation = ep.description_english && ep.description_english.trim() !== ''
+        
+        // Only include if at least one translation is missing
+        return !hasTitleTranslation || !hasDescriptionTranslation
+      }
     )
 
     if (episodesToTranslate.length === 0) {
@@ -79,7 +86,7 @@ export default function TranslateAllEpisodes({ podcastId, episodes }: TranslateA
       return
     }
 
-    const confirmMessage = `This will translate ${episodesToTranslate.length} episode(s) to English using DeepL API. This may take a few moments. Continue?`
+    const confirmMessage = `This will translate ${episodesToTranslate.length} episode(s) to English using DeepL API. This may take a few moments.\n\n⚠️ Please do not leave the page during translation.\n\nContinue?`
     if (!confirm(confirmMessage)) {
       return
     }
@@ -99,16 +106,18 @@ export default function TranslateAllEpisodes({ podcastId, episodes }: TranslateA
         try {
           const updates: { title_english?: string; description_english?: string } = {}
 
-          // Translate title if needed
-          if (!episode.title_english && episode.title) {
+          // Translate title only if it doesn't already have an English translation
+          const hasTitleTranslation = episode.title_english && episode.title_english.trim() !== ''
+          if (!hasTitleTranslation && episode.title && episode.title.trim() !== '') {
             const translatedTitle = await translateText(episode.title)
             if (translatedTitle) {
               updates.title_english = translatedTitle
             }
           }
 
-          // Translate description if needed
-          if (!episode.description_english && episode.description) {
+          // Translate description only if it doesn't already have an English translation
+          const hasDescriptionTranslation = episode.description_english && episode.description_english.trim() !== ''
+          if (!hasDescriptionTranslation && episode.description && episode.description.trim() !== '') {
             const translatedDescription = await translateText(episode.description)
             if (translatedDescription) {
               updates.description_english = translatedDescription
@@ -181,7 +190,12 @@ export default function TranslateAllEpisodes({ podcastId, episodes }: TranslateA
   }
 
   const episodesNeedingTranslation = episodes.filter(
-    (ep) => !ep.title_english || !ep.description_english
+    (ep) => {
+      // Count episodes that need translation (at least one field missing)
+      const hasTitleTranslation = ep.title_english && ep.title_english.trim() !== ''
+      const hasDescriptionTranslation = ep.description_english && ep.description_english.trim() !== ''
+      return !hasTitleTranslation || !hasDescriptionTranslation
+    }
   )
 
   if (episodes.length === 0) {
@@ -189,28 +203,35 @@ export default function TranslateAllEpisodes({ podcastId, episodes }: TranslateA
   }
 
   return (
-    <Button
-      onClick={handleTranslateAll}
-      disabled={loading || episodesNeedingTranslation.length === 0}
-      className="bg-blue-500 hover:bg-blue-600 text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {loading ? (
-        <>
-          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Translating... ({progress.current}/{progress.total})
-        </>
-      ) : (
-        <>
-          <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-          </svg>
-          Translate All Episodes {episodesNeedingTranslation.length > 0 && `(${episodesNeedingTranslation.length})`}
-        </>
+    <div className="flex flex-col items-end">
+      <Button
+        onClick={handleTranslateAll}
+        disabled={loading || episodesNeedingTranslation.length === 0}
+        className="bg-blue-500 hover:bg-blue-600 text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? (
+          <>
+            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Translating... ({progress.current}/{progress.total})
+          </>
+        ) : (
+          <>
+            <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+            </svg>
+            Translate All Episodes {episodesNeedingTranslation.length > 0 && `(${episodesNeedingTranslation.length})`}
+          </>
+        )}
+      </Button>
+      {loading && (
+        <p className="mt-2 text-xs text-orange-600 font-medium">
+          ⚠️ Please do not leave the page during translation
+        </p>
       )}
-    </Button>
+    </div>
   )
 }
 
