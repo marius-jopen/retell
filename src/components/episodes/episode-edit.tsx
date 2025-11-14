@@ -13,6 +13,8 @@ interface Episode {
   id: string
   title: string
   description: string
+  title_english: string | null
+  description_english: string | null
   audio_url: string
   script_url: string
   duration: number | null
@@ -49,6 +51,8 @@ export default function EpisodeEdit({
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    title_english: '',
+    description_english: '',
     episode_number: 1,
     season_number: 1,
     duration: ''
@@ -120,6 +124,8 @@ export default function EpisodeEdit({
         setFormData({
           title: episodeData.title || '',
           description: episodeData.description || '',
+          title_english: episodeData.title_english || '',
+          description_english: episodeData.description_english || '',
           episode_number: episodeData.episode_number || 1,
           season_number: episodeData.season_number || 1,
           duration: durationString
@@ -239,8 +245,8 @@ export default function EpisodeEdit({
       }
 
       // Upload new files if provided
-      let audioUrl = episode?.audio_url
-      let scriptUrl = episode?.script_url
+      let audioUrl = episode?.audio_url || null
+      let scriptUrl = episode?.script_url || null
 
       if (audioFile) {
         audioUrl = await uploadFile(audioFile, 'podcast-audio', `${podcastId}/${audioFile.name}`)
@@ -248,6 +254,11 @@ export default function EpisodeEdit({
 
       if (scriptFile) {
         scriptUrl = await uploadFile(scriptFile, 'podcast-scripts', `${podcastId}/${scriptFile.name}`)
+      }
+      
+      // Normalize empty strings to null
+      if (scriptUrl === '') {
+        scriptUrl = null
       }
 
       // Parse duration from string (mm:ss format)
@@ -269,6 +280,8 @@ export default function EpisodeEdit({
         .update({
           title: formData.title.trim(),
           description: formData.description.trim(),
+          title_english: formData.title_english.trim() || null,
+          description_english: formData.description_english.trim() || null,
           episode_number: formData.episode_number,
           season_number: formData.season_number,
           duration: durationInSeconds,
@@ -378,7 +391,7 @@ export default function EpisodeEdit({
           <h2 className="text-lg font-semibold text-gray-900">Episode Information</h2>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6" noValidate>
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <div className="flex">
@@ -395,24 +408,63 @@ export default function EpisodeEdit({
             </div>
           )}
 
-          <Input
-            label="Episode Title"
-            id="title"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            placeholder="Enter episode title"
-            required
-          />
+          {/* Title Fields - Side by Side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Input
+              label="Episode Title*"
+              id="title"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder="Enter episode title"
+              required
+            />
 
-          <TextArea
-            label="Description"
-            id="description"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            rows={4}
-            placeholder="Describe this episode"
-            required
-          />
+            <Input
+              label="Episode Title (English)"
+              id="title_english"
+              value={formData.title_english}
+              onChange={(e) => setFormData({ ...formData, title_english: e.target.value })}
+              placeholder="Enter English title (optional)"
+            />
+          </div>
+
+          {/* Description Fields - Side by Side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <TextArea
+              label="Description*"
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={4}
+              placeholder="Describe this episode"
+              required
+            />
+
+            <TextArea
+              label="Description (English)"
+              id="description_english"
+              value={formData.description_english}
+              onChange={(e) => setFormData({ ...formData, description_english: e.target.value })}
+              rows={4}
+              placeholder="Enter English description (optional)"
+            />
+          </div>
+
+          {/* Helper Text */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-blue-700">
+                  <strong>Translation fields:</strong> The English fields are optional. If provided, they will be used when displaying episodes to English-speaking audiences. If not provided, the original title and description will be used.
+                </p>
+              </div>
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
@@ -520,7 +572,7 @@ export default function EpisodeEdit({
 
           <div>
             <label htmlFor="script_file" className="block text-sm font-medium text-gray-700 mb-2">
-              Script File
+              Script File (Optional)
             </label>
             
             {episode.script_url ? (
@@ -574,10 +626,9 @@ export default function EpisodeEdit({
                   accept=".txt,.pdf,.doc,.docx"
                   onChange={handleScriptFileChange}
                   className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
-                  required
                 />
                 <p className="mt-2 text-sm text-gray-500">
-                  Upload a script file for this episode (TXT, PDF, DOC, DOCX - max 10MB)
+                  Optional: Upload a script file for this episode (TXT, PDF, DOC, DOCX - max 10MB)
                 </p>
               </div>
             )}

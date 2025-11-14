@@ -153,6 +153,8 @@ export interface Database {
           podcast_id: string
           title: string
           description: string
+          title_english: string | null
+          description_english: string | null
           audio_url: string
           script_url: string
           duration: number | null
@@ -166,6 +168,8 @@ export interface Database {
           podcast_id: string
           title: string
           description: string
+          title_english?: string | null
+          description_english?: string | null
           audio_url: string
           script_url: string
           duration?: number | null
@@ -179,6 +183,8 @@ export interface Database {
           podcast_id?: string
           title?: string
           description?: string
+          title_english?: string | null
+          description_english?: string | null
           audio_url?: string
           script_url?: string
           duration?: number | null

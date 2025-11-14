@@ -8,6 +8,8 @@ interface Episode {
   id: string
   title: string
   description: string
+  title_english: string | null
+  description_english: string | null
   audio_url: string
   script_url: string
   duration: number | null
@@ -185,8 +187,8 @@ export default function EpisodesList({
                               )}
                             </span>
                           </div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2 leading-snug">{episode.title}</h3>
-                          <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-3">{episode.description}</p>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2 leading-snug">{episode.title_english || episode.title}</h3>
+                          <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-3">{episode.description_english || episode.description}</p>
                           <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
                             <span className="bg-gray-100 px-2 py-1 rounded-full">
                               Duration: {formatDuration(episode.duration)}

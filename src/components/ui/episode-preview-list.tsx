@@ -9,6 +9,8 @@ export interface Episode {
   id: string
   title: string
   description: string
+  title_english?: string | null
+  description_english?: string | null
   episode_number: number
   season_number?: number
   duration?: number
@@ -120,12 +122,12 @@ const EpisodePreviewList = forwardRef<HTMLDivElement, EpisodePreviewListProps>(
 
                           {/* Episode Title */}
                           <h3 className="text-sm font-semibold text-gray-900 mb-1 leading-snug hover:text-red-600 transition-colors">
-                            {episode.title}
+                            {episode.title_english || episode.title}
                           </h3>
 
                           {/* Episode Description */}
                           <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">
-                            {episode.description}
+                            {episode.description_english || episode.description}
                           </p>
 
                           {/* Actions */}

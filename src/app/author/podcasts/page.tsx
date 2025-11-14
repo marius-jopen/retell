@@ -22,6 +22,7 @@ interface Podcast {
   episodes: Array<{
     id: string
     title: string
+    title_english: string | null
     episode_number: number
     created_at: string
   }>
@@ -37,6 +38,7 @@ async function getAuthorPodcasts(authorId: string) {
       episodes (
         id,
         title,
+        title_english,
         episode_number,
         created_at
       )
@@ -247,7 +249,7 @@ export default async function AuthorPodcastsPage() {
                               </div>
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 truncate">{episode.title}</p>
+                              <p className="text-sm font-medium text-gray-900 truncate">{episode.title_english || episode.title}</p>
                               <p className="text-xs text-gray-500 mt-0.5">{formatDate(episode.created_at)}</p>
                             </div>
                           </div>
@@ -260,7 +262,7 @@ export default async function AuthorPodcastsPage() {
                             </Link>
                             <EpisodeActions
                               episodeId={episode.id}
-                              episodeTitle={episode.title}
+                              episodeTitle={episode.title_english || episode.title}
                             />
                           </div>
                         </div>

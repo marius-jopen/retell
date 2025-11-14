@@ -90,7 +90,9 @@ export function CatalogClient({ podcasts }: CatalogClientProps) {
         // Search in episode fields
         const episodeMatches = podcast.episodes?.some(episode => 
           episode.title.toLowerCase().includes(query) ||
-          episode.description.toLowerCase().includes(query)
+          episode.description.toLowerCase().includes(query) ||
+          (episode.title_english && episode.title_english.toLowerCase().includes(query)) ||
+          (episode.description_english && episode.description_english.toLowerCase().includes(query))
         ) || false
         
         return podcastMatches || episodeMatches

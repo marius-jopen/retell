@@ -10,6 +10,8 @@ interface Episode {
   id: string
   title: string
   description: string
+  title_english: string | null
+  description_english: string | null
   audio_url: string
   script_url: string
   duration: number | null
@@ -49,6 +51,8 @@ async function getPodcastWithEpisodes(podcastId: string, userId: string, isAdmin
         id,
         title,
         description,
+        title_english,
+        description_english,
         audio_url,
         script_url,
         duration,
@@ -190,11 +194,11 @@ export default async function EpisodesPage({
                           </div>
                           
                           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            {episode.title}
+                            {episode.title_english || episode.title}
                           </h3>
                           
                           <p className="text-gray-600 mb-3 line-clamp-2">
-                            {episode.description}
+                            {episode.description_english || episode.description}
                           </p>
                           
                           <div className="flex items-center text-sm text-gray-500 space-x-4">

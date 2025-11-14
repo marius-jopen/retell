@@ -9,6 +9,8 @@ interface Episode {
   id: string
   title: string
   description: string
+  title_english?: string | null
+  description_english?: string | null
   audio_url?: string | null
   script_url?: string | null
   duration?: number | null
@@ -87,11 +89,11 @@ export function EpisodesList({ episodes, user }: EpisodesListProps) {
                   )}
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {episode.title}
+                  {episode.title_english || episode.title}
                 </h3>
-                {episode.description && (
+                {(episode.description_english || episode.description) && (
                   <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                    {episode.description}
+                    {episode.description_english || episode.description}
                   </p>
                 )}
                 

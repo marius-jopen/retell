@@ -7,6 +7,8 @@ interface Episode {
   id: string
   title: string
   description: string
+  title_english?: string | null
+  description_english?: string | null
   audio_url?: string | null
   script_url?: string | null
   duration?: number | null
@@ -53,10 +55,10 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
               <span>{formatDate(episode.created_at)}</span>
             </div>
             <h3 className="text-lg font-bold text-gray-900 mb-3 leading-tight line-clamp-2">
-              {episode.title}
+              {episode.title_english || episode.title}
             </h3>
             <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
-              {episode.description}
+              {episode.description_english || episode.description}
             </p>
           </div>
 
@@ -106,10 +108,10 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
               <span>{formatDate(episode.created_at)}</span>
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
-              {episode.title}
+              {episode.title_english || episode.title}
             </h3>
             <p className="text-gray-600 leading-relaxed line-clamp-4">
-              {episode.description}
+              {episode.description_english || episode.description}
             </p>
           </div>
 
@@ -170,9 +172,9 @@ export function EpisodeCard({ episode, user, isCompact = false, isFeatured = fal
               </div>
             </div>
             <h3 className="text-base font-medium text-stone-800 mb-2 leading-snug">
-              {episode.title}
+              {episode.title_english || episode.title}
             </h3>
-            <TruncatedText text={episode.description} className="text-sm text-stone-600 leading-relaxed" />
+            <TruncatedText text={episode.description_english || episode.description} className="text-sm text-stone-600 leading-relaxed" />
           </div>
         </div>
         

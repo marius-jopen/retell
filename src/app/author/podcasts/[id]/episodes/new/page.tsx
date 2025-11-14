@@ -21,6 +21,8 @@ export default function NewEpisodePage({ params }: { params: Promise<{ id: strin
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    title_english: '',
+    description_english: '',
     episode_number: 1,
     season_number: 1,
     duration: ''
@@ -90,10 +92,13 @@ export default function NewEpisodePage({ params }: { params: Promise<{ id: strin
           podcast_id: podcast.id,
           title: formData.title,
           description: formData.description,
+          title_english: formData.title_english.trim() || null,
+          description_english: formData.description_english.trim() || null,
           episode_number: formData.episode_number,
           season_number: formData.season_number,
-          duration: formData.duration,
-          status: 'draft'
+          duration: formData.duration ? parseInt(formData.duration) : null,
+          audio_url: '',
+          script_url: ''
         })
         .select()
         .single()
@@ -156,24 +161,58 @@ export default function NewEpisodePage({ params }: { params: Promise<{ id: strin
           </div>
         )}
 
-        <div>
+        {/* Title Fields - Side by Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Input
-            label="Episode Title"
+            label="Episode Title*"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             required
             placeholder="Enter episode title"
           />
+
+          <Input
+            label="Episode Title (English)"
+            value={formData.title_english}
+            onChange={(e) => setFormData({ ...formData, title_english: e.target.value })}
+            placeholder="Enter English title (optional)"
+          />
         </div>
 
-        <div>
+        {/* Description Fields - Side by Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TextArea
-            label="Description"
+            label="Description*"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             rows={4}
             placeholder="Enter episode description"
+            required
           />
+
+          <TextArea
+            label="Description (English)"
+            value={formData.description_english}
+            onChange={(e) => setFormData({ ...formData, description_english: e.target.value })}
+            rows={4}
+            placeholder="Enter English description (optional)"
+          />
+        </div>
+
+        {/* Helper Text */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-blue-700">
+                <strong>Translation fields:</strong> The English fields are optional. If provided, they will be used when displaying episodes to English-speaking audiences. If not provided, the original title and description will be used.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

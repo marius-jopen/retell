@@ -9,6 +9,8 @@ interface Episode {
   id: string
   title: string
   description: string
+  title_english: string | null
+  description_english: string | null
   audio_url: string
   script_url: string
   duration: number | null
@@ -95,8 +97,13 @@ export default function EpisodesLayout({
           )}
         </div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          {selectedEpisode.title}
+          {selectedEpisode.title_english || selectedEpisode.title}
         </h2>
+        {selectedEpisode.title_english && (
+          <p className="text-sm text-gray-500 italic">
+            Original: {selectedEpisode.title}
+          </p>
+        )}
       </div>
 
       {/* Episode Details */}
@@ -105,8 +112,16 @@ export default function EpisodesLayout({
         <div>
           <h3 className="text-sm font-medium text-gray-700 mb-2">Description</h3>
           <p className="text-gray-600 text-sm leading-relaxed">
-            {selectedEpisode.description || 'No description available'}
+            {selectedEpisode.description_english || selectedEpisode.description || 'No description available'}
           </p>
+          {selectedEpisode.description_english && selectedEpisode.description && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <h4 className="text-xs font-medium text-gray-500 mb-1">Original Description:</h4>
+              <p className="text-gray-500 text-xs leading-relaxed">
+                {selectedEpisode.description}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Episode Info */}

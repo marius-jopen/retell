@@ -88,6 +88,8 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
         id,
         title,
         description,
+        title_english,
+        description_english,
         audio_url,
         script_url,
         duration,
@@ -288,7 +290,12 @@ export default function PodcastDetailPage({ params }: PodcastDetailPageProps) {
     )
   }
 
-    const episodes = podcast.episodes || []
+    const episodes = (podcast.episodes || []).sort((a: Episode, b: Episode) => {
+      // Sort by episode_number descending (highest episode number first)
+      const episodeNumA = a.episode_number || 0
+      const episodeNumB = b.episode_number || 0
+      return episodeNumB - episodeNumA
+    })
   // Priority: Country translation > Language translation > Default podcast
   // This allows country switching to work properly
   const currentTranslation = countryTranslations[selectedCountry] ||

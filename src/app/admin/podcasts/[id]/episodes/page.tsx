@@ -8,6 +8,8 @@ interface Episode {
   id: string
   title: string
   description: string
+  title_english: string | null
+  description_english: string | null
   audio_url: string
   script_url: string
   duration: number | null
@@ -47,6 +49,8 @@ async function getPodcastWithEpisodes(podcastId: string): Promise<Podcast | null
         id,
         title,
         description,
+        title_english,
+        description_english,
         audio_url,
         script_url,
         duration,
