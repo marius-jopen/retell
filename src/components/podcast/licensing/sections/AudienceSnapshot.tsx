@@ -35,7 +35,7 @@ export function AudienceSnapshot({ totalListeners, listenersPerEpisode, age }: A
   const perEpisodeLabel = formatListenerCount(listenersPerEpisode)
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 aspect-square flex flex-col">
       <p className="text-xs uppercase tracking-wide font-semibold text-orange-500 mb-3">Audience snapshot</p>
       <h3 className="text-xl font-semibold text-gray-900 mb-6">Performance & age groups</h3>
 
@@ -60,7 +60,7 @@ export function AudienceSnapshot({ totalListeners, listenersPerEpisode, age }: A
       )}
 
       {age && (
-        <div className="space-y-3">
+        <div className="space-y-3 mt-auto">
           {ageRanges.map(
             ({ label, key }) =>
               age[key] && (

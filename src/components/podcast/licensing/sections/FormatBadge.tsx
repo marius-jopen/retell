@@ -11,9 +11,17 @@ export function FormatBadge({ formatBadge }: FormatBadgeProps) {
   }
 
   return (
-    <div className="inline-flex flex-col sm:flex-row sm:items-center gap-2 px-6 py-4 rounded-full bg-white text-black font-semibold shadow-lg">
-      <span>📻 {formatBadge.title}</span>
-      <span className="text-primary text-sm sm:ml-2">{formatBadge.subtitle}</span>
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 aspect-square flex flex-col justify-between">
+      <div>
+        <p className="text-xs uppercase tracking-wide font-semibold text-orange-500 mb-2">Production cadence</p>
+        <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+          <span role="img" aria-label="radio">
+            📻
+          </span>
+          {formatBadge.title}
+        </h3>
+      </div>
+      <p className="text-sm text-gray-600">{formatBadge.subtitle}</p>
     </div>
   )
 }

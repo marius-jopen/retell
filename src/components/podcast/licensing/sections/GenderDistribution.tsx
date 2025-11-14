@@ -16,10 +16,10 @@ const genderRanges: { label: string; key: keyof GenderBreakdown; color: string }
 
 export function GenderDistribution({ gender }: GenderDistributionProps) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 aspect-square flex flex-col">
       <p className="text-xs uppercase tracking-wide font-semibold text-orange-500 mb-3">Gender distribution</p>
       <h3 className="text-xl font-semibold text-gray-900 mb-4">Balanced reach across identities</h3>
-      <div className="space-y-4">
+      <div className="space-y-4 mt-auto">
         {genderRanges.map(
           ({ label, key, color }) =>
             gender[key] && (

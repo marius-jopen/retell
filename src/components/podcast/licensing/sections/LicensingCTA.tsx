@@ -1,6 +1,6 @@
 export function LicensingCTA() {
   return (
-    <div className="bg-white mt-20 rounded-2xl shadow-lg p-8 text-center border border-gray-200 max-w-3xl w-full">
+    <div className="bg-white rounded-2xl shadow-lg p-8 text-center border border-gray-200 max-w-3xl w-full">
       <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
         <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
