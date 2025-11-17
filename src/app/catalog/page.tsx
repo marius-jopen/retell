@@ -1,10 +1,11 @@
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { getCurrentUser } from '@/lib/auth'
 import { CatalogClient } from '@/components/catalog/catalog-client'
+import { CatalogPasswordGate } from '@/components/catalog/catalog-password-gate'
 
 export default async function CatalogPage() {
   const supabase = await createServerSupabaseClient()
+  const user = await getCurrentUser()
 
   // Get approved podcasts with episodes data for enhanced search
   const { data: podcasts, error } = await supabase
@@ -22,9 +23,10 @@ export default async function CatalogPage() {
     .eq('status', 'approved')
     .order('created_at', { ascending: false })
 
+  // Check if user is logged in as admin or author
+  const isAuthorized = user?.profile?.role === 'admin' || user?.profile?.role === 'author'
 
-
-  return (
+  const content = (
     <div className="min-h-screen bg-orange-50">
       {/* Hero Section */}
       <div className="bg-brand text-white">
@@ -45,4 +47,12 @@ export default async function CatalogPage() {
       </div>
     </div>
   )
+
+  // If user is admin or author, show content directly
+  if (isAuthorized) {
+    return content
+  }
+
+  // Otherwise, show password gate
+  return <CatalogPasswordGate>{content}</CatalogPasswordGate>
 } 
